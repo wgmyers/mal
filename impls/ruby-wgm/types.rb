@@ -14,6 +14,10 @@ class MalType
     @data = nil
   end
 
+  def print()
+    return @data
+  end
+
 end
 
 class MalList < MalType
@@ -25,6 +29,14 @@ class MalList < MalType
 
   def push(item)
     @data.push(item)
+  end
+
+  def print()
+    strings = []
+    for item in data
+      strings.push(item.print())
+    end
+    return "(" + strings.join(" ") + ")"
   end
 
 end
