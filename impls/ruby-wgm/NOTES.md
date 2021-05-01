@@ -27,3 +27,5 @@ now, a simple Ruby array. I suspect this will not suffice for many more steps.
 On the other hand, this is enough for now, which means we can either go ahead
 and have a crack at Step 2, or have a go at implementing types.rb and having
 our types be properly, uh, typed.
+
+I think we need to do types now. Bah.

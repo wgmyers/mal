@@ -5,6 +5,8 @@
 # Parses and tokenises input into data structure
 # We're Ruby, we're loosely typed, an array will be fine
 
+require_relative "types"
+
 class Reader
 
   attr_reader :tokens, :pos
