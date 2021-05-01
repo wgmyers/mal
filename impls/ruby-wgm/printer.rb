@@ -9,18 +9,25 @@
 # Iterates through it, converting back to string
 # Returns that string
 def pr_str(mal_data)
+  is_list = false
   strings = []
-  # Handle degenerate case where we have a raw string
-  if !mal_data.kind_of?(Array)
-    return mal_data
-  end
-  # Ok, it's an array, handle that
-  for item in mal_data
-    if item.kind_of?(Array)
-      strings.push(pr_str(item))
-    else
-      strings.push(item)
+  if mal_data.kind_of?(MalSymbol) || mal_data.kind_of?(MalNumber)
+    strings.push(mal_data.data)
+  elsif mal_data.kind_of?(MalList)
+    is_list = true
+    for item in mal_data.data
+      if item.kind_of?(MalList)
+        strings.push(pr_str(item))
+      else
+        strings.push(item.data)
+      end
     end
+  else
+    raise ("Unknown data type")
   end
-  return "(" + strings.join(" ") + ")"
+  if is_list
+    return "(" + strings.join(" ") + ")"
+  else
+    return strings.join(" ")
+  end
 end

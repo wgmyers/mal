@@ -44,12 +44,22 @@ end
 # FIXME does not yet return error on mismatched parens.
 
 def read_atom(rdr)
-  retval = rdr.peek()
+  data = rdr.peek()
+  case data
+  when nil
+    retval = nil
+  when ")"
+    retval = ")"
+  when /-?\d+/
+    retval = MalNumber.new(data)
+  else
+    retval = MalSymbol.new(data)
+  end
   return retval
 end
 
 def read_list(rdr)
-  retval = []
+  retval = MalList.new()
   rdr.next()
   loop do
     res = read_form(rdr)

@@ -7,10 +7,10 @@
 # MalType is the base class for our class types
 class MalType
 
-  attr_reader :name, :data
+  attr_reader :type, :data
 
   def initialize()
-    @name = "BaseType"
+    @type = "MalBaseType"
     @data = nil
   end
 
@@ -19,7 +19,7 @@ end
 class MalList < MalType
 
   def initialize()
-    @name = "List"
+    @type = "MalList"
     @data = []
   end
 
@@ -32,7 +32,7 @@ end
 class MalSymbol < MalType
 
   def initialize(data)
-    @name = "Symbol"
+    @type = "MalSymbol"
     @data = data
   end
 
@@ -41,7 +41,7 @@ end
 class MalNumber < MalType
 
   def initialize(data)
-    @name = "Number"
+    @type = "MalNumber"
     @data = data
   end
 
