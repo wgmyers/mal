@@ -63,7 +63,7 @@ class Matcher
     if @open == @close
       return true
     end
-    raise MalMismatchParensError
+    return false
   end
 
 end
@@ -151,6 +151,8 @@ def read_str(str)
   begin
     if matcher.matched
       return retval
+    else
+      raise MalMismatchParensError
     end
   rescue MalMismatchParensError => e
     raise e
