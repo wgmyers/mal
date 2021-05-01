@@ -6,6 +6,7 @@
 # We're Ruby, we're loosely typed, an array will be fine
 
 require_relative "types"
+require_relative "errors"
 
 class Reader
 
@@ -39,12 +40,40 @@ class Reader
 
 end
 
+#  Matcher
+# A class to count open and close parens as we read them
+class Matcher
+
+  attr_reader :open, :close
+
+  def initialize()
+    @open = 0
+    @close = 0
+  end
+
+  def open
+    @open = @open + 1
+  end
+
+  def close
+    @close = @close + 1
+  end
+
+  def matched
+    if @open == @close
+      return true
+    end
+    raise MalMismatchParensError
+  end
+
+end
+
 # read_atom, read_list and read_form are the core of our parser
 # Works sorta kinda, but!!!
 # FIXME does not yet return error on mismatched parens.
 
-def read_atom(rdr)
-  data = rdr.peek()
+def read_atom(reader, matcher)
+  data = reader.peek()
   case data
   when nil
     retval = nil
@@ -64,11 +93,11 @@ def read_atom(rdr)
   return retval
 end
 
-def read_list(rdr)
+def read_list(reader, matcher)
   retval = MalList.new()
-  rdr.next()
+  reader.next()
   loop do
-    res = read_form(rdr)
+    res = read_form(reader, matcher)
     case res
     when ")"
       break
@@ -76,19 +105,23 @@ def read_list(rdr)
       break
     else
       retval.push(res)
-      rdr.next()
+      reader.next()
     end
   end
   return retval
 end
 
-def read_form(rdr)
-  cur_tok = rdr.peek()
+def read_form(reader, matcher)
+  cur_tok = reader.peek()
   case cur_tok
   when "("
-    retval = read_list(rdr)
+    matcher.open()  # Count our open parentheses
+    retval = read_list(reader, matcher)
   else
-    retval = read_atom(rdr)
+    retval = read_atom(reader, matcher)
+    if retval == ")"
+      matcher.close() # Count our close parentheses
+    end
   end
   return retval
 end
@@ -111,9 +144,17 @@ end
 # Presumably, we then return the output of that? Guide does not say.
 def read_str(str)
   tokens = tokenize(str)
-  rdr = Reader.new(tokens)
-  retval = read_form(rdr)
-  return retval
+  reader = Reader.new(tokens)
+  matcher = Matcher.new()
+  retval = read_form(reader, matcher)
+  #p matcher
+  begin
+    if matcher.matched
+      return retval
+    end
+  rescue MalMismatchParensError => e
+    raise e
+  end
 end
 
 # Some tests
