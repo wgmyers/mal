@@ -3,6 +3,8 @@
 # step0_repl.rb
 # In which we implement the basic skeleton of the interpreter
 
+require_relative 'readline'
+
 # In this step, READ, EVAL and PRINT just return their arguments
 def READ(arg)
   return arg
@@ -28,13 +30,9 @@ end
 def main()
   prompt = "user> "
   loop do
-    print prompt
-    line = gets
-    # The following detects Ctrl-D at the beginning of a line only
-    # Seems fair enough for now as it's passing tests anyway, and we're
-    # about to implement some kind of readline which will hopefully handle
-    # such magics for us.
-    if !line
+    line = grabline(prompt)
+    # The readline library returns nil on EOF
+    if line == nil
       break
     end
     puts rep(line)
