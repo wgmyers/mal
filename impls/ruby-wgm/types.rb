@@ -20,6 +20,47 @@ class MalType
 
 end
 
+# NB - consider having MalBoolean for both true and false?
+
+class MalTrue < MalType
+
+  def initialize()
+    @type = "MalTrue"
+    @data = true
+  end
+
+  def print()
+    return  "true"
+  end
+
+end
+
+class MalFalse < MalType
+
+  def initialize()
+    @type = "MalFalse"
+    @data = false
+  end
+
+  def print()
+    return "false"
+  end
+
+end
+
+class MalNil < MalType
+
+  def initialise()
+    @type = "MalNil"
+    @data = nil
+  end
+
+  def print()
+    return "nil"
+  end
+
+end
+
 class MalList < MalType
 
   def initialize()

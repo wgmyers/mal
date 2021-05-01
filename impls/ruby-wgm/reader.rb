@@ -52,6 +52,12 @@ def read_atom(rdr)
     retval = ")"
   when /-?\d+/
     retval = MalNumber.new(data)
+  when "true"
+    retval = MalTrue.new()
+  when "false"
+    retval = MalFalse.new()
+  when "nil"
+    retval = MalNil.new()
   else
     retval = MalSymbol.new(data)
   end
