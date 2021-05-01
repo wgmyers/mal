@@ -4,16 +4,18 @@
 # In which we implement the basic skeleton of the interpreter
 
 require_relative 'readline'
+require_relative 'reader'
+require_relative 'printer'
 
 # In this step, READ, EVAL and PRINT just return their arguments
 def READ(arg)
-  return arg
+  return read_str(arg)
 end
 def EVAL(arg)
   return arg
 end
 def PRINT(arg)
-  return arg
+  return pr_str(arg)
 end
 
 # Here, rep just passes arg to READ, EVAL and PRINT in order and returns the result
