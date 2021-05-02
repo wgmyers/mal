@@ -131,7 +131,16 @@ def EVAL(ast, env)
           retval = READ(retval.to_s)
         end
         return retval, env
+      when "do"
+        # Do the do
+        # Call eval_ast on every member of the list
+        # Return the value of the last one
+        for item in ast.data.drop(1)
+          retval, env = eval_ast(item, env)
+        end
+        return retval, env
       else
+        # DEFAULT EVALLER
         evaller = eval_ast(ast, env)
         begin
           # We need to convert our MalNumbers to actual numbers somehow. Here?
