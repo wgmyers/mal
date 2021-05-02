@@ -53,7 +53,7 @@ class Env
     if env
       return env.data[key]
     else
-      raise MalUnknownSymbolError
+      raise MalUnknownSymbolError, "Symbol #{key} not found."
     end
   end
 

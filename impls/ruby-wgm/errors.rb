@@ -28,7 +28,7 @@ class MalNestedWithMetaError < StandardError
 end
 
 class MalUnknownSymbolError < StandardError
-  def initialize(msg = "Unknown symbol.")
+  def initialize(msg = "Symbol not found.")
     super(msg)
   end
 end
