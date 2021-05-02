@@ -8,3 +8,9 @@ class MalMismatchParensError < StandardError
     super(msg)
   end
 end
+
+class MalMismatchQuotesError < StandardError
+  def initialize(msg = "Mismatched quotes at EOF")
+    super(msg)
+  end
+end

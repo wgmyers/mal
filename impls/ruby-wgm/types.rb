@@ -4,6 +4,8 @@
 
 # Classes to define the different types we support in Mal
 
+require_relative "errors"
+
 # MalType is the base class for our class types
 class MalType
 
@@ -20,8 +22,23 @@ class MalType
 
 end
 
-# NB - consider having MalBoolean for both true and false?
+class MalString < MalType
 
+  def initialize(data)
+    @type = "MalString"
+    @data = data
+    if !(/[^\\]\"$/.match(@data))
+      raise MalMismatchQuotesError
+    end
+  end
+
+  def print()
+    return @data
+  end
+
+end
+
+# NB - consider having MalBoolean for both true and false?
 class MalTrue < MalType
 
   def initialize()
@@ -34,7 +51,6 @@ class MalTrue < MalType
   end
 
 end
-
 class MalFalse < MalType
 
   def initialize()

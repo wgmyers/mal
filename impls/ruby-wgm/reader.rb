@@ -81,6 +81,8 @@ def read_atom(reader, matcher)
     retval = ")"
   when /-?\d+/
     retval = MalNumber.new(data)
+  when /^\"/
+    retval = MalString.new(data)
   when "true"
     retval = MalTrue.new()
   when "false"
@@ -133,6 +135,7 @@ end
 def tokenize(str)
   token_re = /[\s,]*(~@|[\[\]{}()'`~^@]|"(?:\\.|[^\\"])*"?|;.*|[^\s\[\]{}('"`,;)]*)/
   matches = str.scan(token_re).flatten
+  p matches
   matches.pop # Lose spurious empty string at the end created by str.scan
   return matches
 end
