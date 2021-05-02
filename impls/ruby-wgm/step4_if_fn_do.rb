@@ -150,7 +150,7 @@ def EVAL(ast, env)
         end
         if(!type || type == "MalFalse" || type == "MalNil")
           # Falsy. Return eval of third item if there is one
-          if(ast.data.[3])
+          if(ast.data[3])
             return EVAL(ast.data[3])
           else
             return nil, env
