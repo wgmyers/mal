@@ -3,7 +3,7 @@
 # reader.rb
 
 # Parses and tokenises input into data structure
-# We're Ruby, we're loosely typed, an array will be fine
+# Data structure is defined in types.rb
 
 require_relative "types"
 require_relative "errors"
@@ -85,7 +85,7 @@ end
 
 # read_atom, read_list and read_form are the core of our parser
 # Works sorta kinda, but!!!
-# FIXME does not yet return error on mismatched parens.
+# FIXME does not yet reliably return error on mismatched parens.
 
 def read_atom(reader, matcher)
   data = reader.peek()
@@ -190,10 +190,10 @@ end
 # ~@ = splice-unquote
 # @  = deref
 # Expand them.
-# NB: Macros can nest: in_macro counts how deep we are in.
+# NB: Macros can nest: in_macro and in_brackets count how deep we are in.
 # FIXME Implement ^ => with-meta macro
+# FIXME This code should be less ugly than it is. It is *fugly*.
 def expand_macros(tok_arr)
-  p tok_arr
   ret_arr = []
   in_macro = 0
   in_brackets = 0
@@ -253,7 +253,6 @@ def expand_macros(tok_arr)
       end
     end
   end
-  p ret_arr
   return ret_arr
 end
 
