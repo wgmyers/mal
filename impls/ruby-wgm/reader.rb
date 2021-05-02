@@ -256,6 +256,74 @@ def expand_macros(tok_arr)
   return ret_arr
 end
 
+# expand_metadata
+# The ^ macro for metadata is handled differently from the others.
+# It takes the following two items, rearranges them, and places both in
+# a new list prefixed with 'with-meta'
+# ^{"a" 1} [1 2 3]
+# (with-meta [1 2 3] {"a" 1})
+# The expand_macros function above is horrible enough without trying to
+# splice this in as well. The below is likely to be horrible too.
+def expand_metadata(tok_arr)
+  p tok_arr
+  ret_arr = []
+  in_macro = false
+  item_one_arr = []
+  item_two_arr = []
+  item_count = 0
+  cur_bracket = ""
+  bracket_depth = 0
+  for item in tok_arr
+    case item
+    when "^"
+      # We found a metadata macro
+      # If we are already in one, blow up. We aren't nesting these.
+      if in_macro
+        raise MalNestedWithMetaError
+      end
+      in_macro = true
+      item_count = 2
+      ret_arr.push("(")
+      ret_arr.push("with-meta")
+    else
+      if in_macro
+        # If we haven't seen two items, start counting brackets
+        # and saving the items into our two item arrays
+        # When we've seen as many opening as closing brackets, we have
+        # (probably) seen a complete item. Either go onto the next, or
+        # add both items to the main array and complete the macro.
+        if item_count > 0
+          if(/^[\(\[\{]$/.match(item))
+            bracket_depth = bracket_depth + 1
+          end
+          if(/^[\)\]\}]$/.match(item))
+            bracket_depth = bracket_depth - 1
+          end
+          if item_count == 2
+            item_one_arr.push(item)
+          elsif item_count == 1
+            item_two_arr.push(item)
+          end
+          if bracket_depth == 0
+            item_count = item_count - 1
+          end
+        end
+        if item_count == 0
+          in_macro = false
+          ret_arr.push(item_two_arr)
+          ret_arr.push(item_one_arr)
+          ret_arr.push(")")
+          ret_arr.flatten!
+        end
+      else
+        ret_arr.push(item)
+      end
+    end
+  end
+  p ret_arr
+  return ret_arr
+end
+
 # read_str
 # Take a string, and call tokenize on it
 # Then create a new Reader with those tokens
@@ -263,6 +331,7 @@ end
 # Presumably, we then return the output of that? Guide does not say.
 def read_str(str)
   tokens = tokenize(str)
+  tokens = expand_metadata(tokens)
   tokens = expand_macros(tokens)
   reader = Reader.new(tokens)
   matcher = Matcher.new()

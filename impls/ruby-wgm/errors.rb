@@ -26,3 +26,9 @@ class MalUnknownListTypeError < StandardError
     super(msg)
   end
 end
+
+class MalNestedWithMetaError < StandardError
+  def initialize(msg = "Nested ^/with-meta macros not supported")
+    super(msg)
+  end
+end
