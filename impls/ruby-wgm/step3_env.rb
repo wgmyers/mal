@@ -108,6 +108,24 @@ def EVAL(ast, env)
         end
       when "let*"
         # Do the let* stuff
+        # Create a new environment with current env as outer
+        letenv = Env.new(env)
+        # Iterate over our parameters, calling set on new environment with
+        # each key, value pair, first calling EVAL on the value w/ new env.
+        is_key = true
+        for item in ast.data[1].data
+          if is_key
+            key = item.data
+          else
+            val, letenv = EVAL(item.data, letenv)
+            letenv = letenv.set(key, val)
+          end
+          is_key = !is_key
+        end
+        # Finally, call EVAL on our last parameter in the new enviroment
+        # and return the result. New env is discared, so we return the old env.
+        retval, letenv = EVAL(ast.data[2], letenv)
+        return retval, env
       else
         evaller = eval_ast(ast, env)
         begin
