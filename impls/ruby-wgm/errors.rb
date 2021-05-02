@@ -14,3 +14,9 @@ class MalMismatchQuotesError < StandardError
     super(msg)
   end
 end
+
+class MalUnknownListTypeError < StandardError
+  def initialize(msg = "Unknown list type before EOF")
+    super(msg)
+  end
+end

@@ -79,6 +79,10 @@ def read_atom(reader, matcher)
     retval = nil
   when ")"
     retval = ")"
+  when "]"
+    retval = "]"
+  when "}"
+    retval = "}"
   when /-?\d+/
     retval = MalNumber.new(data)
   when /^\"/
@@ -95,13 +99,21 @@ def read_atom(reader, matcher)
   return retval
 end
 
-def read_list(reader, matcher)
-  retval = MalList.new()
+def read_list(reader, matcher, type)
+  puts "read_list received '#{type}'"
+  case type
+  when "("
+    retval = MalList.new()
+  when "["
+    retval = MalVector.new()
+  else
+    raise MalUnknownListTypeError
+  end
   reader.next()
   loop do
     res = read_form(reader, matcher)
     case res
-    when ")"
+    when /^[\)\]\}]$/
       break
     when nil
       break
@@ -116,12 +128,12 @@ end
 def read_form(reader, matcher)
   cur_tok = reader.peek()
   case cur_tok
-  when "("
+  when /^[\(\[\{]$/
     matcher.open()  # Count our open parentheses
-    retval = read_list(reader, matcher)
+    retval = read_list(reader, matcher, cur_tok)
   else
     retval = read_atom(reader, matcher)
-    if retval == ")"
+    if (retval == ")" || retval == "]" || retval == "}")
       matcher.close() # Count our close parentheses
     end
   end

@@ -121,6 +121,44 @@ class MalList < MalType
 
 end
 
+class MalVector < MalList
+
+  def initialize()
+    @type = "MalVector"
+    @data = []
+  end
+
+  def print
+    strings = []
+    for item in data
+      strings.push(item.print())
+    end
+    return "[" + strings.join(" ") + "]"
+  end
+  
+end
+
+class MalHashMap < MalList
+
+  def initialize()
+    @type = "MalHashMap"
+    @data = []
+  end
+
+  def push(key, val)
+    @data.push(key)
+    @data.push(val)
+  end
+
+  def print
+    strings = []
+    for item in data
+      strings.push(item.print())
+    end
+    return "{" + strings.join(" ") + "}"
+  end
+end
+
 class MalSymbol < MalType
 
   def initialize(data)
