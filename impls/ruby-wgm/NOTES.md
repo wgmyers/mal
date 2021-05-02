@@ -20,18 +20,20 @@ We have (finally) implemented a types.rb to handle types.
 
 We have implemented vectors
 
-We have partially implemented hashmaps and mismatched parens finding.
+We have partially implemented hashmaps and mismatched parens finding. Some
+errors remain with mismatches and hashmaps accept anything as keys, which
+is wrong.
 
 We have partially implemented strings and keywords.
 
-We have partially implemented reader macros.
+We have implemented all reader macros except metadata.
 
 We appear to have partially implemented comments for free in the tokeniser,
 but we don't yet handle 'everything is a comment' properly.
 
 ## TODO
 
-* Fix string handling
-* Complete support for token macros (nesting and metadata)
+* Fix remaining string handling errors
+* Complete support for token macros - just metadata left
 * Implement hashmaps properly (only strings or keywords as keys)
 * Implement comments properly
