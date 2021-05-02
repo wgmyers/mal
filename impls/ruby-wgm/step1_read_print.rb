@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-# step0_repl.rb
-# In which we implement the basic skeleton of the interpreter
+# step1_read_print.rb
+# In which we tokenise our input and untokenise it again for printing
 
 require_relative 'readline'
 require_relative 'reader'

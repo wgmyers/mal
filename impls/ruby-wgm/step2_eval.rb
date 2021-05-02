@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-# step0_repl.rb
-# In which we implement the basic skeleton of the interpreter
+# step2_eval.rb
+# In which we implement a basic calculator
 
 require_relative 'readline'
 require_relative 'reader'
