@@ -42,13 +42,17 @@ end
 
 #  Matcher
 # A class to count open and close parens as we read them
+# Also counts number of items added to hashmaps
+# matched returns true if we counted as many open as close parens
+# hashcount returns true if we have an even number of items
 class Matcher
 
-  attr_reader :open, :close
+  attr_reader :open, :close, :hashcount
 
   def initialize()
     @open = 0
     @close = 0
+    @hashcount = 0
   end
 
   def open
@@ -59,8 +63,19 @@ class Matcher
     @close = @close + 1
   end
 
+  def hashcount
+    @hashcount = @hashcount + 1
+  end
+
   def matched
     if @open == @close
+      return true
+    end
+    return false
+  end
+
+  def goodhash
+    if ((@hashcount / 2).to_i == (@hashcount / 2))
       return true
     end
     return false
@@ -99,13 +114,22 @@ def read_atom(reader, matcher)
   return retval
 end
 
+# read_list creates Lists, Vectors and Hashmaps
+# For hashmaps, we keep count of how many items have been added in the matcher
+# If this is not an even number, we can complain later.
+# FIXME 1 - surely we should be squirreling away our keys
+# in order to properly match them to values and insert both at once.
+# FIXME 2 - Aren't we supposed to check here that hash keys are string or keyword keys?
 def read_list(reader, matcher, type)
-  puts "read_list received '#{type}'"
+  ishash = false
   case type
   when "("
     retval = MalList.new()
   when "["
     retval = MalVector.new()
+  when "{"
+    retval = MalHashMap.new()
+    ishash = true
   else
     raise MalUnknownListTypeError
   end
@@ -119,6 +143,9 @@ def read_list(reader, matcher, type)
       break
     else
       retval.push(res)
+      if ishash
+        matcher.hashcount()
+      end
       reader.next()
     end
   end
@@ -147,7 +174,7 @@ end
 def tokenize(str)
   token_re = /[\s,]*(~@|[\[\]{}()'`~^@]|"(?:\\.|[^\\"])*"?|;.*|[^\s\[\]{}('"`,;)]*)/
   matches = str.scan(token_re).flatten
-  p matches
+  #p matches
   matches.pop # Lose spurious empty string at the end created by str.scan
   return matches
 end
@@ -162,7 +189,7 @@ def read_str(str)
   reader = Reader.new(tokens)
   matcher = Matcher.new()
   retval = read_form(reader, matcher)
-  #p matcher
+  # Check our parentheses have matched
   begin
     if matcher.matched
       return retval

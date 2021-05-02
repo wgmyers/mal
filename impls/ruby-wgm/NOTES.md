@@ -16,7 +16,10 @@ for the reader and all that.
 
 So. We are now passing all the symbols, numbers and lists tests.
 
-We are not yet testing for and handling mismatched parens: this definitely needs
-fixing.
-
 We have (finally) implemented a types.rb to handle types.
+
+We have implemented vectors
+
+We have partially implemented hashmaps and mismatched parens finding.
+
+We have partially implemented strings.

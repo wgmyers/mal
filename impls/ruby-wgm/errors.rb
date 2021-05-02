@@ -15,6 +15,12 @@ class MalMismatchQuotesError < StandardError
   end
 end
 
+class MalMismatchedHashMapError < StandardError
+  def initialize(msg = "Number of keys does not match number of values in hashmap")
+    super(msg)
+  end
+end
+
 class MalUnknownListTypeError < StandardError
   def initialize(msg = "Unknown list type before EOF")
     super(msg)

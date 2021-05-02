@@ -29,6 +29,7 @@ class MalString < MalType
   def initialize(data)
     @type = "MalString"
     @data = _munge(data)
+    # FIXME does not actually work, "\\" is ok but gets caught.
     if !(/[^\\]\"$/.match(@data))
       raise MalMismatchQuotesError
     end
@@ -45,6 +46,7 @@ class MalString < MalType
   # \" => "
   # \\ => \
   # \n => actual newline
+  # FIXME does not actually work, many tests failed.
   def _munge(str)
     str.gsub!(/\\\"/, "\"")
     str.gsub!(/\\\\/, "\\")
@@ -135,7 +137,7 @@ class MalVector < MalList
     end
     return "[" + strings.join(" ") + "]"
   end
-  
+
 end
 
 class MalHashMap < MalList
@@ -145,10 +147,18 @@ class MalHashMap < MalList
     @data = []
   end
 
-  def push(key, val)
-    @data.push(key)
-    @data.push(val)
+# FIXME
+# We should be doing it like this:
+#  def push(key, val)
+#    @data.push(key)
+#    @data.push(val)
+#  end
+# Instead, we are cheating, and doing it like this, while keeping count
+# of items over in reader.rb. Surely this is not the way.
+  def push(item)
+    @data.push(item)
   end
+
 
   def print
     strings = []
