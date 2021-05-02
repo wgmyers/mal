@@ -123,8 +123,10 @@ def EVAL(ast, env)
           is_key = !is_key
         end
         # Finally, call EVAL on our last parameter in the new enviroment
-        # and return the result. New env is discared, so we return the old env.
+        # and return the result. New env is discarded, so we return the old env.
         retval, letenv = EVAL(ast.data[2], letenv)
+        # Convert retval to a Mal data object
+        retval = READ(retval.to_s)
         return retval, env
       else
         evaller = eval_ast(ast, env)
