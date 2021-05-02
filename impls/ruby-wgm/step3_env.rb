@@ -84,6 +84,9 @@ end
 # Otherwise we go ahead as in Step 2:
 # Call eval_ast on the list, assume we now have a function and some
 # parameters, and try and call that, returning the result.
+# NB - We now return the environment along with our result, so that the env
+# object persists. Not quite what the guide asks for but this way we avoid
+# having to use a global, at the cost of some readability.
 def EVAL(ast, env)
   type = ast.class.to_s
   if(type == 'MalList')
@@ -132,6 +135,7 @@ end
 
 # rep
 # Pass input through READ, EVAL and PRINT in order and return the result
+# NB EVAL now returns the environment, as it might modify it.
 def rep(input, repl_env)
   begin
     ast = READ(input)
