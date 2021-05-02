@@ -43,6 +43,12 @@ def eval_ast(ast, repl_env)
       retval.push(EVAL(item, repl_env))
     end
     return retval
+  when "MalVector"
+    retval = MalVector.new()
+    for item in ast.data
+      retval.push(EVAL(item, repl_env))
+    end
+    return retval
   end
   return ast
 end
