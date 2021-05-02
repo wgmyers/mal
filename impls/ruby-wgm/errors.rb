@@ -27,6 +27,12 @@ class MalNestedWithMetaError < StandardError
   end
 end
 
+class MalUnknownSymbolError < StandardError
+  def initialize(msg = "Unknown symbol.")
+    super(msg)
+  end
+end
+
 class MalUnknownListTypeError < StandardError
   def initialize(msg = "Unknown list type before EOF")
     super(msg)
