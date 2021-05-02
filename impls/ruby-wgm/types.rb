@@ -28,11 +28,7 @@ class MalString < MalType
 
   def initialize(data)
     @type = "MalString"
-    @data = _munge(data)
-    # FIXME does not actually work, "\\" is ok but gets caught.
-    if !(/[^\\]\"$/.match(@data))
-      raise MalMismatchQuotesError
-    end
+    @data = _sanitise(data)
   end
 
   def print(readably = true)
@@ -42,11 +38,67 @@ class MalString < MalType
     return @data
   end
 
+  # _sanitise
+  # String sanitising:
+  # First check we have a trailing quote and raise error if not
+  # Next check to see if all we have is a single quote - error if so
+  # Then strip leading and trailing quotes
+  # Then check for an odd number of trailing backslashes and raise error if so
+  # Then we can safely munge our remaining string.
+  def _sanitise(str)
+    _trailing_quote_check(str)
+    _single_quote_check(str)
+    str = _strip_quotes(str)
+    _trailing_backslash_check(str)
+    str = _munge(str)
+    return str
+  end
+
+  # _trailing_backslash_check
+  # If we have one or more trailing backslashes, count them
+  # If the number is even, we're ok
+  # If the number is odd, the last one will escape the quote, and we have an error
+  def _trailing_backslash_check(str)
+    if(m = /(\\+)$/.match(str))
+      #puts "_trailing_backslash_check found #{m[0].length} trailing backslashes"
+      if m[0].length.odd?
+        raise MalMismatchQuotesError
+      end
+    end
+  end
+
+  # _single_quote_check
+  # Raise an error if all we have is a lone quote
+  def _single_quote_check(str)
+    if str == "\""
+      raise MalMismatchQuotesError
+    end
+  end
+
+  # _trailing_quote_check
+  # Check there /is/ a trailing quote at the end of the string
+  # Raise an error if not
+  def _trailing_quote_check(str)
+    if !(/\"$/.match(str))
+      #puts "MalString _trailing_quote_check: rejecting #{str}"
+      raise MalMismatchQuotesError
+    end
+  end
+
+  # _strip_quotes
+  # Remove quotes from beginning and end of string
+  # We are only called with strings that begin with quotes
+  # We call this after checking there is a trailing quote
+  def _strip_quotes(str)
+    str.gsub!(/^\"/, "")
+    str.gsub!(/\"$/, "")
+    return str;
+  end
+
   # _munge and _unmunge handle our backslash escaping 'sensibly'
   # \" => "
   # \\ => \
   # \n => actual newline
-  # FIXME does not actually work, many tests failed.
   def _munge(str)
     str.gsub!(/\\\"/, "\"")
     str.gsub!(/\\\\/, "\\")
@@ -56,9 +108,9 @@ class MalString < MalType
 
   def _unmunge(str)
     str.gsub!(/\n/, "\\n")
-    str.gsub!(/\\/, "\\\\")
-    str.gsub!(/(.+)\"(.+)/, "\\1\\\"\\2") # Don't match tops and tails
-    return str
+    str.gsub!(/(\\)/, '\\1\\1')
+    str.gsub!(/\"/, "\\\"") #
+    return "\"" + str + "\""
   end
 
 end
