@@ -24,12 +24,14 @@ We have partially implemented hashmaps and mismatched parens finding.
 
 We have partially implemented strings and keywords.
 
+We have partially implemented reader macros.
+
 We appear to have partially implemented comments for free in the tokeniser,
 but we don't yet handle 'everything is a comment' properly.
 
 ## TODO
 
 * Fix string handling
-* Add support for token macros
+* Complete support for token macros (nesting and metadata)
 * Implement hashmaps properly (only strings or keywords as keys)
 * Implement comments properly

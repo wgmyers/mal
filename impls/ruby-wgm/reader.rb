@@ -188,9 +188,10 @@ end
 # `  = quasiquote
 # ~  = unquote
 # ~@ = splice-unquote
-# @X = deref
+# @  = deref
 # Expand them
 # FIXME Reader macros can nest.
+# FIXME Implement ^ => with-meta macro
 def expand_macros(tok_arr)
   ret_arr = []
   in_macro = false
