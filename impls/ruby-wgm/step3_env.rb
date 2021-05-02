@@ -113,8 +113,6 @@ def EVAL(ast, env)
         # Iterate over our parameters, calling set on new environment with
         # each key, value pair, first calling EVAL on the value w/ new env.
         is_key = true
-        #puts "let* - first param data is this:"
-        #p ast.data[1].data
         for item in ast.data[1].data
           if is_key
             key = item
@@ -126,13 +124,9 @@ def EVAL(ast, env)
         end
         # Finally, call EVAL on our last parameter in the new enviroment
         # and return the result. New env is discarded, so we return the old env.
-        #puts "new environment looks like:"
-        #p letenv
         retval, letenv = EVAL(ast.data[2], letenv)
         # Convert retval to a Mal data object if it isn't one.
         # FIXME This shouldn't be.
-        #puts "called EVAL and got:"
-        #p retval
         if !/^Mal/.match(retval.class.to_s)
           retval = READ(retval.to_s)
         end
