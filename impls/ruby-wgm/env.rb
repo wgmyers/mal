@@ -18,8 +18,16 @@ class Env
   # set
   # Take a key and a value
   # Add them to @data
+  # If the key is a MalSymbol, use the data as a key
+  # Otherwise go ahead.
+  # FIXME This can't be right.
   def set(key, val)
-    @data[key] = val
+    if key.class.to_s == "MalSymbol"
+      @data[key.data] = val
+    else
+      @data[key] = val
+    end
+    return self
   end
 
   # find

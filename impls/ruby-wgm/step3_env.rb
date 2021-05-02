@@ -17,27 +17,29 @@ require_relative 'types'
 # If it's a list, make a new list containing the results of calling EVAL
 # on each member of the list
 # Otherwise return the contents of the data
-def eval_ast(ast, repl_env)
+def eval_ast(ast, env)
   type = ast.class.to_s
   case type
   when "MalSymbol"
     sym = ast.print()
     # If the symbol isn't found, an error will be raised in env.rb
     begin
-      return repl_env.get(sym)
+      return env.get(sym)
     rescue => e
       raise e
     end
   when "MalList"
     retval = MalList.new()
     for item in ast.data
-      retval.push(EVAL(item, repl_env))
+      newitem, env = EVAL(item, env)
+      retval.push(newitem)
     end
     return retval
   when "MalVector"
     retval = MalVector.new()
     for item in ast.data
-      retval.push(EVAL(item, repl_env))
+      newitem, env = EVAL(item, env)
+      retval.push(newitem)
     end
     return retval
   when "MalHashMap"
@@ -50,7 +52,8 @@ def eval_ast(ast, repl_env)
       if key
         retval.push(item)
       else
-        retval.push(EVAL(item, repl_env))
+        newitem, env = EVAL(item, env)
+        retval.push(newitem)
       end
       key = !key
     end
@@ -81,11 +84,11 @@ end
 # Otherwise we go ahead as in Step 2:
 # Call eval_ast on the list, assume we now have a function and some
 # parameters, and try and call that, returning the result.
-def EVAL(ast, repl_env)
+def EVAL(ast, env)
   type = ast.class.to_s
   if(type == 'MalList')
     if ast.data.length == 0
-      return ast
+      return ast, env
     else
       # APPLY section
       # Switch on the first item of the list
@@ -95,14 +98,15 @@ def EVAL(ast, repl_env)
         # Do the def! stuff
         # QUERY - how does this fail? Should we raise our own BadDefError?
         begin
-          repl_env.set(ast.data[1], EVAL(ast.data[2], repl_env))
+          item, env = EVAL(ast.data[2], env)
+          return item, env.set(ast.data[1], item)
         rescue => e
           raise e
         end
       when "let*"
         # Do the let* stuff
       else
-        evaller = eval_ast(ast, repl_env)
+        evaller = eval_ast(ast, env)
         begin
           # We need to convert our MalNumbers to actual numbers somehow. Here?
           args = evaller.data.drop(1).map{ |x| x.data }
@@ -112,11 +116,11 @@ def EVAL(ast, repl_env)
           raise e
         end
         # Oops. We need to convert back to a Mal data type.
-        return MalNumber.new(res)
+        return MalNumber.new(res), env
       end
     end
   else
-    return eval_ast(ast, repl_env)
+    return eval_ast(ast, env), env
   end
 end
 
@@ -134,7 +138,7 @@ def rep(input, repl_env)
   rescue => e
     raise e
   end
-  ast = EVAL(ast, repl_env)
+  ast, repl_env = EVAL(ast, repl_env)
   output = PRINT(ast)
   return output
 end
@@ -170,7 +174,10 @@ def main()
       break
     end
     begin
+      #puts "Response:"
       puts rep(line, repl_env)
+      #puts "Environment:"
+      #p repl_env
     rescue => e
       puts "Error: " + e.message
       puts e.backtrace
