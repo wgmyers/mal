@@ -188,6 +188,7 @@ end
 # `  = quasiquote
 # ~  = unquote
 # ~@ = splice-unquote
+# @X = deref
 # Expand them
 # FIXME Reader macros can nest.
 def expand_macros(tok_arr)
@@ -201,8 +202,8 @@ def expand_macros(tok_arr)
       ret_arr.push("(")
       ret_arr.push("splice-unquote")
       in_macro = true
-    # Handle quote, quasiquote and unquote
-    when /^[\'|`|~]$/
+    # Handle quote, quasiquote, unquote and deref
+    when /^[\'|`|~|@]$/
       ret_arr.push("(")
       case item
       when "\'"
@@ -211,6 +212,8 @@ def expand_macros(tok_arr)
         ret_arr.push("quasiquote")
       when "~"
         ret_arr.push("unquote")
+      when "@"
+        ret_arr.push("deref")
       end
       in_macro = true
     else
