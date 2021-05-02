@@ -1,6 +1,20 @@
 # Notes
 
-## Step 3
+## Step 3 (2021-05-02)
+
+With some pain, def! is now implemented.
+
+This has involved altering EVAL to return the environment on each call,
+rather than using a global variable for it. Otherwise, changes to the
+environment made in EVAL do not persist for future invocations.
+
+I am not at all sure about this: it is not what the pseudo-code says to do.
+That says we need to use a global. I guess we'll see. Scanning forward, it
+looks like we'll be ok until implementing TCO in Step 5, which looks super-hairy
+so at that point, either we revert to a global (or some cleaner but equivalent
+alternative if I can dream one up) or it turns out that we were fine all along.
+
+Anyway. Now to implement let*.
 
 ## Step 2 (2021-05-02)
 
