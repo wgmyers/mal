@@ -1,6 +1,6 @@
 # Notes
 
-## Step 4
+## Step 4 (2021-05-02)
 
 This is easily the trickiest bit yet.
 
@@ -15,6 +15,13 @@ for functions anyway? Unless I've misunderstood. It's possible.
 Keyword 'do' implemented. Guide says to call eval_ast, but this didn't work
 straightaway: eval_ast doesn't handle the special keywords, so something
 like (do (def! a 1) (+ 1 a)) failed. Calling EVAL instead worked.
+
+Keyword 'if' implemented. Very straightforward, especially after 'do'.
+
+Keyword 'fn*', now, that is not going to be straightforward. First I have to
+figure out how to create the closure. Then I have to figure out where to put it,
+and how to call it when invoked. And when it is invoked. I'm not sure I have
+any idea how to do any of those. Probably time to sleep on it.
 
 ## Step 3 (2021-05-02)
 
