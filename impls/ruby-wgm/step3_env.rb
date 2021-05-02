@@ -3,22 +3,12 @@
 # step3_env.rb
 # In which we implement a Lisp environment
 
+require_relative 'env'
+require_relative 'errors'
+require_relative 'printer'
 require_relative 'readline'
 require_relative 'reader'
-require_relative 'printer'
-require_relative 'errors'
 require_relative 'types'
-
-# Now we are turning our input into a data structure, we can do something
-# useful in the EVAL stage
-
-# A simple environment for basic numeric functions
-repl_env = {
-  '+' => lambda { |x,y| x + y },
-  '-' => lambda { |x,y| x - y },
-  '*' => lambda { |x,y| x * y },
-  '/' => lambda { |x,y| x / y }
-}
 
 # eval_ast
 # Take a Mal data structure and environment
@@ -128,10 +118,31 @@ def rep(input, repl_env)
   return output
 end
 
+# init_env
+# Initialise our environment
+# Use set to create the numeric functions
+def init_env
+  repl_env = Env.new()
+  # A simple environment for basic numeric functions
+  numeric_env = {
+    '+' => lambda { |x,y| x + y },
+    '-' => lambda { |x,y| x - y },
+    '*' => lambda { |x,y| x * y },
+    '/' => lambda { |x,y| x / y }
+  }
+  numeric_env.each do |key, val|
+    repl_env.set(key, val)
+  end
+  puts "init_env checking in:"
+  p repl_env
+  return repl_env
+end
+
 # Print a prompt and take input
 # If input is EOF then stop
 # Otherwise pass input through rep and print it
-def main(repl_env)
+def main()
+  repl_env = init_env()
   prompt = "user> "
   loop do
     line = grabline(prompt)
@@ -148,4 +159,4 @@ def main(repl_env)
   end
 end
 
-main(repl_env)
+main
