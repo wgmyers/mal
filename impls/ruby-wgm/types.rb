@@ -107,8 +107,8 @@ class MalString < MalType
   end
 
   def _unmunge(str)
+    str.gsub!(/(\\)/, '\\1\\1') # MUST do this first
     str.gsub!(/\n/, "\\n")
-    str.gsub!(/(\\)/, '\\1\\1')
     str.gsub!(/\"/, "\\\"") #
     return "\"" + str + "\""
   end
