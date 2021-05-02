@@ -74,13 +74,13 @@ def READ(input)
 end
 
 # EVAL
-# In stage 3 we implement core language features def! and let* in the APPLY bit
+# In stage 4 we implement more core language in the APPLY bit
 # If we aren't given a list, we return the value of applying eval_ast to
 # our input.
 # If we are given a list, and it is empty, we return it.
 # Otherwise, we are in APPLY.
-# Here we check to see if the first item of the list is def! or let* and if so,
-# we do the needful.
+# Here we check to see if the first item of the list is a special keyword and
+# if so, we do the needful.
 # Otherwise we go ahead as in Step 2:
 # Call eval_ast on the list, assume we now have a function and some
 # parameters, and try and call that, returning the result.
@@ -139,6 +139,26 @@ def EVAL(ast, env)
           retval, env = EVAL(item, env)
         end
         return retval, env
+      when "if"
+        # Handle if statements
+        # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
+        retval, env = EVAL(ast.data[1])
+        if retval
+          type = retval.class.to_s
+        else
+          type = nil
+        end
+        if(!type || type == "MalFalse" || type == "MalNil")
+          # Falsy. Return eval of third item if there is one
+          if(ast.data.[3])
+            return EVAL(ast.data[3])
+          else
+            return nil, env
+          end
+        else
+          # Truthy. Return eval of second item (or raise error)
+          return EVAL(ast.data[2])
+        end
       else
         # DEFAULT EVALLER
         evaller = eval_ast(ast, env)
