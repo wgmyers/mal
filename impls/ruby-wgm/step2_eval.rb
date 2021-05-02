@@ -49,6 +49,21 @@ def eval_ast(ast, repl_env)
       retval.push(EVAL(item, repl_env))
     end
     return retval
+  when "MalHashMap"
+    retval = MalHashMap.new()
+    key = true
+    # We alternatve between blindly returning the untouched key and
+    # calling eval on key values.
+    # FIXME This is obviously nonsense behaviour and we need to revisit MalHashMap
+    for item in ast.data
+      if key
+        retval.push(item)
+      else
+        retval.push(EVAL(item, repl_env))
+      end
+      key = !key
+    end
+    return retval
   end
   return ast
 end
