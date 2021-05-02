@@ -22,10 +22,11 @@ def eval_ast(ast, repl_env)
   case type
   when "MalSymbol"
     sym = ast.print()
-    if repl_env.has_key?(sym)
-      return repl_env[sym]
-    else
-      raise MalUnknownSymbolError
+    # If the symbol isn't found, an error will be raised in env.rb
+    begin
+      return repl_env.get(sym)
+    rescue => e
+      raise e
     end
   when "MalList"
     retval = MalList.new()
