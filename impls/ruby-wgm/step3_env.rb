@@ -71,11 +71,15 @@ def READ(input)
 end
 
 # EVAL
-# Finally in stage 2 we actually try and run some code.
+# In stage 3 we implement core language features def! and let* in the APPLY bit
 # If we aren't given a list, we return the value of applying eval_ast to
 # our input.
 # If we are given a list, and it is empty, we return it.
-# Otherwise, we call eval_ast on it, assume we now have a function and some
+# Otherwise, we are in APPLY.
+# Here we check to see if the first item of the list is def! or let* and if so,
+# we do the needful.
+# Otherwise we go ahead as in Step 2:
+# Call eval_ast on the list, assume we now have a function and some
 # parameters, and try and call that, returning the result.
 def EVAL(ast, repl_env)
   type = ast.class.to_s
@@ -83,17 +87,33 @@ def EVAL(ast, repl_env)
     if ast.data.length == 0
       return ast
     else
-      evaller = eval_ast(ast, repl_env)
-      begin
-        # We need to convert our MalNumbers to actual numbers somehow. Here?
-        args = evaller.data.drop(1).map{ |x| x.data }
-        # We still need to splat the args with * so the lambda can see them
-        res = evaller.data[0].call(*args)
-      rescue => e
-        raise e
+      # APPLY section
+      # Switch on the first item of the list
+      # FIXME This wants its own function now (or soon) surely
+      case ast.data[0].data
+      when "def!"
+        # Do the def! stuff
+        # QUERY - how does this fail? Should we raise our own BadDefError?
+        begin
+          repl_env.set(ast.data[1], EVAL(ast.data[2], repl_env))
+        rescue => e
+          raise e
+        end
+      when "let*"
+        # Do the let* stuff
+      else
+        evaller = eval_ast(ast, repl_env)
+        begin
+          # We need to convert our MalNumbers to actual numbers somehow. Here?
+          args = evaller.data.drop(1).map{ |x| x.data }
+          # We still need to splat the args with * so the lambda can see them
+          res = evaller.data[0].call(*args)
+        rescue => e
+          raise e
+        end
+        # Oops. We need to convert back to a Mal data type.
+        return MalNumber.new(res)
       end
-      # Oops. We need to convert back to a Mal data type.
-      return MalNumber.new(res)
     end
   else
     return eval_ast(ast, repl_env)
@@ -134,8 +154,6 @@ def init_env
   numeric_env.each do |key, val|
     repl_env.set(key, val)
   end
-  puts "init_env checking in:"
-  p repl_env
   return repl_env
 end
 
