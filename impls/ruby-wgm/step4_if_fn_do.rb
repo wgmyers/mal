@@ -142,7 +142,7 @@ def EVAL(ast, env)
       when "if"
         # Handle if statements
         # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
-        retval, env = EVAL(ast.data[1])
+        retval, env = EVAL(ast.data[1], env)
         if retval
           type = retval.class.to_s
         else
@@ -151,13 +151,13 @@ def EVAL(ast, env)
         if(!type || type == "MalFalse" || type == "MalNil")
           # Falsy. Return eval of third item if there is one
           if(ast.data[3])
-            return EVAL(ast.data[3])
+            return EVAL(ast.data[3], env)
           else
             return nil, env
           end
         else
           # Truthy. Return eval of second item (or raise error)
-          return EVAL(ast.data[2])
+          return EVAL(ast.data[2], env)
         end
       else
         # DEFAULT EVALLER
