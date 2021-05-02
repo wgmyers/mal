@@ -265,7 +265,6 @@ end
 # The expand_macros function above is horrible enough without trying to
 # splice this in as well. The below is likely to be horrible too.
 def expand_metadata(tok_arr)
-  p tok_arr
   ret_arr = []
   in_macro = false
   item_one_arr = []
@@ -320,7 +319,6 @@ def expand_metadata(tok_arr)
       end
     end
   end
-  p ret_arr
   return ret_arr
 end
 
