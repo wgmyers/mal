@@ -2,7 +2,14 @@
 
 ## Step 2
 
-We have it working. Some problems have arisen.
+We nearly have it working.
+
+What works: simple invocations of (SYM INT1 INT2)
+
+What doesn't: nested invocation.
+
+Problems discovered: We only handle integers at the moment, as our parser
+does not recognise decimal points. This is obviously rubbish and needs fixing.
 
 ## Step 1
 

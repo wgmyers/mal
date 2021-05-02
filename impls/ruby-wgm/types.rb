@@ -243,7 +243,15 @@ class MalNumber < MalType
 
   def initialize(data)
     @type = "MalNumber"
-    @data = data
+    @data = data.to_i
+  end
+
+  def to_i
+    return data.to_i
+  end
+
+  def to_s
+    return data.to_s
   end
 
 end

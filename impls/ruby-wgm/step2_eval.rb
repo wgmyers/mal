@@ -44,7 +44,7 @@ def eval_ast(ast, repl_env)
     end
     return retval
   end
-  return ast.data
+  return ast
 end
 
 # READ
@@ -73,7 +73,10 @@ def EVAL(ast, repl_env)
     else
       evaller = eval_ast(ast, repl_env)
       begin
-        res = evaller.data[0].call(*evaller.data.drop(1))
+        # We need to convert our MalNumbers to actual numbers somehow. Here?
+        args = evaller.data.drop(1).map{ |x| x.data }
+        # We still need to splat the args with * so the lambda can see them
+        res = evaller.data[0].call(*args)
       rescue => e
         raise e
       end
