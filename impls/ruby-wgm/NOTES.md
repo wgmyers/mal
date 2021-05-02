@@ -12,6 +12,10 @@ but in types.rb, where we now have a nominal MalFunction (teehee) type. I'm
 not sure how this will fit in in future, but looks like Step 5 demands a type
 for functions anyway? Unless I've misunderstood. It's possible.
 
+Keyword 'do' implemented. Guide says to call eval_ast, but this didn't work
+straightaway: eval_ast doesn't handle the special keywords, so something
+like (do (def! a 1) (+ 1 a)) failed. Calling EVAL instead worked.
+
 ## Step 3 (2021-05-02)
 
 With some pain, def! is now implemented.
