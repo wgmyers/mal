@@ -169,6 +169,15 @@ class MalHashMap < MalList
   end
 end
 
+class MalKeyword < MalType
+
+  def initialize(data)
+    @type = "MalKeyword"
+    @data = data
+  end
+
+end
+
 class MalSymbol < MalType
 
   def initialize(data)
