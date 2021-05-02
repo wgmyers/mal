@@ -26,7 +26,7 @@ repl_env = {
 # or raise an error complaining about an unknown symbol
 # If it's a list, make a new list containing the results of calling EVAL
 # on each member of the list
-# Otherwise return the data structure unchanged
+# Otherwise return the contents of the data
 def eval_ast(ast, repl_env)
   type = ast.class.to_s
   case type
@@ -40,11 +40,11 @@ def eval_ast(ast, repl_env)
   when "MalList"
     retval = MalList.new()
     for item in ast.data
-      retval.push(EVAL(item))
+      retval.push(EVAL(item, repl_env))
     end
     return retval
   end
-  return ast
+  return ast.data
 end
 
 # READ
@@ -71,12 +71,14 @@ def EVAL(ast, repl_env)
     if ast.data.length == 0
       return ast
     else
-      evaller = eval_ast(ast.data)
+      evaller = eval_ast(ast, repl_env)
       begin
-        res = evaller.data[0].call(evaller.data.drop(1))
+        res = evaller.data[0].call(*evaller.data.drop(1))
       rescue => e
         raise e
       end
+      # Oops. We need to convert back to a Mal data type.
+      return MalNumber.new(res)
     end
   else
     return eval_ast(ast, repl_env)
@@ -117,7 +119,7 @@ def main(repl_env)
       puts rep(line, repl_env)
     rescue => e
       puts "Error: " + e.message
-      #puts e.backtrace
+      puts e.backtrace
     end
   end
 end

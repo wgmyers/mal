@@ -1,12 +1,8 @@
 # Notes
 
-## Step 0
+## Step 2
 
-This went fine, eventually.
-
-The readline implementation is extremely simple and just uses the minimal
-functionality from a single call to the Ruby readline library. I might want
-to revisit that later on.
+We have it working. Some problems have arisen.
 
 ## Step 1
 
@@ -33,8 +29,17 @@ but we don't yet handle 'everything is a comment' properly.
 
 We are now passing all Step 1 tests.
 
+## Step 0
+
+This went fine, eventually.
+
+The readline implementation is extremely simple and just uses the minimal
+functionality from a single call to the Ruby readline library. I might want
+to revisit that later on.
+
 ## TODO
 
 * Implement hashmaps properly (only strings or keywords as keys)
 * Implement comments properly
 * Check we are truly handling strings properly (seems doubtful)
+* Improve readline implementation.
