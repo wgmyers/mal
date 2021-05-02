@@ -16,6 +16,11 @@ alternative if I can dream one up) or it turns out that we were fine all along.
 
 Anyway. Now to implement let*.
 
+Er, that wasn't too painful at all.
+
+We still have issues with not being sure when things are Mal objects or not,
+but all Step 3 tests now pass, so on to Step 4.
+
 ## Step 2 (2021-05-02)
 
 We have it working, but it's clunky and we have to manually convert from
