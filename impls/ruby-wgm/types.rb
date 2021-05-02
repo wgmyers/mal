@@ -22,18 +22,41 @@ class MalType
 
 end
 
+# MalString
+# Here be dragons
 class MalString < MalType
 
   def initialize(data)
     @type = "MalString"
-    @data = data
+    @data = _munge(data)
     if !(/[^\\]\"$/.match(@data))
       raise MalMismatchQuotesError
     end
   end
 
-  def print()
+  def print(readably = true)
+    if readably
+      return _unmunge(@data)
+    end
     return @data
+  end
+
+  # _munge and _unmunge handle our backslash escaping 'sensibly'
+  # \" => "
+  # \\ => \
+  # \n => actual newline
+  def _munge(str)
+    str.gsub!(/\\\"/, "\"")
+    str.gsub!(/\\\\/, "\\")
+    str.gsub!(/\\n/, "\n")
+    return str
+  end
+
+  def _unmunge(str)
+    str.gsub!(/\n/, "\\n")
+    str.gsub!(/\\/, "\\\\")
+    str.gsub!(/(.+)\"(.+)/, "\\1\\\"\\2") # Don't match tops and tails
+    return str
   end
 
 end
