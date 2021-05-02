@@ -1,6 +1,8 @@
 # Notes
 
-## Step 2
+## Step 3
+
+## Step 2 (2021-05-02)
 
 We have it working, but it's clunky and we have to manually convert from
 Mal datatypes to Integer (and back) before doing anything. But it works,
@@ -11,7 +13,7 @@ Now passing all the step two tests.
 Problems discovered: We only handle integers at the moment, as our parser
 does not recognise decimal points. This is obviously rubbish and needs fixing.
 
-## Step 1
+## Step 1 (2021-05-02)
 
 This too went fine, eventually: the guide text is I think deliberately vague
 about exactly how to implement the reader, the whole thing being an exercise
@@ -36,7 +38,7 @@ but we don't yet handle 'everything is a comment' properly.
 
 We are now passing all Step 1 tests.
 
-## Step 0
+## Step 0 (2021-05-01)
 
 This went fine, eventually.
 
