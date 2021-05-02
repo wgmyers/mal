@@ -10,9 +10,16 @@ class Env
 
   attr_reader :outer, :data
 
-  def initialize(outer = nil)
+  def initialize(outer = nil, binds = [], exprs = [])
     @outer = outer
     @data = {}
+    # Nominally sanitycheck our inputs
+    if binds.length != exprs.length
+      raise MalBadEnvError
+    end
+    binds.zip(exprs) do | bind, expr |
+      set(bind, expr)
+    end
   end
 
   # set

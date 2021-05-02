@@ -2,6 +2,11 @@
 
 ## Step 4
 
+This is easily the trickiest bit yet.
+
+We have Environments taking binds and expression on instantiation and calling
+'set' them if they appear to match in length.
+
 ## Step 3 (2021-05-02)
 
 With some pain, def! is now implemented.

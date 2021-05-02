@@ -3,6 +3,12 @@
 # Custom exception classes for errors.
 # NB - Inherit from StandardError and not Exception or things don't work.
 
+class MalBadEnvError < Standard Error
+  def initilize(msg = "Number of binds must match number of exprs in env creation")
+    super(msg)
+  end
+end
+
 class MalBadHashMapError < StandardError
   def initialize(msg = "Number of keys does not match number of values in hashmap")
     super(msg)
