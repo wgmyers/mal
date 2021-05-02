@@ -2,11 +2,9 @@
 
 ## Step 2
 
-We nearly have it working.
-
-What works: simple invocations of (SYM INT1 INT2)
-
-What doesn't: nested invocation.
+We have it working, but it's clunky and we have to manually convert from
+Mal datatypes to Integer (and back) before doing anything. But it works,
+including nested arithmetic.
 
 Problems discovered: We only handle integers at the moment, as our parser
 does not recognise decimal points. This is obviously rubbish and needs fixing.
@@ -46,6 +44,7 @@ to revisit that later on.
 
 ## TODO
 
+* Implement float handling. Ints only for now.
 * Implement hashmaps properly (only strings or keywords as keys)
 * Implement comments properly
 * Check we are truly handling strings properly (seems doubtful)

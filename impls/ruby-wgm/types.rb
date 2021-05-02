@@ -246,12 +246,15 @@ class MalNumber < MalType
     @data = data.to_i
   end
 
-  def to_i
-    return data.to_i
-  end
+  # We didn't need either of these after all.
+  # Keeping here for now, though, because we may need to revisit the way we
+  # convert from Mal data types to types we can actualy process.
+  #def to_i
+  #  return data.to_i
+  #end
 
-  def to_s
-    return data.to_s
-  end
+  #def to_s
+  #  return data.to_s
+  #end
 
 end
