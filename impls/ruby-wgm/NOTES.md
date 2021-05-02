@@ -31,9 +31,11 @@ We have implemented all reader macros except metadata.
 We appear to have partially implemented comments for free in the tokeniser,
 but we don't yet handle 'everything is a comment' properly.
 
+We are now passing all Step 1 tests except with-meta.
+
 ## TODO
 
-* Fix remaining string handling errors
 * Complete support for token macros - just metadata left
 * Implement hashmaps properly (only strings or keywords as keys)
 * Implement comments properly
+* Check we are truly handling strings properly (seems doubtful)
