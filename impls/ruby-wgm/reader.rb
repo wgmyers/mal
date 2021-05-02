@@ -189,20 +189,21 @@ end
 # ~  = unquote
 # ~@ = splice-unquote
 # @  = deref
-# Expand them
-# FIXME Reader macros can nest.
+# Expand them.
+# NB: Macros can nest: in_macro counts how deep we are in.
 # FIXME Implement ^ => with-meta macro
 def expand_macros(tok_arr)
+  p tok_arr
   ret_arr = []
-  in_macro = false
-  in_brackets = false
+  in_macro = 0
+  in_brackets = 0
   for item in tok_arr
     case item
     # Handle splice-unquote
     when "~@"
       ret_arr.push("(")
       ret_arr.push("splice-unquote")
-      in_macro = true
+      in_macro = in_macro + 1
     # Handle quote, quasiquote, unquote and deref
     when /^[\'|`|~|@]$/
       ret_arr.push("(")
@@ -216,27 +217,35 @@ def expand_macros(tok_arr)
       when "@"
         ret_arr.push("deref")
       end
-      in_macro = true
+      in_macro = in_macro + 1
     else
-      if in_macro
+      if in_macro > 0
         case item
         when "("
           ret_arr.push(item)
-          in_brackets = true
+          in_brackets = in_brackets + 1
         else
-          if in_brackets
+          if in_brackets > 0
             if item == ")"
               ret_arr.push(item)
               ret_arr.push(")")
-              in_brackets = false
-              in_macro = false
+              in_brackets = in_brackets - 1
+              in_macro = in_macro - 1
             else
               ret_arr.push(item)
+              # Handle nested macros here. If macro depth is greater than
+              # bracket depth, we have an unbracketed macro inside a bracketed
+              # one, and we need to end it and decrease macro count. Nested
+              # bracketed macros should Just Work.
+              if(in_brackets < in_macro)
+                ret_arr.push(")")
+                in_macro = in_macro - 1
+              end
             end
           else
             ret_arr.push(item)
             ret_arr.push(")")
-            in_macro = false
+            in_macro = in_macro - 1
           end
         end
       else
@@ -244,6 +253,7 @@ def expand_macros(tok_arr)
       end
     end
   end
+  p ret_arr
   return ret_arr
 end
 
