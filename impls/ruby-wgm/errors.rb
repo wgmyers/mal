@@ -15,7 +15,7 @@ class MalMismatchQuotesError < StandardError
   end
 end
 
-class MalMismatchedHashMapError < StandardError
+class MalBadHashMapError < StandardError
   def initialize(msg = "Number of keys does not match number of values in hashmap")
     super(msg)
   end

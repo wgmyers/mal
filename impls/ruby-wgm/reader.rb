@@ -75,7 +75,8 @@ class Matcher
   end
 
   def goodhash
-    if ((@hashcount / 2).to_i == (@hashcount / 2))
+    puts "Hashcount: #{@hashcount}"
+    if (@hashcount.even?)
       return true
     end
     return false
@@ -189,14 +190,18 @@ def read_str(str)
   reader = Reader.new(tokens)
   matcher = Matcher.new()
   retval = read_form(reader, matcher)
-  # Check our parentheses have matched
+  # Check our parentheses have matched and our hashmaps are ok
   begin
-    if matcher.matched
-      return retval
+    if matcher.goodhash
+      if matcher.matched
+        return retval
+      else
+        raise MalMismatchParensError
+      end
     else
-      raise MalMismatchParensError
+      raise MalBadHashMapError
     end
-  rescue MalMismatchParensError => e
+  rescue MalBadHashMapError, MalMismatchParensError => e
     raise e
   end
 end
