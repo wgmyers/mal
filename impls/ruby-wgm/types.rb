@@ -22,6 +22,26 @@ class MalType
 
 end
 
+# MalFunction
+# Tee hee
+class MalFunction < MalType
+
+  # I'm not sure how we want to organise this yet, but I know we are
+  # going to need a Mal data type for functions, so slurping data into
+  # @data will do for now and I will revisit. FIXME.
+  def initialize(data)
+    @type = "MalFunction"
+    @data = data
+  end
+
+  # #<function> is what the guide says to do
+  # It would be nice to have a way of reading the function back too somehow.
+  def print(readably = true)
+    return "#<function>"
+  end
+
+end
+
 # MalString
 # Here be dragons
 class MalString < MalType
