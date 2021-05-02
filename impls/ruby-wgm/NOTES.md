@@ -6,6 +6,8 @@ We have it working, but it's clunky and we have to manually convert from
 Mal datatypes to Integer (and back) before doing anything. But it works,
 including nested arithmetic.
 
+Now passing all the step two tests.
+
 Problems discovered: We only handle integers at the moment, as our parser
 does not recognise decimal points. This is obviously rubbish and needs fixing.
 
