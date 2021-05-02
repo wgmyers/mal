@@ -136,7 +136,7 @@ def EVAL(ast, env)
         # Call eval_ast on every member of the list
         # Return the value of the last one
         for item in ast.data.drop(1)
-          retval, env = eval_ast(item, env)
+          retval, env = EVAL(item, env)
         end
         return retval, env
       else
