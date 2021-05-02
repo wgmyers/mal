@@ -75,7 +75,6 @@ class Matcher
   end
 
   def goodhash
-    puts "Hashcount: #{@hashcount}"
     if (@hashcount.even?)
       return true
     end
