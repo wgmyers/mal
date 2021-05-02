@@ -181,6 +181,68 @@ def tokenize(str)
   return matches
 end
 
+# expand_macros
+# Take our token array
+# Run through looking for reader macros specified in step1_read_print.mal
+# '  = quote
+# `  = quasiquote
+# ~  = unquote
+# ~@ = splice-unquote
+# Expand them
+# FIXME Reader macros can nest.
+def expand_macros(tok_arr)
+  ret_arr = []
+  in_macro = false
+  in_brackets = false
+  for item in tok_arr
+    case item
+    # Handle splice-unquote
+    when "~@"
+      ret_arr.push("(")
+      ret_arr.push("splice-unquote")
+      in_macro = true
+    # Handle quote, quasiquote and unquote
+    when /^[\'|`|~]$/
+      ret_arr.push("(")
+      case item
+      when "\'"
+        ret_arr.push("quote")
+      when "`"
+        ret_arr.push("quasiquote")
+      when "~"
+        ret_arr.push("unquote")
+      end
+      in_macro = true
+    else
+      if in_macro
+        case item
+        when "("
+          ret_arr.push(item)
+          in_brackets = true
+        else
+          if in_brackets
+            if item == ")"
+              ret_arr.push(item)
+              ret_arr.push(")")
+              in_brackets = false
+              in_macro = false
+            else
+              ret_arr.push(item)
+            end
+          else
+            ret_arr.push(item)
+            ret_arr.push(")")
+            in_macro = false
+          end
+        end
+      else
+        ret_arr.push(item)
+      end
+    end
+  end
+  return ret_arr
+end
+
 # read_str
 # Take a string, and call tokenize on it
 # Then create a new Reader with those tokens
@@ -188,6 +250,7 @@ end
 # Presumably, we then return the output of that? Guide does not say.
 def read_str(str)
   tokens = tokenize(str)
+  tokens = expand_macros(tokens)
   reader = Reader.new(tokens)
   matcher = Matcher.new()
   retval = read_form(reader, matcher)

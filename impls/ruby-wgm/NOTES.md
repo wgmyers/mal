@@ -22,4 +22,14 @@ We have implemented vectors
 
 We have partially implemented hashmaps and mismatched parens finding.
 
-We have partially implemented strings.
+We have partially implemented strings and keywords.
+
+We appear to have partially implemented comments for free in the tokeniser,
+but we don't yet handle 'everything is a comment' properly.
+
+## TODO
+
+* Fix string handling
+* Add support for token macros
+* Implement hashmaps properly (only strings or keywords as keys)
+* Implement comments properly
