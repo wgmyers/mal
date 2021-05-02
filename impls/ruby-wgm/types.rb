@@ -16,7 +16,7 @@ class MalType
     @data = nil
   end
 
-  def print()
+  def print(readably = true)
     return @data
   end
 
@@ -71,8 +71,8 @@ class MalTrue < MalType
     @data = true
   end
 
-  def print()
-    return  "true"
+  def print(readably = true)
+    return "true"
   end
 
 end
@@ -83,7 +83,7 @@ class MalFalse < MalType
     @data = false
   end
 
-  def print()
+  def print(readably = true)
     return "false"
   end
 
@@ -96,7 +96,7 @@ class MalNil < MalType
     @data = nil
   end
 
-  def print()
+  def print(readably = true)
     return "nil"
   end
 
@@ -113,10 +113,10 @@ class MalList < MalType
     @data.push(item)
   end
 
-  def print()
+  def print(readably = true)
     strings = []
     for item in data
-      strings.push(item.print())
+      strings.push(item.print(readably))
     end
     return "(" + strings.join(" ") + ")"
   end
@@ -130,10 +130,10 @@ class MalVector < MalList
     @data = []
   end
 
-  def print
+  def print(readably = true)
     strings = []
     for item in data
-      strings.push(item.print())
+      strings.push(item.print(readably))
     end
     return "[" + strings.join(" ") + "]"
   end
@@ -160,10 +160,10 @@ class MalHashMap < MalList
   end
 
 
-  def print
+  def print(readably = true)
     strings = []
     for item in data
-      strings.push(item.print())
+      strings.push(item.print(readably))
     end
     return "{" + strings.join(" ") + "}"
   end
