@@ -11,6 +11,17 @@ require_relative 'readline'
 require_relative 'reader'
 require_relative 'types'
 
+# READ
+# Invokes the reader on its input
+# Returns a Mal data structure or blows up on error
+def READ(input)
+  begin
+    return read_str(input)
+  rescue => e
+    raise e
+  end
+end
+
 # eval_ast
 # Take a Mal data structure and environment
 # If it's a MalSymbol, return the corresponding value fromm the environment
@@ -61,17 +72,6 @@ def eval_ast(ast, env)
     return retval
   end
   return ast
-end
-
-# READ
-# Invokes the reader on its input
-# Returns a Mal data structure or blows up on error
-def READ(input)
-  begin
-    return read_str(input)
-  rescue => e
-    raise e
-  end
 end
 
 # EVAL
@@ -183,16 +183,17 @@ def EVAL(ast, env)
   else
     # DEFAULT EVALLER
     evaller = eval_ast(ast, env)
+    f = evaller.data[0]
+    args = evaller.data.drop(1)
     begin
-      args = evaller.data.drop(1)
       #puts "args: #{args}"
       # If it's a MalFunction, we splat the args in the closure
-      if(evaller.data[0].is_a?(MalFunction))
-        res = evaller.data[0].call(args)
+      if(f.is_a?(MalFunction))
+        res = f.call(args)
       else
         # We still need to splat the args with * so our lambdas can see them
         # FIXME This is stupid. We should call the lambdas the same way. Make them procs?
-        res = evaller.data[0].call(*args)
+        res = f.call(*args)
       end
       #puts "res: #{res}"
     rescue => e
