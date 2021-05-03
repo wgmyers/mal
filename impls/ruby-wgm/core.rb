@@ -7,9 +7,20 @@ module MalCore
     '-'      => lambda { |x,y| MalNumber.new(x.data - y.data) },
     '*'      => lambda { |x,y| MalNumber.new(x.data * y.data) },
     '/'      => lambda { |x,y| MalNumber.new(x.data / y.data) }, # NB Divide by zero caught by Ruby, not us
-    'prn'    => lambda { |x| puts(pr_str(x, true))
-                             return MalNil.new()
+    'prn'    => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
+                              puts(strs.join(" "))
+                              return MalNil.new()
                        },
+    'println'=> lambda { |*x| strs = x.map { |s| pr_str(s, false) }
+                              puts(strs.join(" "))
+                              return MalNil.new()
+                       },
+    'pr-str' => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
+                              return(MalString.new(strs.join(" ")))
+                       },
+    'str'    => lambda { |*x| strs = x.map { |s| pr_str(s, false) }
+                              return(MalString.new(strs.join("")))
+                           },
     'list'   => lambda { |*x| l = MalList.new()
                               x.each { |i| l.push(i) }
                               return l

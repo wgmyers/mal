@@ -192,7 +192,6 @@ def EVAL(ast, env)
         res = f.call(args)
       elsif(f.is_a?(Proc))
         # Here we must splat the args with * so our lambdas can see them
-        #puts "in apply with a #{f.class}"
         res = f.call(*args)
       else
         res = evaller # Here we just return our input
