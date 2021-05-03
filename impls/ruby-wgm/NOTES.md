@@ -5,7 +5,7 @@
 This is easily the trickiest bit yet.
 
 We have Environments taking binds and expression on instantiation and calling
-'set' them if they appear to match in length.
+'set' on them if they appear to match in length.
 
 Support for printing values of functions nominally added, not in printer.rb,
 but in types.rb, where we now have a nominal MalFunction (teehee) type. I'm
@@ -29,12 +29,14 @@ Ok, done, mostly.
 
 Fixed the infinite loop bug and have no idea how.
 
+All fn* tests now passing, anyway.
+
 I thought it was because def! was returning item,env and not nil,env, so
 anything using def and recursion was bugging out. But that means def! returns
 the wrong thing now, and having fixed further bugs from other tests, restoring
 a return of item,env does not after all trigger and infinite loop.
 
-Remaining non-optional bug is that defs don't nest properly.
+Remaining non-optional bug is that def! fn*s don't nest properly?
 
 Implemented not in Mal. Cute.
 
@@ -50,6 +52,14 @@ Fixed list/vector comparison bugs: Mal wants to treat lists and vectors as the
 same for comparison (this is not intuitive but then I don't know Lisp), so now
 we have a recursive lambda for '=' that calls itself if it finds data which is
 either MalList or MalVector.
+
+Fixed nested def! fn* flagged by tests. This was hard to fix because it was
+not in fact a bug caused by nested functions, which work fine. It was a bug in
+the reader, which was reading any symbol ending in \d as a MalNumber, and the
+test was calling the functions things like gen-plus5. Now fixed.
+
+Fixed "\\n" bug. All string tests now pass, though we still have not eliminated
+all string bugs, as things like """"" are still accepted quite happily.
 
 ## Step 3 (2021-05-02)
 

@@ -79,6 +79,7 @@ class MalString < MalType
     _trailing_quote_check(str)
     _single_quote_check(str)
     str = _strip_quotes(str)
+    _unescaped_quote_check(str)
     _trailing_backslash_check(str)
     str = _munge(str)
     return str
@@ -115,13 +116,22 @@ class MalString < MalType
     end
   end
 
+  # _unescaped_quote_check
+  # Run this after we have stripped our leading and trailing quotes.
+  def _unescaped_quote_check(str)
+    p str
+    if (/[^\\]\"/.match(str))
+      raise MalMisMatchQuotesError
+    end
+  end
+
   # _strip_quotes
   # Remove quotes from beginning and end of string
   # We are only called with strings that begin with quotes
   # We call this after checking there is a trailing quote
   def _strip_quotes(str)
-    str.gsub!(/^\"/, "")
-    str.gsub!(/\"$/, "")
+    str.sub!(/^\"/, "")
+    str.sub!(/\"$/, "")
     return str;
   end
 
@@ -130,16 +140,17 @@ class MalString < MalType
   # \\ => \
   # \n => actual newline
   def _munge(str)
+    str.gsub!(/\\\\/, "{esc-bs}")
     str.gsub!(/\\\"/, "\"")
-    str.gsub!(/\\\\/, "\\")
     str.gsub!(/\\n/, "\n")
+    str.gsub!("{esc-bs}", "\\")
     return str
   end
 
   def _unmunge(str)
     str.gsub!(/(\\)/, '\\1\\1') # MUST do this first
     str.gsub!(/\n/, "\\n")
-    str.gsub!(/\"/, "\\\"") #
+    str.gsub!(/\"/, "\\\"")
     return "\"" + str + "\""
   end
 
