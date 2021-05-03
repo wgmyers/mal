@@ -25,6 +25,11 @@ Running tests absolutely blows up on the attempt to calculate Fibonacci numbers.
 
 But let's go ahead and implement the rest of Step 4, then go back and debug fn*.
 
+Ok, done, mostly. 
+
+Fixed the infinite loop bug - def! was returning item,env and not nil,env, so
+anything using def and recursion was bugging out.
+
 ## Step 3 (2021-05-02)
 
 With some pain, def! is now implemented.
