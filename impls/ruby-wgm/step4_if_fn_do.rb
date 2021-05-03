@@ -159,6 +159,16 @@ def EVAL(ast, env)
           # Truthy. Return eval of second item (or raise error)
           return EVAL(ast.data[2], env)
         end
+      when "fn*"
+        # Second element of the list is parameters. Third is function body.
+        # So create a closure which:
+        # 1 - creates a new env using our env as outer and binds /it's/
+        #     parameters to the ones given using binds/exprs.
+        # 2 - calls EVAL on the function body and returns it
+        # We create a MalFunction to store this closure, we add a call method
+        # to MalFunction, and here we return *that*.
+        # Then we add code below in the DEFAULT EVALLER, to call the function
+        # if it ever shows up in a list. I think. Or in eval_ast. I'm not sure.
       else
         # DEFAULT EVALLER
         evaller = eval_ast(ast, env)
@@ -171,7 +181,14 @@ def EVAL(ast, env)
           raise e
         end
         # Oops. We need to convert back to a Mal data type.
-        return MalNumber.new(res), env
+        case res.class.to_s
+        when "TrueClass"
+          return MalTrue.new(), env
+        when "FalseClass"
+          return MalFalse.new(), env
+        else
+          return MalNumber.new(res), env
+        end
       end
     end
   else
@@ -209,7 +226,8 @@ def init_env
     '+' => lambda { |x,y| x + y },
     '-' => lambda { |x,y| x - y },
     '*' => lambda { |x,y| x * y },
-    '/' => lambda { |x,y| x / y }
+    '/' => lambda { |x,y| x / y },
+    '=' => lambda { |x,y| x == y }  # FIXME - doesn't check type or handle lists
   }
   numeric_env.each do |key, val|
     repl_env.set(key, val)
