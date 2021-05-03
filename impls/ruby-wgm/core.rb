@@ -25,17 +25,22 @@ module MalCore
                               x.each { |i| l.push(i) }
                               return l
                        },
-    'list?'  => lambda { |x| x.is_a?(MalList) ? MalTrue.new() : MalFalse.new() },
+    'list?'  => lambda { |x| x.instance_of?(MalList) ? MalTrue.new() : MalFalse.new() },
     'empty?' => lambda { |x| x.data.length == 0 ? MalTrue.new() : MalFalse.new() },
     'count'  => lambda { |x| x.is_a?(MalNil) ? 0 : x.data.length },
-    '='      => lambda { |x,y| if (x.class != y.class)
-                                 return MalFalse.new()
-                               end
-                               if (x.is_a?(MalList) || x.is_a?(MalVector))
-                                 return MalFalse.new if x.length != y.length
+    '='      => lambda { |x,y| # We must treat MalList and MalVector as equivalent
+                               if ((x.instance_of?(MalList) || x.instance_of?(MalVector)) &&
+                                   (y.instance_of?(MalList) || y.instance_of?(MalVector)))
+                                 return MalFalse.new unless x.length == y.length
                                  x.data.each_with_index { |item, idx|
-                                   return MalFalse.new if item.data != y.data[idx].data
+                                   if (item.is_a?(MalList))
+                                     return MalFalse.new() unless MalCore::Env['='].call(item, y.data[idx])
+                                   else
+                                     return MalFalse.new if item.data != y.data[idx].data
+                                   end
                                  }
+                               elsif (x.class != y.class)
+                                 return MalFalse.new()
                                elsif (x.data != y.data)
                                  return MalFalse.new()
                                end
