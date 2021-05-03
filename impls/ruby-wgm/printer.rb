@@ -8,8 +8,8 @@
 # Takes our mal data object
 # Returns a string representation
 # Each data type knows how to print itself
-def pr_str(mal_data)
-  return mal_data.print()
+def pr_str(mal_data, readably = true)
+  return mal_data.print(readably)
 end
 
 #  is_list = false

@@ -18,10 +18,12 @@ like (do (def! a 1) (+ 1 a)) failed. Calling EVAL instead worked.
 
 Keyword 'if' implemented. Very straightforward, especially after 'do'.
 
-Keyword 'fn*', now, that is not going to be straightforward. First I have to
-figure out how to create the closure. Then I have to figure out where to put it,
-and how to call it when invoked. And when it is invoked. I'm not sure I have
-any idea how to do any of those. Probably time to sleep on it.
+Keyword 'fn*' partially implemented, but with bugs, and also showing up bugs
+in def!, with which it should, but does not yet play nicely.
+
+Running tests absolutely blows up on the attempt to calculate Fibonacci numbers.
+
+But let's go ahead and implement the rest of Step 4, then go back and debug fn*.
 
 ## Step 3 (2021-05-02)
 
