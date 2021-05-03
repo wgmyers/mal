@@ -98,7 +98,7 @@ def read_atom(reader, matcher)
     retval = "]"
   when "}"
     retval = "}"
-  when /-?\d+/
+  when /^-?\d+$/
     retval = MalNumber.new(data)
   when /^\"/
     retval = MalString.new(data)
