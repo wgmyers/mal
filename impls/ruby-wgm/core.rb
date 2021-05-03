@@ -16,10 +16,10 @@ module MalCore
                               return MalNil.new()
                        },
     'pr-str' => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
-                              return(MalString.new(strs.join(" ")))
+                              return(MalString.new(strs.join(" "), false))
                        },
     'str'    => lambda { |*x| strs = x.map { |s| pr_str(s, false) }
-                              return(MalString.new(strs.join("")))
+                              return(MalString.new(strs.join(""), false))
                            },
     'list'   => lambda { |*x| l = MalList.new()
                               x.each { |i| l.push(i) }

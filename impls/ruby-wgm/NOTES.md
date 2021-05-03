@@ -1,6 +1,6 @@
 # Notes
 
-## Step 4 (2021-05-02)
+## Step 4 (2021-05-03)
 
 This is easily the trickiest bit yet.
 
@@ -35,6 +35,11 @@ the wrong thing now, and having fixed further bugs from other tests, restoring
 a return of item,env does not after all trigger and infinite loop.
 
 Remaining non-optional bug is that defs don't nest properly.
+
+Implemented not in Mal. Cute.
+
+Implemented extra string functions. All the tests pass apart from string bugs
+not caught by previous tests (looking at you, "\\n")
 
 ## Step 3 (2021-05-02)
 

@@ -50,9 +50,15 @@ end
 # Here be dragons
 class MalString < MalType
 
-  def initialize(data)
+  # By default we sanitise our string inputs
+  # But when we print from core.rb, we don't want to, so from there
+  # we call with the sanitise flag set to false.
+  def initialize(data, sanitise=true)
     @type = "MalString"
-    @data = _sanitise(data)
+    @data = data
+    if sanitise
+      @data = _sanitise(@data)
+    end
   end
 
   def print(readably = true)
