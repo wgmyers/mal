@@ -179,22 +179,28 @@ def EVAL(ast, env)
       else
         # DEFAULT EVALLER
         evaller = eval_ast(ast, env)
+        puts "EVALLER"
+        p evaller
         begin
           # We need to convert our MalNumbers to actual numbers somehow. Here?
-          args = evaller.data.drop(1).map{ |x| x.data }
+          args = evaller.data.drop(1) #.map{ |x| x.data ? x.data : x }
+          puts "args: #{args}"
           # We still need to splat the args with * so the lambda can see them
           res = evaller.data[0].call(*args)
+          puts "res: #{res}"
         rescue => e
           raise e
         end
-        # Oops. We need to convert back to a Mal data type.
+        # Oops. We /might/ need to convert back to a Mal data type.
         case res.class.to_s
         when "TrueClass"
           return MalTrue.new(), env
         when "FalseClass"
           return MalFalse.new(), env
-        else
+        when "Integer"
           return MalNumber.new(res), env
+        else
+          return res, env
         end
       end
     end
@@ -230,10 +236,10 @@ def init_env
   repl_env = Env.new()
   # A simple environment for basic numeric functions
   numeric_env = {
-    '+' => lambda { |x,y| x + y },
-    '-' => lambda { |x,y| x - y },
-    '*' => lambda { |x,y| x * y },
-    '/' => lambda { |x,y| x / y },
+    '+' => lambda { |x,y| MalNumber.new(x.data + y.data) },
+    '-' => lambda { |x,y| MalNumber.new(x.data - y.data) },
+    '*' => lambda { |x,y| MalNumber.new(x.data * y.data) },
+    '/' => lambda { |x,y| MalNumber.new(x.data / y.data) }, # FIXME x/0 should raise error
     '=' => lambda { |x,y| x == y }  # FIXME - doesn't check type or handle lists
   }
   numeric_env.each do |key, val|
