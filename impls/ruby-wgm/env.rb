@@ -29,7 +29,7 @@ class Env
   # Otherwise go ahead.
   # FIXME This can't be right.
   def set(key, val)
-    if key.class.to_s == "MalSymbol"
+    if key.is_a?(MalSymbol)
       @data[key.data] = val
     else
       @data[key] = val

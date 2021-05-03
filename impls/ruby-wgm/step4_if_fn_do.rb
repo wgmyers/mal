@@ -179,15 +179,18 @@ def EVAL(ast, env)
       else
         # DEFAULT EVALLER
         evaller = eval_ast(ast, env)
-        puts "EVALLER"
-        p evaller
         begin
-          # We need to convert our MalNumbers to actual numbers somehow. Here?
-          args = evaller.data.drop(1) #.map{ |x| x.data ? x.data : x }
-          puts "args: #{args}"
-          # We still need to splat the args with * so the lambda can see them
-          res = evaller.data[0].call(*args)
-          puts "res: #{res}"
+          args = evaller.data.drop(1)
+          #puts "args: #{args}"
+          # If it's a MalFunction, we splat the args in the closure
+          if(evaller.data[0].is_a?(MalFunction))
+            res = evaller.data[0].call(args)
+          else
+            # We still need to splat the args with * so our lambdas can see them
+            # FIXME This is stupid. We should call the lambdas the same way. Make them procs?
+            res = evaller.data[0].call(*args)
+          end
+          #puts "res: #{res}"
         rescue => e
           raise e
         end
