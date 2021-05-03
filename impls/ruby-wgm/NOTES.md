@@ -34,7 +34,7 @@ All fn* tests now passing, anyway.
 I thought it was because def! was returning item,env and not nil,env, so
 anything using def and recursion was bugging out. But that means def! returns
 the wrong thing now, and having fixed further bugs from other tests, restoring
-a return of item,env does not after all trigger and infinite loop.
+a return of item,env does not after all trigger an infinite loop.
 
 Remaining non-optional bug is that def! fn*s don't nest properly?
 
