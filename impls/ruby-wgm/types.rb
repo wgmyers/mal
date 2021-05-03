@@ -26,9 +26,8 @@ end
 # Tee hee
 class MalFunction < MalType
 
-  # I'm not sure how we want to organise this yet, but I know we are
-  # going to need a Mal data type for functions, so slurping data into
-  # @data will do for now and I will revisit. FIXME.
+  # Here we expect data to be a Proc
+  # FIXME We should complain if it isn't
   def initialize(data)
     @type = "MalFunction"
     @data = data
@@ -38,6 +37,11 @@ class MalFunction < MalType
   # It would be nice to have a way of reading the function back too somehow.
   def print(readably = true)
     return "#<function>"
+  end
+
+  # This way we don't have to access @data directly
+  def call(args)
+    return @data.call(*args)
   end
 
 end
@@ -193,6 +197,10 @@ class MalList < MalType
     return "(" + strings.join(" ") + ")"
   end
 
+  def length()
+    return @data.length
+  end
+
 end
 
 class MalVector < MalList
@@ -208,6 +216,10 @@ class MalVector < MalList
       strings.push(item.print(readably))
     end
     return "[" + strings.join(" ") + "]"
+  end
+
+  def length()
+    return @data.length
   end
 
 end

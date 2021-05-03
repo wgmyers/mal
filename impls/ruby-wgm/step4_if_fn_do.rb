@@ -169,6 +169,13 @@ def EVAL(ast, env)
         # to MalFunction, and here we return *that*.
         # Then we add code below in the DEFAULT EVALLER, to call the function
         # if it ever shows up in a list. I think. Or in eval_ast. I'm not sure.
+        closure = Proc.new { |*x|
+          cl_env = Env.new(env, ast.data[1].data, x)
+          retval, e = EVAL(ast.data[2], cl_env)
+          retval
+        }
+        myfn = MalFunction.new(closure)
+        return myfn, env
       else
         # DEFAULT EVALLER
         evaller = eval_ast(ast, env)
