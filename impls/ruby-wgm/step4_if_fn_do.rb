@@ -106,7 +106,7 @@ def EVAL(ast, env)
     # QUERY - how does this fail? Should we raise our own BadDefError?
     begin
       item, env = EVAL(ast.data[2], env)
-      return item, env.set(ast.data[1], item)
+      return nil, env.set(ast.data[1], item)
     rescue => e
       raise e
     end
