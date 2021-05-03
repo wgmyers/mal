@@ -16,7 +16,7 @@ module MalCore
                        },
     'list?'  => lambda { |x| x.is_a?(MalList) ? MalTrue.new() : MalFalse.new() },
     'empty?' => lambda { |x| x.data.length == 0 ? MalTrue.new() : MalFalse.new() },
-    'count'  => lambda { |x| x.data.length },
+    'count'  => lambda { |x| x.is_a?(MalNil) ? 0 : x.data.length },
     '='      => lambda { |x,y| if (x.class != y.class) || (x.data != y.data)
                                  return MalFalse.new()
                                end
