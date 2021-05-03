@@ -242,6 +242,10 @@ def init_env
   MalCore::Env.each do |key, val|
     repl_env.set(key, val)
   end
+  # Support for functions defined in mal in core.rb
+  MalCore::Mal.each do |key, val|
+    rep(val, repl_env)
+  end
   return repl_env
 end
 

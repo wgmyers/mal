@@ -35,4 +35,7 @@ module MalCore
     '>'      => lambda { |x,y| x.data > y.data ? MalTrue.new() : MalFalse.new() },
     '>='     => lambda { |x,y| x.data >= y.data ? MalTrue.new() : MalFalse.new() },
   }
+  Mal = {
+    'not' => '(def! not (fn* (a) (if a false true)))'
+  }
 end
