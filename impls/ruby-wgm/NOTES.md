@@ -41,9 +41,15 @@ Implemented not in Mal. Cute.
 Implemented extra string functions. All the tests pass apart from string bugs
 not caught by previous tests (looking at you, "\\n")
 
-Attempted to add variadic bindings with '&'. Total failure. No idea why, but
-I'm not wholly sure I properly understand the bindings thing anyway, making it
-hard to debug.
+Attempted to add variadic bindings with '&'. Total failure. I think it's b/c
+we are splatting all our arguments anyway when we create the closure in order
+to create it without using eval. I wonder if we can fix it in the closure
+instead of in the Env bindings.
+
+Fixed list/vector comparison bugs: Mal wants to treat lists and vectors as the
+same for comparison (this is not intuitive but then I don't know Lisp), so now
+we have a recursive lambda for '=' that calls itself if it finds data which is
+either MalList or MalVector.
 
 ## Step 3 (2021-05-02)
 
