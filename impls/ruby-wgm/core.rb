@@ -17,11 +17,19 @@ module MalCore
     'list?'  => lambda { |x| x.is_a?(MalList) ? MalTrue.new() : MalFalse.new() },
     'empty?' => lambda { |x| x.data.length == 0 ? MalTrue.new() : MalFalse.new() },
     'count'  => lambda { |x| x.is_a?(MalNil) ? 0 : x.data.length },
-    '='      => lambda { |x,y| if (x.class != y.class) || (x.data != y.data)
+    '='      => lambda { |x,y| if (x.class != y.class)
+                                 return MalFalse.new()
+                               end
+                               if (x.is_a?(MalList))
+                                 return MalFalse.new if x.length != y.length
+                                 x.data.each_with_index { |item, idx|
+                                   return MalFalse.new if item.data != y.data[idx].data
+                                 }
+                               elsif (x.data != y.data)
                                  return MalFalse.new()
                                end
                                return MalTrue.new()
-                       }, # FIXME does not work on lists :(
+                       },
     '<'      => lambda { |x,y| x.data < y.data ? MalTrue.new() : MalFalse.new() },
     '<='     => lambda { |x,y| x.data <= y.data ? MalTrue.new() : MalFalse.new() },
     '>'      => lambda { |x,y| x.data > y.data ? MalTrue.new() : MalFalse.new() },
