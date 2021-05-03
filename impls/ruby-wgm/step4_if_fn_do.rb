@@ -190,10 +190,12 @@ def EVAL(ast, env)
       # If it's a MalFunction, we splat the args in the closure
       if(f.is_a?(MalFunction))
         res = f.call(args)
-      else
-        # We still need to splat the args with * so our lambdas can see them
-        # FIXME This is stupid. We should call the lambdas the same way. Make them procs?
+      elsif(f.is_a?(Proc))
+        # Here we must splat the args with * so our lambdas can see them
+        #puts "in apply with a #{f.class}"
         res = f.call(*args)
+      else
+        res = evaller # Here we just return our input
       end
       #puts "res: #{res}"
     rescue => e

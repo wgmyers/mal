@@ -20,7 +20,7 @@ module MalCore
     '='      => lambda { |x,y| if (x.class != y.class)
                                  return MalFalse.new()
                                end
-                               if (x.is_a?(MalList))
+                               if (x.is_a?(MalList) || x.is_a?(MalVector))
                                  return MalFalse.new if x.length != y.length
                                  x.data.each_with_index { |item, idx|
                                    return MalFalse.new if item.data != y.data[idx].data

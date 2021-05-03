@@ -218,10 +218,6 @@ class MalVector < MalList
     return "[" + strings.join(" ") + "]"
   end
 
-  def length()
-    return @data.length
-  end
-
 end
 
 class MalHashMap < MalList
