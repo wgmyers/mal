@@ -157,7 +157,7 @@ def EVAL(ast, env)
       if(ast.data[3])
         return EVAL(ast.data[3], env)
       else
-        return nil, env
+        return MalNil.new(), env
       end
     else
       # Truthy. Return eval of second item (or raise error)
