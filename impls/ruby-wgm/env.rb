@@ -13,12 +13,39 @@ class Env
   def initialize(outer = nil, binds = [], exprs = [])
     @outer = outer
     @data = {}
-    # Nominally sanitycheck our inputs
-    if binds.length != exprs.length
+
+    # First check if we've been given variadic bindings
+    variadic = false
+    binds.each do |b|
+      if b.data == "&"
+        variadic = true
+        break
+      end
+    end
+    # Sanity check inputs a bit
+    if ((binds.length != exprs.length) && !variadic)
       raise MalBadEnvError
     end
-    binds.zip(exprs) do | bind, expr |
-      set(bind, expr)
+    # Variadic binding: if we encounter a "&" we bind the next bind item
+    # to all the remaining items in expr.
+    if variadic
+      binds.each_with_index do |b, i|
+        if b == "&"
+          # FIXME This does not work at all.
+          nl = MalList(new)
+          for e in exprs[i,-1]
+            nl.push(e)
+          end
+          set(binds[i+1], nl)
+          break
+        else
+          set(b, exprs[i])
+        end
+      end
+    else
+      binds.zip(exprs) do | bind, expr |
+        set(bind, expr)
+      end
     end
   end
 

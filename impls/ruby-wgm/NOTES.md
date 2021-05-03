@@ -41,6 +41,10 @@ Implemented not in Mal. Cute.
 Implemented extra string functions. All the tests pass apart from string bugs
 not caught by previous tests (looking at you, "\\n")
 
+Attempted to add variadic bindings with '&'. Total failure. No idea why, but
+I'm not wholly sure I properly understand the bindings thing anyway, making it
+hard to debug.
+
 ## Step 3 (2021-05-02)
 
 With some pain, def! is now implemented.
