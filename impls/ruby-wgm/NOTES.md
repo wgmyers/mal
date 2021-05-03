@@ -25,10 +25,16 @@ Running tests absolutely blows up on the attempt to calculate Fibonacci numbers.
 
 But let's go ahead and implement the rest of Step 4, then go back and debug fn*.
 
-Ok, done, mostly. 
+Ok, done, mostly.
 
-Fixed the infinite loop bug - def! was returning item,env and not nil,env, so
-anything using def and recursion was bugging out.
+Fixed the infinite loop bug and have no idea how.
+
+I thought it was because def! was returning item,env and not nil,env, so
+anything using def and recursion was bugging out. But that means def! returns
+the wrong thing now, and having fixed further bugs from other tests, restoring
+a return of item,env does not after all trigger and infinite loop.
+
+Remaining non-optional bug is that defs don't nest properly.
 
 ## Step 3 (2021-05-02)
 
