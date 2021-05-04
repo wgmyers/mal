@@ -15,7 +15,8 @@ require_relative 'types'
 
 # Some debugging flags
 DEBUG = {
-  'show_env' => true
+  'show_env'  => true
+  'backtrace' => true
 }
 
 # READ
@@ -323,7 +324,9 @@ def main()
       puts rep(line, repl_env)
     rescue => e
       puts "Error: " + e.message
-      puts e.backtrace
+      if DEBUG['backtrace']
+        puts e.backtrace
+      end
     end
   end
 end

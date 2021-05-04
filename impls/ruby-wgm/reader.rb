@@ -91,7 +91,7 @@ def read_atom(reader, matcher)
   data = reader.peek()
   case data
   when nil
-    retval = MalNil.new()
+    retval = nil
   when ")"
     retval = ")"
   when "]"
