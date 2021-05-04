@@ -18,6 +18,10 @@ on this one is less comprehensive than others.
 Nearly there, except the Redefine def! test fails. Hiliarious. We didn't
 modify it. Hah. Ok, why is that happening?
 
+Added a DEBUG constant to hold debug flags.
+
+Added 'q' for quit so I stop typing 'Ctrl-D' in the terminal and closing it.
+
 ## Step 4 (2021-05-03)
 
 This is easily the trickiest bit yet.
@@ -152,7 +156,7 @@ to revisit that later on.
 
 ## TODO
 
-* Entering nothing in the REPL yields an error. Fix this.
+* FIXED (Step 5) Entering nothing in the REPL yields an error. Fix this.
 * Implement float handling. Ints only for now.
 * Implement hashmaps properly (only strings or keywords as keys)
 * Implement comments properly
