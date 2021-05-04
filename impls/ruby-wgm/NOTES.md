@@ -61,6 +61,12 @@ test was calling the functions things like gen-plus5. Now fixed.
 Fixed "\\n" bug. All string tests now pass, though we still have not eliminated
 all string bugs, as things like """"" are still accepted quite happily.
 
+Finally fixed the variadic bindings issue. Actually the code was fine, it just
+wasn't actually doing what I intended. Poking at it and fixing the thinkos made
+everything just work.
+
+So, all Step 4 tests now pass.
+
 ## Step 3 (2021-05-02)
 
 With some pain, def! is now implemented.
@@ -128,6 +134,7 @@ to revisit that later on.
 
 ## TODO
 
+* Entering nothing in the REPL yields an error. Fix this.
 * Implement float handling. Ints only for now.
 * Implement hashmaps properly (only strings or keywords as keys)
 * Implement comments properly
