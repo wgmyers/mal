@@ -22,7 +22,7 @@ Added a DEBUG constant to hold debug flags.
 
 Added 'q' for quit so I stop typing 'Ctrl-D' in the terminal and closing it.
 
-(Much failed debugging later)
+(Much failed debugging later...)
 
 I'm stumped for now. Need to automate the running of a bunch of tests so I can
 see more easily what is going on. Items created by def! aren't persisting, which
@@ -42,12 +42,19 @@ So that's where we're at.
 Maybe I should take a short break and learn graphviz. This is getting hairy.
 See https://twitter.com/thingskatedid/status/1386077306381242371
 
-EVAL no longer returns env and all the Step 5 tests pass.
+So, I tried it. EVAL no longer returns env - and lo all the Step 5 tests pass!
 
-But, just discovered the regression tests, and we are now failing some of
+But, I just discovered the regression tests, and we are now failing some of
 the Step 4 tests.
 
 make REGRESS=1 "test^ruby-wgm^step5" is my new friend.
+
+The Step 4 tests that were failing were all in 'do'.
+
+The fix was to call EVAL on each element of the list and not eval_ast, just
+as before. I am now wondering if I did something wrong in eval_ast such that
+it breaks do (but being called via EVAL is ok). Presumably we'll find out at
+a later stage. For now, though, on to Step 6!
 
 ## Step 4 (2021-05-03)
 
