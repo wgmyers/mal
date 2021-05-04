@@ -2,8 +2,6 @@
 
 # env.rb
 
-#require 'pp'
-
 # Implement a Lisp environment
 
 require_relative "errors"
@@ -31,10 +29,8 @@ class Env
     # Variadic binding: if we encounter a "&" we bind the next bind item
     # to all the remaining items in expr.
     if variadic
-      #puts "We are variadic!"
       binds.each_with_index do |b, i|
         if b.data == "&"
-          # FIXME This does not work at all.
           nl = MalList.new()
           exprs.drop(i).each { |e| nl.push(e) }
           set(binds[i+1], nl)
@@ -48,8 +44,6 @@ class Env
         set(bind, expr)
       end
     end
-    #puts "Env.initialize"
-    #pp self
   end
 
   # set

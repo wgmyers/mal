@@ -189,10 +189,6 @@ def EVAL(ast, env)
       #puts "args: #{args}"
       # If it's a MalFunction, we splat the args in the closure
       if(f.is_a?(MalFunction))
-        #puts "Calling a function, got args:"
-        #p args
-        #arglist = MalList.new()
-        #args.each { |x| arglist.push(x) }
         res = f.call(args)
       elsif(f.is_a?(Proc))
         # Here we must splat the args with * so our lambdas can see them
@@ -200,7 +196,6 @@ def EVAL(ast, env)
       else
         res = evaller # Here we just return our input
       end
-      #puts "res: #{res}"
     rescue => e
       raise e
     end
@@ -267,10 +262,7 @@ def main()
       break
     end
     begin
-      #puts "Response:"
       puts rep(line, repl_env)
-      #puts "Environment:"
-      #p repl_env
     rescue => e
       puts "Error: " + e.message
       puts e.backtrace
