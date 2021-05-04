@@ -51,14 +51,14 @@ def eval_ast(ast, env)
   when "MalList"
     retval = MalList.new()
     for item in ast.data
-      newitem, env = EVAL(item, env)
+      newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalVector"
     retval = MalVector.new()
     for item in ast.data
-      newitem, env = EVAL(item, env)
+      newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
@@ -72,7 +72,7 @@ def eval_ast(ast, env)
       if key
         retval.push(item)
       else
-        newitem, env = EVAL(item, env)
+        newitem = EVAL(item, env)
         retval.push(newitem)
       end
       key = !key
@@ -102,11 +102,11 @@ def EVAL(ast, env)
   loop do
     # If it's not a list, call eval_ast on it
     if !ast.is_a?(MalList)
-      return eval_ast(ast, env), env
+      return eval_ast(ast, env) #, env
     end
     # It's a list. If it's empty, just return it.
     if ast.data.length == 0
-      return ast, env
+      return ast #, env
     end
     # APPLY section
     # Switch on the first item of the list
@@ -118,8 +118,9 @@ def EVAL(ast, env)
       # QUERY - how does this fail? Should we raise our own BadDefError?
       # NB - No TCO here. We return.
       begin
-        item, env = EVAL(ast.data[2], env)
-        return item, env.set(ast.data[1], item)
+        item = EVAL(ast.data[2], env)
+        env = env.set(ast.data[1], item)
+        return item#, env
       rescue => e
         raise e
       end
@@ -135,7 +136,7 @@ def EVAL(ast, env)
         if is_key
           key = item
         else
-          val, letenv = EVAL(item, letenv)
+          val = EVAL(item, letenv)
           letenv = letenv.set(key, val)
         end
         is_key = !is_key
@@ -179,7 +180,7 @@ def EVAL(ast, env)
     when "if"
       # Handle if statements
       # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
-      retval, env = EVAL(ast.data[1], env)
+      retval = EVAL(ast.data[1], env)
       if retval
         type = retval.class.to_s
       else
@@ -191,7 +192,7 @@ def EVAL(ast, env)
           # Pre TCO - return EVAL(ast.data[3], env)
           ast = ast.data[3]
         else
-          return MalNil.new(), env
+          return MalNil.new()#, env
         end
       else
         # Truthy. Return eval of second item (or raise error)
@@ -213,8 +214,8 @@ def EVAL(ast, env)
       # if it ever shows up in a list. I think. Or in eval_ast. I'm not sure.
       closure = Proc.new { |*x|
         cl_env = Env.new(env, ast.data[1].data, x)
-        retval, e = EVAL(ast.data[2], cl_env)
-        retval
+        retval = EVAL(ast.data[2], cl_env)
+        #retval
       }
 
       # Pre TCO way
@@ -225,7 +226,7 @@ def EVAL(ast, env)
       # NB - We also modify MalFunction over in types.rb to reflect the new
       #      function design:  MalFunction.new(ast, params, env, closure)
       myfn = MalFunction.new(ast.data[2], ast.data[1], env, closure)
-      return myfn, env
+      return myfn#, env
     else
       # DEFAULT EVALLER
       evaller = eval_ast(ast, env)
@@ -255,13 +256,13 @@ def EVAL(ast, env)
       # FIXME I'm sure this shouldn't ever be the case.
       case res.class.to_s
       when "TrueClass"
-        return MalTrue.new(), env
+        return MalTrue.new()#, env
       when "FalseClass"
-        return MalFalse.new(), env
+        return MalFalse.new()#, env
       when "Integer"
-        return MalNumber.new(res), env
+        return MalNumber.new(res)#, env
       else
-        return res, env
+        return res#, env
       end
     end
   end
@@ -282,7 +283,7 @@ def rep(input, repl_env)
   rescue => e
     raise e
   end
-  ast, repl_env = EVAL(ast, repl_env)
+  ast = EVAL(ast, repl_env)
   if DEBUG['show_env']
     puts "Env:"
     pp repl_env

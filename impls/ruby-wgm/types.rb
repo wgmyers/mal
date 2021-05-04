@@ -26,7 +26,7 @@ end
 # Tee hee
 class MalFunction < MalType
 
-  attr_reader :ast, :params, :env, :closure
+  attr_reader :ast, :params, :env, :closure, :data
 
   # Here we expect data to be a Proc
   # FIXME We should complain if it isn't
@@ -36,6 +36,7 @@ class MalFunction < MalType
     @params = params
     @env = env
     @closure = closure
+    @data = self # Will this work or blow up?
   end
 
   # #<function> is what the guide says to do

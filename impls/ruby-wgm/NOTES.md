@@ -22,6 +22,26 @@ Added a DEBUG constant to hold debug flags.
 
 Added 'q' for quit so I stop typing 'Ctrl-D' in the terminal and closing it.
 
+(Much failed debugging later)
+
+I'm stumped for now. Need to automate the running of a bunch of tests so I can
+see more easily what is going on. Items created by def! aren't persisting, which
+is definitely to do with some of it. The new MalFunction originally didn't have
+a value called data, which may also be related, as everything else does and
+there is foo.data liberally in the code. The fib function from Step 4 blows up
+with a stack too deep error, which makes me think that something somewhere is
+pointing to itself, but the root cause of all of this is probably the way the
+env thing is stored and manipulated - EVAL is still returning env rather than
+changing a (global?) env stored elsewhere. Maybe I should fix that?
+
+Also it is not clear what env.set should return - currently it returns self,
+but again, this might have worked before but not now.
+
+So that's where we're at.
+
+Maybe I should take a short break and learn graphviz. This is getting hairy.
+See https://twitter.com/thingskatedid/status/1386077306381242371
+
 ## Step 4 (2021-05-03)
 
 This is easily the trickiest bit yet.
