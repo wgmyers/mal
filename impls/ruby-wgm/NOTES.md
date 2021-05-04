@@ -9,11 +9,14 @@ Next, we modify the following:
 * let* - done.
 * do   - done. Worried about this one as we modified it before :(
 * if   - done
-* fn*
-* default 'apply'
+* fn*  - done
+* default 'apply' - done
 
 Run some tests from elsewhere to make sure things haven't broken. Test coverage
 on this one is less comprehensive than others.
+
+Nearly there, except the Redefine def! test fails. Hiliarious. We didn't
+modify it. Hah. Ok, why is that happening?
 
 ## Step 4 (2021-05-03)
 
