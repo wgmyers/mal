@@ -204,7 +204,15 @@ def EVAL(ast, env)
         retval, e = EVAL(ast.data[2], cl_env)
         retval
       }
-      myfn = MalFunction.new(closure)
+
+      # Pre TCO way
+      #myfn = MalFunction.new(closure)
+      #return myfn, env
+
+      # TCO way
+      # NB - We also modify MalFunction over in types.rb to reflect the new
+      #      function design:  MalFunction.new(ast, params, env, closure)
+      myfn = MalFunction.new(ast.data.[2], ast.data[1], env, closure)
       return myfn, env
     else
       # DEFAULT EVALLER
@@ -215,7 +223,12 @@ def EVAL(ast, env)
         #puts "args: #{args}"
         # If it's a MalFunction, we splat the args in the closure
         if(f.is_a?(MalFunction))
-          res = f.call(args)
+          # pre TCO
+          #res = f.call(args)
+          # TCO
+          ast = f.ast
+          env = Env.new(f.env, f.params, args)
+          next
         elsif(f.is_a?(Proc))
           # Here we must splat the args with * so our lambdas can see them
           res = f.call(*args)
