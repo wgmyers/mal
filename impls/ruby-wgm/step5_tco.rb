@@ -227,7 +227,7 @@ def EVAL(ast, env)
           #res = f.call(args)
           # TCO
           ast = f.ast
-          env = Env.new(f.env, f.params, args)
+          env = Env.new(f.env, f.params.data, args)
           next
         elsif(f.is_a?(Proc))
           # Here we must splat the args with * so our lambdas can see them
