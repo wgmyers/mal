@@ -212,7 +212,7 @@ def EVAL(ast, env)
       # TCO way
       # NB - We also modify MalFunction over in types.rb to reflect the new
       #      function design:  MalFunction.new(ast, params, env, closure)
-      myfn = MalFunction.new(ast.data.[2], ast.data[1], env, closure)
+      myfn = MalFunction.new(ast.data[2], ast.data[1], env, closure)
       return myfn, env
     else
       # DEFAULT EVALLER

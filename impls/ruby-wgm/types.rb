@@ -26,11 +26,16 @@ end
 # Tee hee
 class MalFunction < MalType
 
+  attr_reader :ast, :params, :env, :closure
+
   # Here we expect data to be a Proc
   # FIXME We should complain if it isn't
-  def initialize(data)
+  def initialize(ast, params, env, closure)
     @type = "MalFunction"
-    @data = data
+    @ast = ast
+    @params = params
+    @env = env
+    @closure = closure
   end
 
   # #<function> is what the guide says to do
@@ -39,9 +44,9 @@ class MalFunction < MalType
     return "#<function>"
   end
 
-  # This way we don't have to access @data directly
+  # This way we don't have to access @closure directly
   def call(args)
-    return @data.call(*args)
+    return @closure.call(*args)
   end
 
 end
