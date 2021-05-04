@@ -15,8 +15,8 @@ require_relative 'types'
 
 # Some debugging flags
 DEBUG = {
-  'show_env'  => true,
-  'backtrace' => true
+  'show_env'  => false,
+  'backtrace' => false
 }
 
 # READ
@@ -83,30 +83,28 @@ def eval_ast(ast, env)
 end
 
 # EVAL
-# In stage 4 we implement more core language in the APPLY bit
-# If we aren't given a list, we return the value of applying eval_ast to
-# our input.
-# If we are given a list, and it is empty, we return it.
-# Otherwise, we are in APPLY.
-# Here we check to see if the first item of the list is a special keyword and
-# if so, we do the needful.
-# Otherwise we go ahead as in Step 2:
-# Call eval_ast on the list, assume we now have a function and some
-# parameters, and try and call that, returning the result.
-# NB - We now return the environment along with our result, so that the env
-# object persists. Not quite what the guide asks for but this way we avoid
-# having to use a global, at the cost of some readability.
+# Stage 5 refactors EVAL to handle TCO.
+# We put an infinite loop around the whole thing.
+# Whenever possible, by which we mean user-defined functions, let*, do and if,
+# we don't return anything but instead prepare the variables ast and env for
+# another run round the loop. This saves a stack frame and allows for deep
+# recursion. I think, and is compulsory in Scheme and related Lisps. I don't
+# really understand it yet, but that's what you get for trying to learn Lisp
+# by implementing it.
+# NB - The trick we used in previous steps of returning env here turns out to
+# have been a mistake, as it broke TCO. Removing it seems to have fixed most
+# of the problems, though not all regression tests pass as I type this.
 def EVAL(ast, env)
 
   # TCO YOLO
   loop do
     # If it's not a list, call eval_ast on it
     if !ast.is_a?(MalList)
-      return eval_ast(ast, env) #, env
+      return eval_ast(ast, env)
     end
     # It's a list. If it's empty, just return it.
     if ast.data.length == 0
-      return ast #, env
+      return ast
     end
     # APPLY section
     # Switch on the first item of the list
@@ -120,7 +118,7 @@ def EVAL(ast, env)
       begin
         item = EVAL(ast.data[2], env)
         env = env.set(ast.data[1], item)
-        return item#, env
+        return item
       rescue => e
         raise e
       end
@@ -192,7 +190,7 @@ def EVAL(ast, env)
           # Pre TCO - return EVAL(ast.data[3], env)
           ast = ast.data[3]
         else
-          return MalNil.new()#, env
+          return MalNil.new()
         end
       else
         # Truthy. Return eval of second item (or raise error)
@@ -226,7 +224,7 @@ def EVAL(ast, env)
       # NB - We also modify MalFunction over in types.rb to reflect the new
       #      function design:  MalFunction.new(ast, params, env, closure)
       myfn = MalFunction.new(ast.data[2], ast.data[1], env, closure)
-      return myfn#, env
+      return myfn
     else
       # DEFAULT EVALLER
       evaller = eval_ast(ast, env)
@@ -256,13 +254,13 @@ def EVAL(ast, env)
       # FIXME I'm sure this shouldn't ever be the case.
       case res.class.to_s
       when "TrueClass"
-        return MalTrue.new()#, env
+        return MalTrue.new()
       when "FalseClass"
-        return MalFalse.new()#, env
+        return MalFalse.new()
       when "Integer"
-        return MalNumber.new(res)#, env
+        return MalNumber.new(res)
       else
-        return res#, env
+        return res
       end
     end
   end
