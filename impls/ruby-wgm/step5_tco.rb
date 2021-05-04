@@ -89,126 +89,153 @@ end
 # object persists. Not quite what the guide asks for but this way we avoid
 # having to use a global, at the cost of some readability.
 def EVAL(ast, env)
-  # If it's not a list, call eval_ast on it
-  if !ast.is_a?(MalList)
-    return eval_ast(ast, env), env
-  end
-  # It's a list. If it's empty, just return it.
-  if ast.data.length == 0
-    return ast, env
-  end
-  # APPLY section
-  # Switch on the first item of the list
-  # FIXME This wants its own function now (or soon) surely
-  case ast.data[0].data
-  when "def!"
-    # Do the def! stuff
-    # QUERY - how does this fail? Should we raise our own BadDefError?
-    begin
-      item, env = EVAL(ast.data[2], env)
-      return item, env.set(ast.data[1], item)
-    rescue => e
-      raise e
+
+  # TCO YOLO
+  loop do
+    # If it's not a list, call eval_ast on it
+    if !ast.is_a?(MalList)
+      return eval_ast(ast, env), env
     end
-  when "let*"
-    # Do the let* stuff
-    # Create a new environment with current env as outer
-    letenv = Env.new(env)
-    # Iterate over our parameters, calling set on new environment with
-    # each key, value pair, first calling EVAL on the value w/ new env.
-    is_key = true
-    for item in ast.data[1].data
-      if is_key
-        key = item
-      else
-        val, letenv = EVAL(item, letenv)
-        letenv = letenv.set(key, val)
+    # It's a list. If it's empty, just return it.
+    if ast.data.length == 0
+      return ast, env
+    end
+    # APPLY section
+    # Switch on the first item of the list
+    # FIXME This wants its own function now (or soon) surely
+    case ast.data[0].data
+
+    when "def!"
+      # Do the def! stuff
+      # QUERY - how does this fail? Should we raise our own BadDefError?
+      # NB - No TCO here. We return.
+      begin
+        item, env = EVAL(ast.data[2], env)
+        return item, env.set(ast.data[1], item)
+      rescue => e
+        raise e
       end
-      is_key = !is_key
-    end
-    # Finally, call EVAL on our last parameter in the new enviroment
-    # and return the result. New env is discarded, so we return the old env.
-    retval, letenv = EVAL(ast.data[2], letenv)
-    # Convert retval to a Mal data object if it isn't one.
-    # FIXME This shouldn't be.
-    if !/^Mal/.match(retval.class.to_s)
-      retval = READ(retval.to_s)
-    end
-    return retval, env
-  when "do"
-    # Do the do
-    # Call eval_ast on every member of the list
-    # Return the value of the last one
-    for item in ast.data.drop(1)
-      retval, env = EVAL(item, env)
-    end
-    return retval, env
-  when "if"
-    # Handle if statements
-    # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
-    retval, env = EVAL(ast.data[1], env)
-    if retval
-      type = retval.class.to_s
-    else
-      type = nil
-    end
-    if(!type || type == "MalFalse" || type == "MalNil")
-    # Falsy. Return eval of third item if there is one
-      if(ast.data[3])
-        return EVAL(ast.data[3], env)
-      else
-        return MalNil.new(), env
+
+    when "let*"
+      # Do the let* stuff
+      # Create a new environment with current env as outer
+      letenv = Env.new(env)
+      # Iterate over our parameters, calling set on new environment with
+      # each key, value pair, first calling EVAL on the value w/ new env.
+      is_key = true
+      for item in ast.data[1].data
+        if is_key
+          key = item
+        else
+          val, letenv = EVAL(item, letenv)
+          letenv = letenv.set(key, val)
+        end
+        is_key = !is_key
       end
-    else
-      # Truthy. Return eval of second item (or raise error)
-      return EVAL(ast.data[2], env)
-    end
-  when "fn*"
-    # Second element of the list is parameters. Third is function body.
-    # So create a closure which:
-    # 1 - creates a new env using our env as outer and binds /it's/
-    #     parameters to the ones given using binds/exprs.
-    # 2 - calls EVAL on the function body and returns it
-    # We create a MalFunction to store this closure, we add a call method
-    # to MalFunction, and here we return *that*.
-    # Then we add code below in the DEFAULT EVALLER, to call the function
-    # if it ever shows up in a list. I think. Or in eval_ast. I'm not sure.
-    closure = Proc.new { |*x|
-      cl_env = Env.new(env, ast.data[1].data, x)
-      retval, e = EVAL(ast.data[2], cl_env)
-      retval
-    }
-    myfn = MalFunction.new(closure)
-    return myfn, env
-  else
-    # DEFAULT EVALLER
-    evaller = eval_ast(ast, env)
-    f = evaller.data[0]
-    args = evaller.data.drop(1)
-    begin
-      #puts "args: #{args}"
-      # If it's a MalFunction, we splat the args in the closure
-      if(f.is_a?(MalFunction))
-        res = f.call(args)
-      elsif(f.is_a?(Proc))
-        # Here we must splat the args with * so our lambdas can see them
-        res = f.call(*args)
+
+      # Pre TCO
+      # Finally, call EVAL on our last parameter in the new enviroment
+      # and return the result. New env is discarded, so we return the old env.
+      #retval, letenv = EVAL(ast.data[2], letenv)
+      # Convert retval to a Mal data object if it isn't one.
+      # FIXME This shouldn't be.
+      #if !/^Mal/.match(retval.class.to_s)
+      #  retval = READ(retval.to_s)
+      #end
+      #return retval, env
+
+      # TCO way
+      env = letenv
+      ast = ast.data[2]
+      # ... and loop to start of EVAL
+
+    when "do"
+      # Do the do
+      # Call eval_ast on every member of the list
+      # Return the value of the last one
+
+      # Pre TCO do - NB
+      #for item in ast.data.drop(1)
+      #  retval, env = EVAL(item, env)
+      #end
+      #return retval, env
+
+      # TCO do
+      lastel = ast.data.pop                 # save last element of ast
+      ast = eval_ast(ast.data.drop(1), env) # eval ast the rest
+      ast = lastel                          # set ast to saved last element
+      # ... and loop to start of EVAL
+
+    when "if"
+      # Handle if statements
+      # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
+      retval, env = EVAL(ast.data[1], env)
+      if retval
+        type = retval.class.to_s
       else
-        res = evaller # Here we just return our input
+        type = nil
       end
-    rescue => e
-      raise e
-    end
-    # Oops. We /might/ need to convert back to a Mal data type.
-    case res.class.to_s
-    when "TrueClass"
-      return MalTrue.new(), env
-    when "FalseClass"
-      return MalFalse.new(), env
-    when "Integer"
-      return MalNumber.new(res), env
+      if(!type || type == "MalFalse" || type == "MalNil")
+      # Falsy. Return eval of third item if there is one
+        if(ast.data[3])
+          # Pre TCO - return EVAL(ast.data[3], env)
+          ast = ast.data[3]
+        else
+          return MalNil.new(), env
+        end
+      else
+        # Truthy. Return eval of second item (or raise error)
+        # Pre TCO - return EVAL(ast.data[2], env)
+        ast = ast.data[2]
+      end
+
+    when "fn*"
+      # Second element of the list is parameters. Third is function body.
+      # So create a closure which:
+      # 1 - creates a new env using our env as outer and binds /it's/
+      #     parameters to the ones given using binds/exprs.
+      # 2 - calls EVAL on the function body and returns it
+      # We create a MalFunction to store this closure, we add a call method
+      # to MalFunction, and here we return *that*.
+      # Then we add code below in the DEFAULT EVALLER, to call the function
+      # if it ever shows up in a list. I think. Or in eval_ast. I'm not sure.
+      closure = Proc.new { |*x|
+        cl_env = Env.new(env, ast.data[1].data, x)
+        retval, e = EVAL(ast.data[2], cl_env)
+        retval
+      }
+      myfn = MalFunction.new(closure)
+      return myfn, env
     else
-      return res, env
+      # DEFAULT EVALLER
+      evaller = eval_ast(ast, env)
+      f = evaller.data[0]
+      args = evaller.data.drop(1)
+      begin
+        #puts "args: #{args}"
+        # If it's a MalFunction, we splat the args in the closure
+        if(f.is_a?(MalFunction))
+          res = f.call(args)
+        elsif(f.is_a?(Proc))
+          # Here we must splat the args with * so our lambdas can see them
+          res = f.call(*args)
+        else
+          res = evaller # Here we just return our input
+        end
+      rescue => e
+        raise e
+      end
+      # Oops. We /might/ need to convert back to a Mal data type.
+      case res.class.to_s
+      when "TrueClass"
+        return MalTrue.new(), env
+      when "FalseClass"
+        return MalFalse.new(), env
+      when "Integer"
+        return MalNumber.new(res), env
+      else
+        return res, env
+      end
     end
   end
 end

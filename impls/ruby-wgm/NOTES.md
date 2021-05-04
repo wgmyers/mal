@@ -2,6 +2,19 @@
 
 ## Step 5 (2021-05-04)
 
+Ok, we've made EVAL always loop.
+
+Next, we modify the following:
+
+* let* - done.
+* do   - done. Worried about this one as we modified it before :(
+* if   - done
+* fn*
+* default 'apply'
+
+Run some tests from elsewhere to make sure things haven't broken. Test coverage
+on this one is less comprehensive than others.
+
 ## Step 4 (2021-05-03)
 
 This is easily the trickiest bit yet.
