@@ -3,6 +3,8 @@
 # step5_tco.rb
 # In which we implement tail call optimisation
 
+require "pp"
+
 require_relative 'core'
 require_relative 'env'
 require_relative 'errors'
@@ -10,6 +12,11 @@ require_relative 'printer'
 require_relative 'readline'
 require_relative 'reader'
 require_relative 'types'
+
+# Some debugging flags
+DEBUG = {
+  'show_env' => true
+}
 
 # READ
 # Invokes the reader on its input
@@ -269,6 +276,10 @@ def rep(input, repl_env)
     raise e
   end
   ast, repl_env = EVAL(ast, repl_env)
+  if DEBUG['show_env']
+    puts "Env:"
+    pp repl_env
+  end
   output = PRINT(ast)
   return output
 end
@@ -298,7 +309,8 @@ def main()
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
-    if line == nil
+    # Adding 'q' to quit because Ctrl-D at the wrong time is doing my head in
+    if line == nil || line == "q"
       break
     end
     begin
