@@ -42,6 +42,13 @@ So that's where we're at.
 Maybe I should take a short break and learn graphviz. This is getting hairy.
 See https://twitter.com/thingskatedid/status/1386077306381242371
 
+EVAL no longer returns env and all the Step 5 tests pass.
+
+But, just discovered the regression tests, and we are now failing some of
+the Step 4 tests.
+
+make REGRESS=1 "test^ruby-wgm^step5" is my new friend.
+
 ## Step 4 (2021-05-03)
 
 This is easily the trickiest bit yet.
