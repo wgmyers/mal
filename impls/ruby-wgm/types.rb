@@ -171,7 +171,6 @@ class MalString < MalType
   # _unescaped_quote_check
   # Run this after we have stripped our leading and trailing quotes.
   def _unescaped_quote_check(str)
-    p str
     if (/[^\\]\"/.match(str))
       raise MalMisMatchQuotesError
     end
