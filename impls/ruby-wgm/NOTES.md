@@ -56,6 +56,37 @@ It... seems to be coming from within load-file itself?
 If we enter nil at the prompt, we are supposed to return nil. Except when it's
 load-file. If I have understood correctly. That... can't be right?
 
+So.. we just print the output of command line loading with [0...-4] to suppress
+the "\nnil" that we added. That's... fine. We now pass all Step 4 test including
+regressions.
+
+I'm still not sure we are handling strings / eval right.
+
+The following returns the string rather than evalling:
+
+```
+user> (eval "(do (prn \"poop\"))\nnil")
+"(do (prn \"poop\"))\nnil"
+```
+
+The following is even more horrible:
+
+```
+user> (def! prog (str "(do (prn \"poop\")"))
+"(do (prn \"poop\")"
+user> prog
+"(do (prn \\\"poop\\\")"
+user> (eval prog)
+"(do (prn \\\\\\\"poop\\\\\\\")"
+user> prog
+"(do (prn \\\\\\\\\\\\\\\"poop\\\\\\\\\\\\\\\")"
+user> prog
+"(do (prn \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"poop\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\")"
+```
+
+I *must* still be doing something wrong. But I've not trusted my string handling
+from the very beginning, and meanwhile, Step 7 beckons.
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
