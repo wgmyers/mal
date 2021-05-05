@@ -322,6 +322,16 @@ def expand_metadata(tok_arr)
   return ret_arr
 end
 
+# drop_comments
+# Seems our tokenizer does our comment munging for us
+# So if we drop all tokens beginning with ';' we should be ok. Right? Hrm.
+def drop_comments(tok_arr)
+  ret_arr = []
+  tok_arr.each { |item| ret_arr.push(item) unless item[0] == ';' }
+  return ret_arr
+end
+
+
 # read_str
 # Take a string, and call tokenize on it
 # Then create a new Reader with those tokens
@@ -329,6 +339,7 @@ end
 # Presumably, we then return the output of that? Guide does not say.
 def read_str(str)
   tokens = tokenize(str)
+  tokens = drop_comments(tokens)
   tokens = expand_metadata(tokens)
   tokens = expand_macros(tokens)
   reader = Reader.new(tokens)

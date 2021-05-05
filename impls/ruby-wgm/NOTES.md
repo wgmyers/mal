@@ -25,6 +25,13 @@ or a built in, which have different calling semantics, but, anyway, fixed.
 
 Now passing all non-optional / deferrable tests. Time to implement that.
 
+First up - we have never been handling comments properly. Time to fix that.
+IIUC, a lisp comment is anything following a ';' to the end of that line.
+Comments may be prefixed with one or more semicolons according to convention,
+but we don't need to worry about that - as soon as we see a symbol beginning
+with ';' (so ";" is ok and not a comment) our reader needs to stop parsing
+everything until it sees \n. So back to reader.rb we go.
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
