@@ -339,7 +339,8 @@ def main()
       break
     end
     begin
-      puts rep(line, repl_env)
+      out = rep(line, repl_env)
+      puts out if out # Don't print spurious blank lines
     rescue => e
       puts "Error: " + e.message
       if DEBUG['backtrace']
