@@ -318,8 +318,9 @@ def init_env
     ARGV.drop(1).each { |arg| argv.push(MalString.new(arg.dup, false)) }
     repl_env.set("*ARGV*", argv)
     # Now call rep with load-file and ARGV[0], print the result and exit
+    # The [0...-4] bit is to suppress here and here only the trailing \nnil
     filename = ARGV[0]
-    puts rep("(load-file \"#{filename}\")", repl_env)
+    puts rep("(load-file \"#{filename}\")", repl_env)[0...-4]
     exit
   end
   return repl_env

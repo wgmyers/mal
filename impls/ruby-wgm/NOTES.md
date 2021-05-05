@@ -47,6 +47,15 @@ Right. Spurious string printing solved by removing debug code from MalString
 in types.rb that I had forgotten about. This is why you aren't supposed to
 do that kind of debugging. Bah.
 
+Also, the inputs from (Ruby) ARGV need to be unfrozen strings. Ok then.
+
+All that remains is to track down and remove the spurious trailing nil.
+
+It... seems to be coming from within load-file itself?
+
+If we enter nil at the prompt, we are supposed to return nil. Except when it's
+load-file. If I have understood correctly. That... can't be right?
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
