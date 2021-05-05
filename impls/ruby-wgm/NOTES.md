@@ -2,7 +2,14 @@
 
 ## Step 6 (2021-05-05)
 
+Initial implementation of load-file mostly works.
 
+We can successfully load a file and run it.
+
+However, we print a spurious nil afterwards, which needs fixing.
+
+Also, we get weird startup now, where parts of load-file are printed for no
+obvious reason.
 
 ## Step 5 (2021-05-04)
 
