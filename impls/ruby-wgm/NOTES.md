@@ -43,6 +43,10 @@ spurious output from parsing the definition of load-file and also stop load-file
 from outputting the filename given to it. Might be nice to lose the trailing
 'nil' as well. Meanwhile I'm not sure why any of that is happening.
 
+Right. Spurious string printing solved by removing debug code from MalString
+in types.rb that I had forgotten about. This is why you aren't supposed to
+do that kind of debugging. Bah.
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
@@ -236,6 +240,6 @@ to revisit that later on.
 * FIXED (Step 5) Entering nothing in the REPL yields an error. Fix this.
 * Implement float handling. Ints only for now.
 * Implement hashmaps properly (only strings or keywords as keys)
-* Implement comments properly
+* FIXED (Step 6) Implement comments properly
 * Check we are truly handling strings properly (seems doubtful)
 * Improve readline implementation.

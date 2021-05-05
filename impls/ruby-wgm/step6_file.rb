@@ -313,7 +313,9 @@ def init_env
   # If ARGV is non-empty we should treat the first item as a filename and load it
   if ARGV.length > 0
     # Populate *ARGV* 'properly'
-    ARGV.drop(1).each { |arg| argv.push(READ(arg)) }
+    # NB We need to use arg.dup as command line strings are frozen in Ruby
+    # but outputting them requires a call to unmunge, which blows up on frozen strings.
+    ARGV.drop(1).each { |arg| argv.push(MalString.new(arg.dup, false)) }
     repl_env.set("*ARGV*", argv)
     # Now call rep with load-file and ARGV[0], print the result and exit
     filename = ARGV[0]
