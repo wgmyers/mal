@@ -16,7 +16,7 @@ require_relative 'types'
 # Some debugging flags
 DEBUG = {
   'show_env'  => false,
-  'backtrace' => false
+  'backtrace' => true
 }
 
 # READ
@@ -304,6 +304,9 @@ def init_env
   MalCore::Mal.each do |key, val|
     rep(val, repl_env)
   end
+  # Guide says we must define eval here. Is so we can close over repl_env?
+  eval_proc = Proc.new { |ast| EVAL(ast, repl_env) }
+  repl_env.set("eval", eval_proc)
   return repl_env
 end
 
