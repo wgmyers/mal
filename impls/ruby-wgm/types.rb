@@ -49,14 +49,21 @@ class MalAtom < MalType
     @data = data
   end
 
-  # arr contains a MalFunction and zero or more arguments
+  # arr contains a Mal function and zero or more arguments
   # We take the first element of the array to get the function
   # We prepend self to the remaining array, possibly empty
   # Now we can call the function.
+  # We need to check if it's a MalFunction or a core lambda
+  # to get the calling semantics right.
+  # FIXME - Error checking here? What if we aren't given a function at all?
   def swap(arr)
     fn = arr.shift()
-    args = arr.unshift(self)
-    @data = fn.call(args)
+    args = arr.unshift(@data)
+    if (fn.is_a?(MalFunction))
+      @data = fn.call(args)
+    else
+      @data = fn.call(*args)
+    end
   end
 
 end

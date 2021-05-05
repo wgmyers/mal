@@ -20,6 +20,11 @@ create a string like "(atom " + data.print() + ")"
 Next problem: my implementation of swap takes one or more arguments, but we
 want zero or more arguments. Ok, let's fix that.
 
+Trickier than expected - swap needs to be able to take either a MalFunction
+or a built in, which have different calling semantics, but, anyway, fixed.
+
+Now passing all non-optional / deferrable tests. Time to implement that.
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
