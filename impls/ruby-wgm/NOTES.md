@@ -32,6 +32,12 @@ but we don't need to worry about that - as soon as we see a symbol beginning
 with ';' (so ";" is ok and not a comment) our reader needs to stop parsing
 everything until it sees \n. So back to reader.rb we go.
 
+Aaand... that was surprisingly straightforward, as the given regex is already
+munging everything after a ';' into a single token, so we just need to zip
+through the token list and throw away anything beginning with ';'.
+
+All that is left is to implement *ARGV* and taking files from the command line.
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
