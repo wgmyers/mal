@@ -49,10 +49,13 @@ class MalAtom < MalType
     @data = data
   end
 
-  # fn is a MalFunction (tee hee) and args are its args.
-  # We prepend self to args before calling fn, then set @data to result
-  def swap(fn, args)
-    args.unshift(self)
+  # arr contains a MalFunction and zero or more arguments
+  # We take the first element of the array to get the function
+  # We prepend self to the remaining array, possibly empty
+  # Now we can call the function.
+  def swap(arr)
+    fn = arr.shift()
+    args = arr.unshift(self)
     @data = fn.call(args)
   end
 

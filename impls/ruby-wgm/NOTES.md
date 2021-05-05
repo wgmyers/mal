@@ -15,7 +15,10 @@ Initial implementation of atoms. Mostly works, lots of bugs and failing tests.
 
 This test: (def! a (atom 2)) should return (atom 2). We don't have any other
 similiar tests. I'm guessing we should behave like MalList does and manually
-create a string like "(atom " + data.print() + ")" 
+create a string like "(atom " + data.print() + ")"
+
+Next problem: my implementation of swap takes one or more arguments, but we
+want zero or more arguments. Ok, let's fix that.
 
 ## Step 5 (2021-05-04)
 

@@ -56,7 +56,7 @@ module MalCore
     'atom?'       => lambda { |x| return x.is_a?(MalAtom) },
     'deref'       => lambda { |x| return x.deref() },
     'reset!'      => lambda { |x,y| return x.reset(y) },
-    'swap!'       => lambda { |x,y,z| return x.swap(y,z) }
+    'swap!'       => lambda { |x,*y| return x.swap(y) }
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
