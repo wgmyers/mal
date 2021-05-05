@@ -22,6 +22,43 @@ class MalType
 
 end
 
+class MalAtom < MalType
+
+  attr_reader :type, :data
+
+  # data must be a Mal object
+  def initialize(data)
+    @type = "MalAtom"
+    @data = data
+  end
+
+  # What should this do?
+  # For now, return Ruby's idea of what kind of Mal object we point to
+  def print(readably = true)
+    return "#{@data}"
+  end
+
+  # deref
+  # Allows us to implement deref so it only works on MalAtoms
+  # NB Don't give any other MalObject a deref method.
+  def deref()
+    return @data
+  end
+
+  # reset expects data to be a Mal object
+  def reset(data)
+    @data = data
+  end
+
+  # fn is a MalFunction (tee hee) and args are its args.
+  # We prepend self to args before calling fn, then set @data to result
+  def swap(fn, args)
+    args.unshift(self)
+    @data = fn.call(args)
+  end
+
+end
+
 # MalFunction
 # Tee hee
 class MalFunction < MalType

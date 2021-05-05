@@ -51,7 +51,12 @@ module MalCore
     '>'           => lambda { |x,y| x.data > y.data ? MalTrue.new() : MalFalse.new() },
     '>='          => lambda { |x,y| x.data >= y.data ? MalTrue.new() : MalFalse.new() },
     'read-string' => lambda { |x| return read_str(x.print(false)) },
-    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(false)), false) } # Error checking?
+    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(false)), false) }, # Error checking?
+    'atom'        => lambda { |x| return MalAtom.new(x) },
+    'atom?'       => lambda { |x| return x.is_a?(MalAtom) },
+    'deref'       => lambda { |x| return x.deref() },
+    'reset!'      => lambda { |x,y| return x.reset(y) },
+    'swap!'       => lambda { |x,y,z| return x.swap(y,z) }
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
