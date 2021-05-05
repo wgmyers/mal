@@ -1,5 +1,9 @@
 # Notes
 
+## Step 6 (2021-05-05)
+
+
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
