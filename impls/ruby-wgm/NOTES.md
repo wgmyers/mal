@@ -38,6 +38,11 @@ through the token list and throw away anything beginning with ';'.
 
 All that is left is to implement *ARGV* and taking files from the command line.
 
+This is trickier than it seems - in order to pass the tests we need to fix the
+spurious output from parsing the definition of load-file and also stop load-file
+from outputting the filename given to it. Might be nice to lose the trailing
+'nil' as well. Meanwhile I'm not sure why any of that is happening.
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
