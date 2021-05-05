@@ -32,10 +32,9 @@ class MalAtom < MalType
     @data = data
   end
 
-  # What should this do?
-  # For now, return Ruby's idea of what kind of Mal object we point to
+  # Produce output indicated by the test case
   def print(readably = true)
-    return "#{@data}"
+    return "(atom #{@data.print()})"
   end
 
   # deref

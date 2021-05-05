@@ -11,6 +11,12 @@ However, we print a spurious nil afterwards, which needs fixing.
 Also, we get weird startup now, where parts of load-file are printed for no
 obvious reason.
 
+Initial implementation of atoms. Mostly works, lots of bugs and failing tests.
+
+This test: (def! a (atom 2)) should return (atom 2). We don't have any other
+similiar tests. I'm guessing we should behave like MalList does and manually
+create a string like "(atom " + data.print() + ")" 
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
