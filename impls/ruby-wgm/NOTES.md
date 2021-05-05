@@ -87,6 +87,17 @@ user> prog
 I *must* still be doing something wrong. But I've not trusted my string handling
 from the very beginning, and meanwhile, Step 7 beckons.
 
+Hang on though. This fails. We aren't done yet.
+
+```
+(def! mal-prog (list + 1 2))
+(eval mal-prog)
+```
+
+Actually, `(list + 1 2)` fails, because it tries to print + which is somehow now
+a Proc and not a MalSymbol or MalString. Er, eh? Do we need to wrap our core
+functions in another MalType? That might fix it.
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.
