@@ -312,12 +312,13 @@ def init_env
   repl_env.set("*ARGV*", argv)
   # If ARGV is non-empty we should treat the first item as a filename and load it
   if ARGV.length > 0
-    # Populate *ARGV* properly
-    ARGV.drop(1).each { |arg| argv.push(arg)}
+    # Populate *ARGV* 'properly'
+    ARGV.drop(1).each { |arg| argv.push(READ(arg)) }
     repl_env.set("*ARGV*", argv)
-    # Now call rep with load-file and ARGV[0]
-    filename = ARGV.unshift()
-    rep("(load-file #{filename})", repl_env)
+    # Now call rep with load-file and ARGV[0], print the result and exit
+    filename = ARGV[0]
+    puts rep("(load-file \"#{filename}\")", repl_env)
+    exit
   end
   return repl_env
 end
