@@ -112,7 +112,8 @@ MalSymbol.
 
 Time for a brutal hack in the default evaller, just for 'list', where if the
 first item in a list is 'list' we pass the second item through unchanged if
-it happens to be a MalSymbol (otherwise we eval_ast it).
+it happens to be a MalSymbol (otherwise we eval_ast it along with the rest, as
+normal).
 
 I am not at all sure about this, obviously.
 
@@ -125,9 +126,10 @@ print it. Lets see if anything else triggers this kind of behaviour. Maybe it
 won't? On the other hand... wait, we are about to implement quote, which is a
 mechanism for deliberately marking symbols as 'do not eval me'. Is there
 perhaps just a missing quote in (list + 1 2) - perhaps this is not actually
-valid Lisp and should be (list '+ 1 2)? But I am just learning Lisp via going
-through, and Joel Martin has implemented Lisp twenty five times over. Seems
-unlikely then.
+valid Lisp and should be (list '+ 1 2)?
+
+But I am just learning Lisp via going through the Mal tutorial, and Joel Martin
+has implemented Lisp twenty five times over. Seems unlikely then.
 
 ## Step 5 (2021-05-04)
 
