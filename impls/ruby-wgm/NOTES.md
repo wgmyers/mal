@@ -114,7 +114,20 @@ Time for a brutal hack in the default evaller, just for 'list', where if the
 first item in a list is 'list' we pass the second item through unchanged if
 it happens to be a MalSymbol (otherwise we eval_ast it).
 
-I am not sure about this, obviously.
+I am not at all sure about this, obviously.
+
+I've done it though.
+
+I think the root cause maybe that I have an over-simple implementation of my
+Env object: a more elegant solution might be to be able to look up the associated
+symbol for a given proc and then return that if we are unexpectedly asked to
+print it. Lets see if anything else triggers this kind of behaviour. Maybe it
+won't? On the other hand... wait, we are about to implement quote, which is a
+mechanism for deliberately marking symbols as 'do not eval me'. Is there
+perhaps just a missing quote in (list + 1 2) - perhaps this is not actually
+valid Lisp and should be (list '+ 1 2)? But I am just learning Lisp via going
+through, and Joel Martin has implemented Lisp twenty five times over. Seems
+unlikely then.
 
 ## Step 5 (2021-05-04)
 
