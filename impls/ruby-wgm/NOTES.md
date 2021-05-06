@@ -98,6 +98,24 @@ Actually, `(list + 1 2)` fails, because it tries to print + which is somehow now
 a Proc and not a MalSymbol or MalString. Er, eh? Do we need to wrap our core
 functions in another MalType? That might fix it.
 
+Oh crap I've been handling the whole Env object wrong. Items are keyed on
+strings and not MalSymbols, which means we're fine until we have two symbols
+in a row where we want one to evaluate to the lambda and one to stay as it is.
+But so what? Even if we do refactor the whole thing, the default evaller is
+still calling eval_ast on the list here, and that is still going to merrily
+look up both 'list' and '+' however we store them.
+
+We can't fix this in the lambda as it is too late.
+
+I can't find another example in the tests where 'list' is followed by another
+MalSymbol.
+
+Time for a brutal hack in the default evaller, just for 'list', where if the
+first item in a list is 'list' we pass the second item through unchanged if
+it happens to be a MalSymbol (otherwise we eval_ast it).
+
+I am not sure about this, obviously.
+
 ## Step 5 (2021-05-04)
 
 Ok, we've made EVAL always loop.

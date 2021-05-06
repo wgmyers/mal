@@ -16,7 +16,7 @@ require_relative 'types'
 # Some debugging flags
 DEBUG = {
   'show_env'  => false,
-  'backtrace' => true
+  'backtrace' => false
 }
 
 # READ
@@ -228,9 +228,20 @@ def EVAL(ast, env)
       return myfn
     else
       # DEFAULT EVALLER
-      evaller = eval_ast(ast, env)
-      f = evaller.data[0]
-      args = evaller.data.drop(1)
+      # Brutal hack to allow (list + 1 2) etc
+      # FIXME This really really can't be right.
+      if (ast.data[0].is_a?(MalSymbol) &&
+          (ast.data[0].data == 'list') &&
+          (ast.data[1].is_a?(MalSymbol)))
+        f = eval_ast(ast.data.shift, env)
+        squirrel = ast.data.shift
+        args = eval_ast(ast, env)
+        args = args.data.unshift(squirrel)
+      else
+        evaller = eval_ast(ast, env)
+        f = evaller.data[0]
+        args = evaller.data.drop(1)
+      end
       begin
         # If it's a MalFunction, we can do TCO
         if(f.is_a?(MalFunction))
@@ -244,6 +255,7 @@ def EVAL(ast, env)
         elsif(f.is_a?(Proc))
           # No TCO here - we can return a result
           # Here we must splat the args with * so our lambdas can see them
+          #p args
           res = f.call(*args)
         else
           res = evaller # Here we just return our input
@@ -279,6 +291,7 @@ end
 def rep(input, repl_env)
   begin
     ast = READ(input)
+    #p ast
   rescue => e
     raise e
   end
