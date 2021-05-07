@@ -124,12 +124,15 @@ Env object: a more elegant solution might be to be able to look up the associate
 symbol for a given proc and then return that if we are unexpectedly asked to
 print it. Lets see if anything else triggers this kind of behaviour. Maybe it
 won't? On the other hand... wait, we are about to implement quote, which is a
-mechanism for deliberately marking symbols as 'do not eval me'. Is there
-perhaps just a missing quote in (list + 1 2) - perhaps this is not actually
-valid Lisp and should be (list '+ 1 2)?
+mechanism for deliberately marking symbols as 'do not eval me'.
 
-But I am just learning Lisp via going through the Mal tutorial, and Joel Martin
-has implemented Lisp twenty five times over. Seems unlikely then.
+A more elegant, or at least less unelegant solution would be to allow builtins
+to get replaced by Proc in the EVAL process and just deal with them. But a quick
+crack at doing this reveals that the problem involves more than just fixing the
+print method of MalList - the EVAL loop itself assumes the first item in the
+loop will have a @data attribute. So will leave this here for now and move on.
+
+I bet future steps force us to revisit this anyway.
 
 ## Step 5 (2021-05-04)
 

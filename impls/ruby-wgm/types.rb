@@ -261,6 +261,7 @@ class MalList < MalType
     strings = []
     for item in data
       strings.push(item.print(readably))
+      #strings.push(item.is_a?(Proc) ? print_proc() : item.print(readably))
     end
     return "(" + strings.join(" ") + ")"
   end
@@ -268,6 +269,12 @@ class MalList < MalType
   def length()
     return @data.length
   end
+
+  # FIXME - We may need to reinstate this if we go for allowing
+  # Procs to filter through  as far as print() above.
+  #def print_proc()
+  #  return "<#builtin>"
+  #end
 
 end
 
