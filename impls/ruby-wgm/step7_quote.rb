@@ -226,6 +226,10 @@ def EVAL(ast, env)
       #      function design:  MalFunction.new(ast, params, env, closure)
       myfn = MalFunction.new(ast.data[2], ast.data[1], env, closure)
       return myfn
+
+    when "quote"
+      return ast.data[1]
+
     else
       # DEFAULT EVALLER
       # Brutal hack to allow (list + 1 2) etc
