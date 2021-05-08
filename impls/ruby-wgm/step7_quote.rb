@@ -15,7 +15,7 @@ require_relative 'types'
 
 # Some debugging flags
 DEBUG = {
-  'show_ast'  => true,
+  'show_ast'  => false,
   'show_env'  => false,
   'backtrace' => false
 }

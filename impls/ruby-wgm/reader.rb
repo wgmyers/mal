@@ -221,12 +221,12 @@ def expand_macros(tok_arr)
     else
       if in_macro > 0
         case item
-        when "("
+        when "(", "["
           ret_arr.push(item)
           in_brackets = in_brackets + 1
         else
           if in_brackets > 0
-            if item == ")"
+            if (item == ")") || (item == "]")
               ret_arr.push(item)
               ret_arr.push(")")
               in_brackets = in_brackets - 1
