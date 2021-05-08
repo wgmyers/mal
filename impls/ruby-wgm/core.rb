@@ -79,10 +79,10 @@ module MalCore
                                   return y
                             }, # FIXME Error checking? What if not list or vector?
     'nth'         => lambda { |x,y|
-                                    if y >= x.data.length
+                                    if y.data >= x.data.length
                                       raise MalIndexOutOfRangeError
                                     end
-                                    return x.data[y]
+                                    return x.data[y.data]
                             }, # FIXME Error checking? What if not list or vector?
   }
   Mal = {
