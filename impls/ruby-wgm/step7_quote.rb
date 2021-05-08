@@ -59,7 +59,7 @@ def quasiquote(ast)
       }
     end
     retval = result
-  when "MalHashMap" || "MalSymbol"
+  when "MalHashMap", "MalSymbol"
     retval = MalList.new()
     retval.push(MalSymbol.new("quote"))
     retval.push(ast)
