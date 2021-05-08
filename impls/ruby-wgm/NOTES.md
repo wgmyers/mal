@@ -1,5 +1,9 @@
 # Notes
 
+## Step 8 (2021-05-08)
+
+Macros.
+
 ## Step 7 (2021-05-08)
 
 Quote and quasiquote time.
