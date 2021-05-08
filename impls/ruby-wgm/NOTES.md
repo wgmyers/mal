@@ -18,6 +18,14 @@ Bit spooked, tbh.
 Ok, then, time to implement nth, first and rest, and to add cond to the list
 of Mal-implemented functions.
 
+All done. Still two failing tests: first and rest aren't dealing with nil
+properly.
+
+And now they are, after some confusion where I forget that the nil they were
+getting was not actually Ruby nil but MalNil.
+
+So. All Step 8 tests now pass. Eep.
+
 ## Step 7 (2021-05-08)
 
 Quote and quasiquote time.
