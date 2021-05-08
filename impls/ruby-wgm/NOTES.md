@@ -8,6 +8,16 @@ MalFunction (tee hee) now has an is_macro attribute, and we also have a
 defmacro! special form that checks if it is creating a function, and if so,
 sets it to true.
 
+is_macro_call and macroexpand now implemented, and wired into EVAL with a
+call to macroexpand before the apply section and a 'macroexpand' special form.
+
+Blow me. That worked first time. All remaining failing tests are deferrables.
+
+Bit spooked, tbh.
+
+Ok, then, time to implement nth, first and rest, and to add cond to the list
+of Mal-implemented functions.
+
 ## Step 7 (2021-05-08)
 
 Quote and quasiquote time.
