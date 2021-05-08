@@ -197,6 +197,7 @@ def expand_macros(tok_arr)
   ret_arr = []
   in_macro = 0
   in_brackets = 0
+  
   for item in tok_arr
     case item
     # Handle splice-unquote
@@ -233,26 +234,30 @@ def expand_macros(tok_arr)
               in_macro = in_macro - 1
             else
               ret_arr.push(item)
-              # Handle nested macros here. If macro depth is greater than
+              # Handle nested macros+brackets here. If macro depth is greater than
               # bracket depth, we have an unbracketed macro inside a bracketed
               # one, and we need to end it and decrease macro count. Nested
               # bracketed macros should Just Work.
-              if(in_brackets < in_macro)
+              # Nested unbracketed macros not so much :(
+              if in_brackets < in_macro
                 ret_arr.push(")")
                 in_macro = in_macro - 1
               end
             end
           else
             ret_arr.push(item)
-            ret_arr.push(")")
-            in_macro = in_macro - 1
-          end
+            # We're not in brackets. End all open macros now.
+            while in_macro > 0
+              ret_arr.push(")")
+              in_macro = in_macro - 1
+            end
+          end # if in_brackets > 0
         end
       else
         ret_arr.push(item)
-      end
-    end
-  end
+      end # if in_macro
+    end   # case item
+  end     # item in tok_arr
   return ret_arr
 end
 
