@@ -31,6 +31,36 @@ def READ(input)
   end
 end
 
+# macroexpand
+# Expand macros until we are no longer in a macro
+# Calling is_macro_call ensures we are always operating on a list where
+# the first element is the symbol of an is_macro function.
+def macroexpand(ast, env)
+  while is_macro_call(ast, env)
+    funcsym = ast.data.shift
+    func = env.get(funcsym.data)
+    ast = func.call(ast.data)
+  end
+  return ast
+end
+
+# is_macro_call
+# Take ast and env
+# Return true if ast is list with symbol as first element referring to a
+# function in env which has is_macro set to true
+def is_macro_call(ast, env)
+  if ast.is_a?(MalList) && (ast.data.length > 0)
+    if ast.data[0].is_a?(MalSymbol)
+      key = ast.data[0].data
+      menv = env.find(key)
+      if menv && menv.data[key].is_a?(MalFunction)
+        return menv.data[key].is_macro
+      end
+    end
+  end
+  return false
+end
+
 # quasiquote
 # A function to implement the quasiquote special form
 def quasiquote(ast)
