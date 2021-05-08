@@ -43,7 +43,7 @@ def quasiquote(ast)
       result = MalList.new()
       ast.data.reverse.each { |elt|
         if elt.is_a?(MalList) && (elt.data.length > 1) &&
-           elt.data[0].is_a?(MalSymbol) && (elt.data[0] == "splice-unquote")
+           elt.data[0].is_a?(MalSymbol) && (elt.data[0].data == "splice-unquote")
           # Handle splice-unquote
           spliceresult = MalList.new()
           spliceresult.push(MalSymbol.new("concat"))
