@@ -77,7 +77,13 @@ module MalCore
                                   y = MalVector.new()
                                   x.data.each { |i| y.push(i) }
                                   return y
-                            } # FIXME Error checking? What if not list or vector?
+                            }, # FIXME Error checking? What if not list or vector?
+    'nth'         => lambda { |x,y|
+                                    if y >= x.data.length
+                                      raise MalIndexOutOfRangeError
+                                    end
+                                    return x.data[y]
+                            }, # FIXME Error checking? What if not list or vector?
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
