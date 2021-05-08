@@ -62,7 +62,14 @@ module MalCore
                                   z.push(x)
                                   y.data.each { |i| z.push(i) }
                                   return z
-                            } # FIXME Error checking?
+                            }, # FIXME Error checking?
+    'concat'      => lambda { |*x|
+                                  y = MalList.new()
+                                  x.each { |l|
+                                    l.data.each { |i| y.push(i) }
+                                  }
+                                  return y
+                            } # FIXME Error checking? What if not list?
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
