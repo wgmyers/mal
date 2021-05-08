@@ -73,6 +73,7 @@ end
 class MalFunction < MalType
 
   attr_reader :ast, :params, :env, :closure, :data
+  attr_accessor :is_macro
 
   # Here we expect data to be a Proc
   # FIXME We should complain if it isn't
@@ -82,6 +83,7 @@ class MalFunction < MalType
     @params = params
     @env = env
     @closure = closure
+    @is_macro = false
     @data = self # Will this work or blow up?
   end
 

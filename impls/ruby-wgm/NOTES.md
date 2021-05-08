@@ -4,6 +4,10 @@
 
 Macros.
 
+MalFunction (tee hee) now has an is_macro attribute, and we also have a
+defmacro! special form that checks if it is creating a function, and if so,
+sets it to true.
+
 ## Step 7 (2021-05-08)
 
 Quote and quasiquote time.

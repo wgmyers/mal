@@ -16,7 +16,7 @@ require_relative 'types'
 # Some debugging flags
 DEBUG = {
   'show_ast'  => false,
-  'show_env'  => false,
+  'show_env'  => true,
   'backtrace' => true
 }
 
@@ -168,12 +168,18 @@ def EVAL(ast, env)
     # FIXME This wants its own function now (or soon) surely
     case ast.data[0].data
 
-    when "def!"
+    when "def!", "defmacro!"
       # Do the def! stuff
-      # QUERY - how does this fail? Should we raise our own BadDefError?
-      # NB - No TCO here. We return.
+      # If defmacro! do that too
+      # Only difference is we set is_macro in the MalFunction (tee hee)
+
+      # Set is_defmacro if we are behaving as defmacro!
+      is_defmacro = ast.data[0].data == "defmacro!" ? true : false
       begin
         item = EVAL(ast.data[2], env)
+        if is_defmacro && item.is_a?(MalFunction)
+          item.is_macro = true
+        end
         env = env.set(ast.data[1], item)
         return item
       rescue => e
