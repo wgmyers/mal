@@ -69,7 +69,15 @@ module MalCore
                                     l.data.each { |i| y.push(i) }
                                   }
                                   return y
-                            } # FIXME Error checking? What if not list?
+                            }, # FIXME Error checking? What if not list?
+    'vec'         => lambda { |x|
+                                  if x.is_a?(MalVector)
+                                    return x
+                                  end
+                                  y = MalVector.new()
+                                  x.data.each { |i| y.push(i) }
+                                  return y
+                            } # FIXME Error checking? What if not list or vector?
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
