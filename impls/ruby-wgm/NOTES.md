@@ -1,5 +1,9 @@
 # Notes
 
+## Step 7 (2021-05-08)
+
+Quote and quasiquote time.
+
 ## Step 6 (2021-05-05)
 
 Initial implementation of load-file mostly works.
@@ -133,6 +137,8 @@ print method of MalList - the EVAL loop itself assumes the first item in the
 loop will have a @data attribute. So will leave this here for now and move on.
 
 I bet future steps force us to revisit this anyway.
+
+Anyway, on to Step 7.
 
 ## Step 5 (2021-05-04)
 
