@@ -269,6 +269,13 @@ def EVAL(ast, env)
     when "quote"
       return ast.data[1]
 
+    when "quasiquoteexpand"
+      return quasiquote(ast.data[1])
+
+    when "quasiquote"
+      ast = quasiquote(ast.data[1])
+      next  # TCO fallthrough
+
     else
       # DEFAULT EVALLER
       # Brutal hack to allow (list + 1 2) etc
