@@ -4,6 +4,25 @@
 
 Quote and quasiquote time.
 
+This was mostly straightforward, though actually implementing the quote and
+quasiquote stuff revealed numerous bugs in reader.rb, as the token expansion
+code in expand_macros was not actually working properly after all and did not
+handle nested macros in more than one set of brackets.
+
+I'm pretty sure there'll be similar nesting problems in the with-meta macro
+implementation, but we'll deal with those in Step A, should we get there.
+
+The other issue I encountered was handling vectors in the quasiquote function.
+
+It was all fine until I needed to implement selective non-handling of 'unquote',
+which meant the recursive implementation would fail. I tried removing and then
+replacing the 'unquote' symbol, but this led to lists being stripped of their
+listness. Instead, I found another highly inelegant solution: when quasiquote
+encounters 'unquote' as the first element of a vector, it changes it to
+'hidden-unquote' before recursing, and then changes it back so it behaves.
+
+Never mind. Step 8 time!
+
 ## Step 6 (2021-05-05)
 
 Initial implementation of load-file mostly works.
