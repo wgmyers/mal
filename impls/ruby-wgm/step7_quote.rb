@@ -63,6 +63,16 @@ def quasiquote(ast)
     retval = MalList.new()
     retval.push(MalSymbol.new("quote"))
     retval.push(ast)
+  when "MalVector"
+    retval = MalList.new()
+    retval.push(MalSymbol.new("vec"))
+    # Now add "the result of processing ast as if it were a list not starting with unquote"
+    # QUERY - What if it *does* start with unquote? Do we drop it or pass through unchanged?
+    # FIXME Not sure how to handle this: for now if it does start with unquote, we'll misbehave.
+    tmplist = MalList.new()
+    ast.data.each { |item| tmplist.push(item) }
+    tmplist = quasiquote(tmplist)
+    retval.push(tmplist)
   else
     retval = ast
   end
@@ -305,7 +315,6 @@ def EVAL(ast, env)
         elsif(f.is_a?(Proc))
           # No TCO here - we can return a result
           # Here we must splat the args with * so our lambdas can see them
-          #p args
           res = f.call(*args)
         else
           res = evaller # Here we just return our input
