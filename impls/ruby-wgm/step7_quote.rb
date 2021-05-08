@@ -30,6 +30,45 @@ def READ(input)
   end
 end
 
+# quasiquote
+# A function to implement the quasiquote special form
+def quasiquote(ast)
+  type = ast.class.to_s
+  case type
+  when "MalList"
+    # If first element of list is 'unquote' symbol, return second element
+    if (ast.data.length > 1) && ast.data[0].is_a?(MalSymbol) && (ast.data[0].data == "unquote")
+      retval = ast.data[1]
+    else
+      result = MalList.new()
+      ast.data.reverse.each { |elt|
+        if elt.is_a?(MalList) && (elt.data.length > 1) &&
+           elt.data[0].is_a?(MalSymbol) && (elt.data[0] == "splice-unquote")
+          # Handle splice-unquote
+          spliceresult = MalList.new()
+          spliceresult.push(MalSymbol.new("concat"))
+          spliceresult.push(elt.data[1])
+          spliceresult.push(result)
+        else
+          spliceresult = MalList.new()
+          spliceresult.push(MalSymbol.new("cons"))
+          spliceresult.push(quasiquote(elt))
+          spliceresult.push(result)
+        end
+        result = spliceresult
+      }
+    end
+    retval = result
+  when "MalHashMap" || "MalSymbol"
+    retval = MalList.new()
+    retval.push(MalSymbol.new("quote"))
+    retval.push(ast)
+  else
+    retval = ast
+  end
+  return retval
+end
+
 # eval_ast
 # Take a Mal data structure and environment
 # If it's a MalSymbol, return the corresponding value fromm the environment
