@@ -15,6 +15,7 @@ require_relative 'types'
 
 # Some debugging flags
 DEBUG = {
+  'show_ast'  => true,
   'show_env'  => false,
   'backtrace' => false
 }
@@ -353,6 +354,10 @@ def rep(input, repl_env)
     #p ast
   rescue => e
     raise e
+  end
+  if DEBUG['show_ast']
+    puts "ast (pre EVAL):"
+    pp ast
   end
   ast = EVAL(ast, repl_env)
   if DEBUG['show_env']
