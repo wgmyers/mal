@@ -197,14 +197,18 @@ def expand_macros(tok_arr)
   ret_arr = []
   in_macro = 0
   in_brackets = 0
-  
+  last_was_macro = false
+
   for item in tok_arr
+    #puts "expand_macros:"
+    #puts "Got item: #{item}, in_macro: #{in_macro}, in_brackets: #{in_brackets}"
     case item
     # Handle splice-unquote
     when "~@"
       ret_arr.push("(")
       ret_arr.push("splice-unquote")
       in_macro = in_macro + 1
+      last_was_macro = true
     # Handle quote, quasiquote, unquote and deref
     when /^[\'|`|~|@]$/
       ret_arr.push("(")
@@ -219,9 +223,11 @@ def expand_macros(tok_arr)
         ret_arr.push("deref")
       end
       in_macro = in_macro + 1
+      last_was_macro = true
     else
       if in_macro > 0
         case item
+        # When we're in a macro, we need to start counting brackets
         when "(", "["
           ret_arr.push(item)
           in_brackets = in_brackets + 1
@@ -234,12 +240,15 @@ def expand_macros(tok_arr)
               in_macro = in_macro - 1
             else
               ret_arr.push(item)
-              # Handle nested macros+brackets here. If macro depth is greater than
-              # bracket depth, we have an unbracketed macro inside a bracketed
-              # one, and we need to end it and decrease macro count. Nested
-              # bracketed macros should Just Work.
+              # Handle nested macros+brackets here.
+              # If macro depth is greater than bracket depth, we have an
+              # unbracketed macro inside a bracketed one, and we need to end it
+              # and decrease macro count.
+              # Nested bracketed macros should Just Work.
               # Nested unbracketed macros not so much :(
-              if in_brackets < in_macro
+              # But if last_was_macro is true, we're the first item after the
+              # last macro, so we should also end it
+              if (in_brackets < in_macro) || last_was_macro
                 ret_arr.push(")")
                 in_macro = in_macro - 1
               end
@@ -256,6 +265,7 @@ def expand_macros(tok_arr)
       else
         ret_arr.push(item)
       end # if in_macro
+      last_was_macro = false
     end   # case item
   end     # item in tok_arr
   return ret_arr
@@ -349,7 +359,11 @@ def read_str(str)
   tokens = expand_macros(tokens)
   reader = Reader.new(tokens)
   matcher = Matcher.new()
+  #puts "read_str tokens:"
+  #pp tokens
   retval = read_form(reader, matcher)
+  #puts "read_str retval:"
+  #pp retval
   # Check our parentheses have matched and our hashmaps are ok
   begin
     if matcher.goodhash
