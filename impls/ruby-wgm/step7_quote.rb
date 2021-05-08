@@ -57,8 +57,8 @@ def quasiquote(ast)
         end
         result = spliceresult
       }
+      retval = result
     end
-    retval = result
   when "MalHashMap", "MalSymbol"
     retval = MalList.new()
     retval.push(MalSymbol.new("quote"))
