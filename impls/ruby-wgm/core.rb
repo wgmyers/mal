@@ -85,7 +85,7 @@ module MalCore
                                     return x.data[y.data]
                             }, # FIXME Error checking? What if not list or vector?
     'first'       => lambda { |x| (!x.is_a?(MalNil) && (x.data.length > 0)) ? x.data[0] : MalNil.new() },
-    'rest'        => lambda { |x| puts "Rest lambda got #{x}"
+    'rest'        => lambda { |x| 
                                   y = MalList.new()
                                   return y unless !x.is_a?(MalNil) # back out now if x is nil
                                   x.data.shift()
