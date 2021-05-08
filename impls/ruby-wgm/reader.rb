@@ -191,7 +191,7 @@ end
 # @  = deref
 # Expand them.
 # NB: Macros can nest: in_macro and in_brackets count how deep we are in.
-# FIXME Implement ^ => with-meta macro
+# last_was_macro tracks if the last token we saw was a macro
 # FIXME This code should be less ugly than it is. It is *fugly*.
 def expand_macros(tok_arr)
   ret_arr = []
@@ -200,8 +200,6 @@ def expand_macros(tok_arr)
   last_was_macro = false
 
   for item in tok_arr
-    #puts "expand_macros:"
-    #puts "Got item: #{item}, in_macro: #{in_macro}, in_brackets: #{in_brackets}"
     case item
     # Handle splice-unquote
     when "~@"
@@ -241,12 +239,11 @@ def expand_macros(tok_arr)
             else
               ret_arr.push(item)
               # Handle nested macros+brackets here.
-              # If macro depth is greater than bracket depth, we have an
+              # * If macro depth is greater than bracket depth, we have an
               # unbracketed macro inside a bracketed one, and we need to end it
               # and decrease macro count.
               # Nested bracketed macros should Just Work.
-              # Nested unbracketed macros not so much :(
-              # But if last_was_macro is true, we're the first item after the
+              # * But if last_was_macro is true, we're the first item after the
               # last macro, so we should also end it
               if (in_brackets < in_macro) || last_was_macro
                 ret_arr.push(")")
@@ -359,11 +356,7 @@ def read_str(str)
   tokens = expand_macros(tokens)
   reader = Reader.new(tokens)
   matcher = Matcher.new()
-  #puts "read_str tokens:"
-  #pp tokens
   retval = read_form(reader, matcher)
-  #puts "read_str retval:"
-  #pp retval
   # Check our parentheses have matched and our hashmaps are ok
   begin
     if matcher.goodhash
