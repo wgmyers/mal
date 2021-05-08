@@ -381,3 +381,12 @@ to revisit that later on.
 * FIXED (Step 6) Implement comments properly
 * Check we are truly handling strings properly (seems doubtful)
 * Improve readline implementation.
+
+## SNIPPETS
+
+* Reverse a list:
+
+(def! rev (fn* (xs) (if (= (count xs) 1) xs (concat (rev (rest xs)) (list (first xs))))))
+
+Can't seem to make that work with defmacro! though. I don't know if it's bugs
+in my implementation or my near-complete ignorance of how Lisp works.
