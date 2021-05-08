@@ -193,6 +193,13 @@ def EVAL(ast, env)
     if ast.data.length == 0
       return ast
     end
+
+    # Macro expansion
+    ast = macroexpand(ast, env)
+    if !ast.is_a?(MalList)
+      next # Shorter than 'return eval_ast(ast, env)' modulo this comment.
+    end
+
     # APPLY section
     # Switch on the first item of the list
     # FIXME This wants its own function now (or soon) surely
@@ -329,6 +336,10 @@ def EVAL(ast, env)
     when "quasiquote"
       ast = quasiquote(ast.data[1])
       next  # TCO fallthrough
+
+    when "macroexpand"
+      # I have no idea how this is supposed to work.
+      return macroexpand(ast.data[1], env)
 
     else
       # DEFAULT EVALLER
