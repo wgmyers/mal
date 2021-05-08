@@ -17,7 +17,7 @@ require_relative 'types'
 DEBUG = {
   'show_ast'  => false,
   'show_env'  => false,
-  'backtrace' => false
+  'backtrace' => true
 }
 
 # READ
@@ -68,11 +68,18 @@ def quasiquote(ast)
     retval = MalList.new()
     retval.push(MalSymbol.new("vec"))
     # Now add "the result of processing ast as if it were a list not starting with unquote"
-    # QUERY - What if it *does* start with unquote? Do we drop it or pass through unchanged?
-    # FIXME Not sure how to handle this: for now if it does start with unquote, we'll misbehave.
     tmplist = MalList.new()
     ast.data.each { |item| tmplist.push(item) }
-    tmplist = quasiquote(tmplist)
+    # If list *does* begin with unquote, squirrel it away and add it back after processing
+    if (tmplist.data.length > 0) &&
+       tmplist.data[0].is_a?(MalSymbol) &&
+       (tmplist.data[0].data == "unquote")
+      tmplist.data[0] = MalSymbol.new("hidden-unquote") # hide the 'unquote'
+      tmplist = quasiquote(tmplist)
+      tmplist.data[1].data[1] = MalSymbol.new("unquote") # put it back (it's now wrapped in cons and quote)
+    else
+      tmplist = quasiquote(tmplist)
+    end
     retval.push(tmplist)
   else
     retval = ast
