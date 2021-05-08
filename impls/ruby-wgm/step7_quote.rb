@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-# step6_file.rb
-# In which we implement loading of files, eval, and atoms
+# step7_quote.rb
+# In which we implement quote, quasiquote and friends
 
 require "pp"
 
