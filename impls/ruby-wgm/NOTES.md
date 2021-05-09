@@ -53,6 +53,28 @@ All deferrable functionality now more or less implemented modulo debugging,
 apart from 'dissoc' where I think I need to look at the tests to figure out
 exactly what kind of a list it is expecting.
 
+I am getting myself into a right muddle with the hash-maps. I need to decide
+whether or not we will store the keys internally as bare Ruby strings or not.
+If so, we'll need to go ahead and use the Unicode thing to distinguish between
+MalKeywords and MalStrings on the way in. The alternative is to enforce that
+everything is always a MalKeyword or MalString, and add some magic in 'get' and
+'set' such that different keywords/strings with the same data match up. But
+that will make lookup slow, so, no. Unicode it is.
+
+Currently we just have an almighty mess.
+
+Much cleanup later, we still have a bit of a mess, but it's looking better.
+
+MalHashMap is now doing the unicode thing internally, and is wrapping calls to
+things like keys() in such a way as to convert everything back to either
+MalString or MalSymbol before returning it.
+
+It's an annoying process, because fixing certain things is breaking others,
+but that's what I get for giving into hackish tendencies and not Doing Things
+Properly. We are implementing a language here, we must Be Proper. Mostly.
+
+I think we're getting there.
+
 ## Step 8 (2021-05-08)
 
 Macros.
