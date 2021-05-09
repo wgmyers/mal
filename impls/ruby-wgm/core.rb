@@ -110,7 +110,7 @@ module MalCore
                             },
     'apply'       => lambda { |f, *ins|
                                   if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
-                                     !ins[-1].is_a?(MalList)
+                                     !(ins[-1].is_a?(MalList) || ins[-1].is_a?(MalVector))
                                     raise MalBadApplyError
                                   end
                                   argsl = ins.pop()
@@ -122,7 +122,7 @@ module MalCore
                             },
     'map'         => lambda { |f, ins|
                                   if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
-                                     !ins.is_a?(MalList)
+                                     !(ins.is_a?(MalList) || ins.is_a?(MalVector))
                                     raise MalBadMapError
                                   end
                                   y = MalList.new()
