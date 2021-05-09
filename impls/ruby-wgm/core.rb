@@ -104,15 +104,13 @@ module MalCore
                                   end
                                   return f.call(argsl.data)
                             },
-    'map'         => lambda { |*x|
-                                  if (x.length != 2) ||
-                                     !(x[0].is_a?(MalFunction) || x[0].is_a?(Proc)) ||
-                                     !x[1].is_a?(MalList)
-                                    raise MalBadApplyError
+    'map'         => lambda { |f, ins|
+                                  if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
+                                     !ins.is_a?(MalList)
+                                    raise MalBadMapError
                                   end
-                                  f = x[0]
                                   y = MalList.new()
-                                  x[1].data.each { |i| y.push(f.call(i)) }
+                                  ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
                                   return y
                             },
     'nil?'        => lambda { |x| x.is_a?(MalNil) ? true : false },
