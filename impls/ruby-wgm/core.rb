@@ -106,13 +106,7 @@ module MalCore
                                   return y
                             },
     'throw'       => lambda { |e|
-                                  msg = "error thrown"
-                                  if e.is_a?(MalHashMap)
-                                    msg = e.print()
-                                  elsif e.is_a?(MalString)
-                                    msg = e.data
-                                  end
-                                  raise MalThrownError, msg
+                                  raise MalThrownError, e.print(false)
                             },
     'apply'       => lambda { |f, *ins|
                                   if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
