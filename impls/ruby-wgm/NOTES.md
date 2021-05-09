@@ -88,6 +88,20 @@ Hang on, we already figured that out last week with lists. We can refer to
 any of the lambdas in core.rb from within themselves (or any other one) using
 MalCore::Env['foo']. So deep hash equality is not hard.
 
+Remaining bugs were fiendish. One of them involves correct behaviour after
+a malformed try*. I wanted to raise an error, but the test wants us to go
+ahead and evaluate the next expression. Ok then.
+
+Finally, I was tearing my hair out with the thrown list, as I was nicely passing
+the evaluated form of that through as a string, where prn merrily goes ahead
+and wraps it in quotes. But the test demands it not be wrapped in quotes? How
+can that be? That can be, when prn receives not a string, but an expression.
+So I had to add a variable to MalThrownError to hold the expression given to it
+for later evaluation, and lo.. after much wailing and gnashing of teeth, it
+works.
+
+Time for Step A.
+
 ## Step 8 (2021-05-08)
 
 Macros.
@@ -463,12 +477,14 @@ to revisit that later on.
 
 ## TODO
 
-* FIXED (Step 5) Entering nothing in the REPL yields an error. Fix this.
-* Implement float handling. Ints only for now.
-* Implement hashmaps properly (only strings or keywords as keys)
-* FIXED (Step 6) Implement comments properly
-* Check we are truly handling strings properly (seems doubtful)
 * Improve readline implementation.
+* Implement float handling. Ints only for now.
+* Check we are truly handling strings properly (seems doubtful) - possibly
+fixed in Step 9 but I am sceptical.
+* FIXED (Step 5) Entering nothing in the REPL yields an error. Fix this.
+* FIXED (Step 9) Implement hashmaps properly (only strings or keywords as keys)
+* FIXED (Step 6) Implement comments properly
+
 
 ## SNIPPETS
 
