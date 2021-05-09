@@ -117,6 +117,7 @@ module MalCore
     'true?'       => lambda { |x| x.is_a?(MalTrue) ? true : false },
     'false?'      => lambda { |x| x.is_a?(MalFalse) ? true : false },
     'symbol?'     => lambda { |x| x.is_a?(MalSymbol) ? true : false },
+    'macavity'    => lambda { |*x| raise MalNotImplementedError },
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
