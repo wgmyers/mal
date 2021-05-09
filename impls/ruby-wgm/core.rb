@@ -92,7 +92,14 @@ module MalCore
                                   return y
                             },
     'throw'       => lambda { |x| x.is_a?(MalString) ? (raise MalThrownError, x.data) : (raise MalThrownError) },
-    'apply'       => lambda { |*x| raise MalNotImplementedError, "apply not implemented" },
+    'apply'       => lambda { |*x|
+                                  if (x.length == 0) ||
+                                     !x[0].is_a?(MalFunction)
+                                    raise MalBadApplyError
+                                  end
+                                  args = x.drop(1)
+                                  return f.call(args)
+                            },
     'map'         => lambda { |*x| raise MalNotImplementedError, "map not implemented" },
     'nil?'        => lambda { |x| x.is_a?(MalNil) ? true : false },
     'true?'       => lambda { |x| x.is_a?(MalTrue) ? true : false },

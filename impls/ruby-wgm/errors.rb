@@ -3,8 +3,20 @@
 # Custom exception classes for errors.
 # NB - Inherit from StandardError and not Exception or things don't work.
 
+class MalBadApplyError < StandardError
+  def initialize(msg = "First argument to 'apply' must be a function")
+    super(msg)
+  end
+end
+
 class MalBadEnvError < StandardError
   def initialize(msg = "Number of binds must match number of exprs in env creation")
+    super(msg)
+  end
+end
+
+class MalBadMapError < StandardError
+  def initialize(msg = "First argument to 'map' must be a function")
     super(msg)
   end
 end

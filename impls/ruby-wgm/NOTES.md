@@ -17,6 +17,20 @@ them from within the REPL. This is probably a good step to implement that too.
 Meanwhile I have read over the guide for the implementation of try/catch at
 least five times and I am not at all sure how to do it. Time to reread.
 
+Ok, that's try*/catch* and throw implemented.
+
+Tricky bit was realising that you have to return the calls to EVAl or you get
+an infinite loop. Doh.
+
+Next bit involves lots of editing existing errors to match what is recognised
+by the test suite. Oh, and prn and println MUST emit a literal 'nil' after doing
+their thing. This can be disabled by returning 'nil' instead of MalNil,  but
+causes various tests to fail. Not sure I understand the purpose of this?
+
+nil?, true?, false? and symbol? implemented.
+
+
+
 ## Step 8 (2021-05-08)
 
 Macros.
