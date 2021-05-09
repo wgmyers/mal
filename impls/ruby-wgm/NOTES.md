@@ -1,5 +1,9 @@
 # Notes
 
+## Step A (2021-05-09)
+
+Wooo...
+
 ## Step 9 (2021-05-09)
 
 Try/catch.
