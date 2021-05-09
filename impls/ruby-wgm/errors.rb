@@ -16,7 +16,7 @@ class MalBadHashMapError < StandardError
 end
 
 class MalIndexOutOfRangeError < StandardError
-  def initialize(msg = "nth called with index larger than size of list")
+  def initialize(msg = "'nth' index out of bounds")
     super(msg)
   end
 end

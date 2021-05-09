@@ -17,7 +17,7 @@ require_relative 'types'
 DEBUG = {
   'show_ast'  => false,
   'show_env'  => false,
-  'backtrace' => true
+  'backtrace' => false
 }
 
 # READ
@@ -358,14 +358,14 @@ def EVAL(ast, env)
         tryA = ast.data[1]
         tryB = ast.data[2].data[1]
         tryC = ast.data[2].data[2]
-        return EVAL(tryA, env) 
+        return EVAL(tryA, env)
       rescue => e
         # Don't try and handle malformed exceptions, just reraise
         if !well_formed_try
           raise e
         end
         # Ok, we have B and C.
-        err_str = MalString.new("Error caught: " + e.message, false)
+        err_str = MalString.new(e.message, false)
         err_env = Env.new(env)
         err_env.set(tryB, err_str)
         return EVAL(tryC, err_env)

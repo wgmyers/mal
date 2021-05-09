@@ -9,11 +9,11 @@ module MalCore
     '/'           => lambda { |x,y| MalNumber.new(x.data / y.data) }, # NB Divide by zero caught by Ruby, not us
     'prn'         => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
                               puts(strs.join(" "))
-                              return nil #MalNil.new()
+                              return MalNil.new() # NB - return nil instead to suppress 'nil' print
                             },
     'println'     => lambda { |*x| strs = x.map { |s| pr_str(s, false) }
                               puts(strs.join(" "))
-                              return nil #MalNil.new()
+                              return MalNil.new() # NB - same as above.
                             },
     'pr-str'      => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
                               return(MalString.new(strs.join(" "), false))
