@@ -337,7 +337,7 @@ class MalHashMap < MalType
   # Return a key's value if it exists
   # Else return MalNil
   def get(key)
-    if @data.has_key(key)
+    if @data.has_key?(key)
       return @data[key]
     end
     return MalNil.new()
