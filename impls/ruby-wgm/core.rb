@@ -49,12 +49,9 @@ module MalCore
                                    return MalFalse.new()
                                  end
                                  # Next: check each key points to same value
-                                 # NB: Will fail on arrays, vectors and nested hashes
-                                 #puts "in = comparing:"
-                                 #pp x
-                                 #pp y
                                  x.keys.each { |k|
-                                                  if !y.exists(k) || (x.get(k).data != y.get(k).data)
+                                                  if !y.exists(k) ||
+                                                     (MalCore::Env['='].call(x.get(k), y.get(k)).is_a?(MalFalse))
                                                     return MalFalse.new()
                                                   end
                                              }
