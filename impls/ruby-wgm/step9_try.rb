@@ -345,6 +345,7 @@ def EVAL(ast, env)
       well_formed_try = true
       begin
         # Enforce form: (try* A (catch* B C))
+        # B must be a MalSymbol.
         if (ast.data.length != 3) ||
            !ast.data[2].is_a?(MalList) ||
            ast.data[2].data.length != 3 ||
@@ -357,18 +358,16 @@ def EVAL(ast, env)
         tryA = ast.data[1]
         tryB = ast.data[2].data[1]
         tryC = ast.data[2].data[2]
-        return EVAL(tryA, env) # I'm guessing 'next' here won't work :(
+        return EVAL(tryA, env) 
       rescue => e
         # Don't try and handle malformed exceptions, just reraise
         if !well_formed_try
           raise e
         end
         # Ok, we have B and C.
-        #puts "try*/catch* rescue block got #{e.message}"
         err_str = MalString.new("Error caught: " + e.message, false)
         err_env = Env.new(env)
         err_env.set(tryB, err_str)
-        #pp err_env
         return EVAL(tryC, err_env)
       end
 
