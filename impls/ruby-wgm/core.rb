@@ -128,7 +128,7 @@ module MalCore
     'vector?'     => lambda { |x| x.is_a?(MalVector) ? true : false },
     'sequential?' => lambda { |x| (x.is_a?(MalVector) || x.is_a?(MalList)) ? true : false },
     'hash-map'    => lambda { |*x|
-                                  if !x.length.is_even?
+                                  if !x.length.even?
                                     raise MalBadHashMapError
                                   end
                                   y = MalHashMap.new()
@@ -136,23 +136,47 @@ module MalCore
                                   return y
                             },
     'map?'        => lambda { |x| x.is_a?(MalHashMap) ? true : false },
-    'assoc'       => lambda { |hash, kvs|
-                                  if !hash.is_a?(MalHashMap)
-                                    raise MalBadHashMapError, "first arg to assoc must be hash"
+    'assoc'       => lambda { |h, kv|
+                                  if !h.is_a?(MalHashMap)
+                                    raise MalBadHashMapError, "first arg to 'assoc' must be hash"
                                   end
-                                  if !kvs.length.is_even?
+                                  if !kv.length.even?
                                     raise MalBadHashMapError
                                   end
                                   y = MalHashMap.new()
-                                  hash.data.each { |i| y.push(i) }
-                                  kvs.each { |i| y.push(i) }
+                                  h.data.each { |i| y.push(i) }
+                                  kv.each { |i| y.push(i) }
                                   return y
                             },
     'dissoc'      => lambda { |*x| raise MalNotImplementedError },
-    'get'         => lambda { |*x| raise MalNotImplementedError },
-    'contains?'   => lambda { |*x| raise MalNotImplementedError },
-    'keys'        => lambda { |*x| raise MalNotImplementedError },
-    'vals'        => lambda { |*x| raise MalNotImplementedError },
+    'get'         => lambda { |h,k|
+                                  if !h.is_a?(MalHashMap)
+                                    raise MalBadHashMapError, "first arg to 'get' must be hash"
+                                  end
+                                  return h.get(k)
+                            },
+    'contains?'   => lambda { |h,k|
+                                  if !h.is_a?(MalHashMap)
+                                    raise MalBadHashMapError, "first arg to 'get' must be hash"
+                                  end
+                                  return h.has_key?(k)
+                            },
+    'keys'        => lambda { |h|
+                                  if !h.is_a?(MalHashMap)
+                                    raise MalBadHashMapError, "first arg to 'keys' must be hash"
+                                  end
+                                  y = MalList.new()
+                                  h.data.keys.each { |k| y.push(k) }
+                                  return y
+                            },
+    'vals'        => lambda { |h|
+                                  if !h.is_a?(MalHashMap)
+                                    raise MalBadHashMapError, "first arg to 'values' must be hash"
+                                  end
+                                  y = MalList.new()
+                                  h.data.values.each { |k| y.push(k) }
+                                  return y
+                            },
     'macavity'    => lambda { |*x| raise MalNotImplementedError },
   }
   Mal = {
