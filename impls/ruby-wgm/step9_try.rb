@@ -475,6 +475,10 @@ def init_env
     puts rep("(load-file \"#{filename}\")", repl_env)[0...-4]
     exit
   end
+  # Add commands to twiddle our debug flags
+  DEBUG.keys.each { |k|
+    repl_env.set(k, Proc.new { DEBUG[k] = !DEBUG[k] })
+  }
   return repl_env
 end
 
