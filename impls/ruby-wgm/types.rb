@@ -346,10 +346,6 @@ class MalHashMap < MalType
   # Might make life easier: allows us to use sequential push elsewhere
   # to populate hashes, so long as we trust that we are always getting
   # an even number of key,val pairs, or we will corrupt ourselves.
-  # We don't enforce the same rules about keys as set does, so we can
-  # make life easier over in reader.rb.
-  # In any case we take the data from the string or keyword and use that as our
-  # internal key. Otherwise we have problems implementing get.
   def push(item)
     if @next_is_key
       if (item.is_a?(MalString) || item.is_a?(MalKeyword))
