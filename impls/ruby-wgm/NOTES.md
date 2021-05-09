@@ -1,5 +1,22 @@
 # Notes
 
+## Step 9 (2021-05-09)
+
+Try/catch.
+
+This would be a good step to go through and look at error handling more closely
+all over and see too what extent we can a) catch our own exceptions instead of
+leaving it to Ruby, and b) provide useful error messages.
+
+Certainly, by this stage, I now have a deeper understanding of why error messages
+are often not hugely useful. It is difficult to implement.
+
+It would be good to have our DEBUG flags stored differently so we could toggle
+them from within the REPL. This is probably a good step to implement that too.
+
+Meanwhile I have read over the guide for the implementation of try/catch at
+least five times and I am not at all sure how to do it. Time to reread.
+
 ## Step 8 (2021-05-08)
 
 Macros.
