@@ -4,7 +4,7 @@
 # NB - Inherit from StandardError and not Exception or things don't work.
 
 class MalBadApplyError < StandardError
-  def initialize(msg = "First argument to 'apply' must be a function")
+  def initialize(msg = "Malformed call to 'apply'")
     super(msg)
   end
 end
@@ -16,7 +16,7 @@ class MalBadEnvError < StandardError
 end
 
 class MalBadMapError < StandardError
-  def initialize(msg = "First argument to 'map' must be a function")
+  def initialize(msg = "Malformed call to 'map'")
     super(msg)
   end
 end
