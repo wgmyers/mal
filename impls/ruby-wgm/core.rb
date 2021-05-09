@@ -152,7 +152,7 @@ module MalCore
                                     raise MalBadHashMapError
                                   end
                                   y = MalHashMap.new()
-                                  h.data.each { |i| y.push(i) }
+                                  h.data.keys.each { |k| y.set(k, h.get(k)) }
                                   kv.each { |i| y.push(i) }
                                   return y
                             },
