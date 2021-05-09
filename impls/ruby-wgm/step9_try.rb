@@ -14,6 +14,7 @@ require_relative 'reader'
 require_relative 'types'
 
 # Some debugging flags
+# Type (foo) to toggle the flag in the REPL
 DEBUG = {
   'show_ast'  => false,
   'show_env'  => false,

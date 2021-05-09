@@ -329,7 +329,7 @@ class MalHashMap < MalType
     if key[0] == KEYWORD_PREFIX
       return MalKeyword.new(key[1..-1])
     end
-    return MalString.new(key)
+    return MalString.new(key.dup, false) # NB key.dup as string may be frozen
   end
 
   # keys
