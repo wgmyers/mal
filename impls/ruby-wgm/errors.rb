@@ -39,6 +39,12 @@ class MalNestedWithMetaError < StandardError
   end
 end
 
+class MalNotImplementedError < StandardError
+  def initialize(msg = "Function not implemented")
+    super(msg)
+  end
+end
+
 class MalThrownError < StandardError
   def initialize(msg = "Error thrown by Mal throw built-in")
     super(msg)

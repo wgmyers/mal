@@ -91,7 +91,13 @@ module MalCore
                                   x.data.drop(1).each { |i| y.push(i) }
                                   return y
                             },
-    'throw'       => lambda { |x| x.is_a?(MalString) ? (raise MalThrownError, x.data) : (raise MalThrownError) }
+    'throw'       => lambda { |x| x.is_a?(MalString) ? (raise MalThrownError, x.data) : (raise MalThrownError) },
+    'apply'       => lambda { raise MalNotImplementedError, "apply not implemented" },
+    'map'         => lambda { raise MalNotImplementedError, "map not implemented" },
+    'nil?'        => lambda { |x| x.is_a?(MalNil) ? true : false },
+    'true?'       => lambda { |x| x.is_a?(MalTrue) ? true : false },
+    'false?'      => lambda { |x| x.is_a?(MalFalse) ? true : false },
+    'symbol?'     => lambda { |x| x.is_a?(MalSymbol) ? true : false },
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
