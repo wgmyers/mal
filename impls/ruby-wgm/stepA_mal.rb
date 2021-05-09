@@ -264,9 +264,9 @@ def EVAL(ast, env)
       #return retval, env
 
       # TCO do
-      lastel = ast.data.pop()                # save last element of ast
+      lastel = ast.data[-1]                # save last element of ast
       #ast = eval_ast(ast.data.drop(1), env) # eval ast the rest
-      ast.data.drop(1).each { |i| EVAL(i, env) }
+      ast.data.drop(1).each { |i| EVAL(i, env) unless i == lastel }
       ast = lastel                          # set ast to saved last element
       next
       # ... and loop to start of EVAL
