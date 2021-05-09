@@ -6,6 +6,8 @@
 
 require_relative "errors"
 
+KEYWORD_PREFIX = "\u029e"  # Not wholly sure about this.
+
 # MalType is the base class for our class types
 class MalType
 
@@ -306,15 +308,58 @@ class MalHashMap < MalType
     @last_key = nil
   end
 
+  # make_internal_key
+  # Utility function to make internal keys
+  def make_internal_key(key)
+    if key.is_a?(MalString)
+      return key.data
+    elsif key.is_a?(MalKeyword)
+      return key.unimunge
+    elsif key.is_a?(String)
+      return key.dup() # make sure it's unfrozen?
+    else
+      throw "MalHashMap got weird internal key #{key}"
+    end
+  end
+
+  # return_internal_key
+  # Utility function to convert internal representation
+  # back into MalTypes for external usage
+  def return_internal_key(key)
+    if key[0] == KEYWORD_PREFIX
+      return MalKeyword.new(key[1..-1])
+    end
+    return MalString.new(key)
+  end
+
+  # keys
+  # A wrapper around Ruby's keys that unmunges our internal munging
+  # for external usage.
+  def keys()
+    ret_arr = []
+    @data.keys.each { |k| ret_arr.push(return_internal_key(k)) }
+    return ret_arr
+  end
+
   # push
   # Not sure if we should keep this around
   # Might make life easier: allows us to use sequential push elsewhere
   # to populate hashes, so long as we trust that we are always getting
   # an even number of key,val pairs, or we will corrupt ourselves.
+  # We don't enforce the same rules about keys as set does, so we can
+  # make life easier over in reader.rb.
+  # In any case we take the data from the string or keyword and use that as our
+  # internal key. Otherwise we have problems implementing get.
   def push(item)
     if @next_is_key
-      @data[item] = nil
-      @last_key = item
+      if (item.is_a?(MalString) || item.is_a?(MalKeyword))
+        ikey = make_internal_key(item)
+        @data[ikey] = nil
+        @last_key = ikey
+      else
+        @data[item] = nil
+        @last_key = item
+      end
     else
       @data[@last_key] = item
       @last_key = nil
@@ -322,23 +367,31 @@ class MalHashMap < MalType
     @next_is_key = !@next_is_key
   end
 
+  # exists
+  # Take a key
+  # Return true if we have such a key, false if not
+  def exists(key)
+    ikey = make_internal_key(key)
+    return @data.has_key?(ikey)
+  end
+
   # set
   # Take a key and a value
-  # Enforce key rules, raise error if problem
-  # Set key to value if all well
+  # Convert input to our internal key representation
+  # Set key to value
   def set(key, val)
-    if (!key.is_a?(MalString) && !key.is_a?(MalKeyword))
-      raise MalBadHashMapError, "hash keys must be string or keyword"
-    end
-    @data[key] = val
+    ikey = make_internal_key(key)
+    @data[ikey] = val
   end
 
   # get
   # Return a key's value if it exists
   # Else return MalNil
+  # Accept both raw strings and MalTypes
   def get(key)
-    if @data.has_key?(key)
-      return @data[key]
+    ikey = make_internal_key(key)
+    if @data.has_key?(ikey)
+      return @data[ikey]
     end
     return MalNil.new()
   end
@@ -347,11 +400,18 @@ class MalHashMap < MalType
   # Zip our keys with their values, flatten that
   # then treat it all as an array for ease of processing.
   # FIXME Is this really a good idea / idiomatic? Or idiotic?
+  # FIXME Shouldn't we just use return_internal_key here?
   def print(readably = true)
     strings = []
     munge = @data.keys.zip(@data.values).flatten
     for item in munge
-      strings.push(item.print(readably))
+      if(item.is_a?(MalType))
+        strings.push(item.print(readably))
+      elsif item[0] == KEYWORD_PREFIX # magic MalKeyword prefix
+        strings.push(item[1..-1])
+      else
+        strings.push("\"" + item + "\"")
+      end
     end
     return "{" + strings.join(" ") + "}"
   end
@@ -366,6 +426,10 @@ class MalKeyword < MalType
     if @data[0] != ":"
       @data = ":" + @data
     end
+  end
+
+  def unimunge()
+    return KEYWORD_PREFIX + self.data
   end
 
 end

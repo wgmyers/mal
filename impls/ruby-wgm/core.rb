@@ -173,6 +173,10 @@ module MalCore
                                   return y
                             },
     'get'         => lambda { |h,k|
+                                  # Return nil if nil
+                                  if h.is_a?(MalNil)
+                                    return MalNil.new()
+                                  end
                                   if !h.is_a?(MalHashMap)
                                     raise MalBadHashMapError, "first arg to 'get' must be hash"
                                   end
@@ -182,22 +186,22 @@ module MalCore
                                   if !h.is_a?(MalHashMap)
                                     raise MalBadHashMapError, "first arg to 'contains?' must be hash"
                                   end
-                                  return h.data.has_key?(k)
+                                  return h.exists(k)
                             },
     'keys'        => lambda { |h|
                                   if !h.is_a?(MalHashMap)
-                                    raise MalBadHashMapError, "first arg to 'keys' must be hash"
+                                    raise MalBadHashMapError, "arg to 'keys' must be hash"
                                   end
                                   y = MalList.new()
-                                  h.data.keys.each { |k| y.push(k) }
+                                  h.keys.each { |k| y.push(k) } # NB h.keys and not h.data.keys
                                   return y
                             },
     'vals'        => lambda { |h|
                                   if !h.is_a?(MalHashMap)
-                                    raise MalBadHashMapError, "first arg to 'values' must be hash"
+                                    raise MalBadHashMapError, "arg to 'vals' must be hash"
                                   end
                                   y = MalList.new()
-                                  h.data.values.each { |k| y.push(k) }
+                                  h.data.values.each { |k| y.push(k) } # NB h.data.values and not h.values
                                   return y
                             },
     'macavity'    => lambda { |*x| raise MalNotImplementedError },
