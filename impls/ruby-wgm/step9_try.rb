@@ -151,18 +151,9 @@ def eval_ast(ast, env)
     return retval
   when "MalHashMap"
     retval = MalHashMap.new()
-    key = true
-    # We alternatve between blindly returning the untouched key and
-    # calling eval on key values.
-    # FIXME This is obviously nonsense behaviour and we need to revisit MalHashMap
-    for item in ast.data
-      if key
-        retval.push(item)
-      else
-        newitem = EVAL(item, env)
-        retval.push(newitem)
-      end
-      key = !key
+    # Now the MalHashMap is a real hash we can do this sensibly
+    for key in ast.data.keys
+      retval.set(key, EVAL(ast.data[key], env))
     end
     return retval
   end

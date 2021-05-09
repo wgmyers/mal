@@ -46,6 +46,13 @@ on them. Time to fix this, use a Ruby hash internally, expose some functions to
 make the implementation of contains? and get work, and see what breaks from
 earlier tests. We should also enforce only strings/keywords as keys.
 
+MalHashMap is now a hash, though we have preserved the 'push' method, perhaps
+dodgily, to save having to rewrite code elsewhere that relies on it. For now.
+
+All deferrable functionality now more or less implemented modulo debugging,
+apart from 'dissoc' where I think I need to look at the tests to figure out
+exactly what kind of a list it is expecting.
+
 ## Step 8 (2021-05-08)
 
 Macros.
