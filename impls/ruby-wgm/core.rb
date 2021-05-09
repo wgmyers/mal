@@ -9,11 +9,11 @@ module MalCore
     '/'           => lambda { |x,y| MalNumber.new(x.data / y.data) }, # NB Divide by zero caught by Ruby, not us
     'prn'         => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
                               puts(strs.join(" "))
-                              return MalNil.new()
+                              return nil #MalNil.new()
                             },
     'println'     => lambda { |*x| strs = x.map { |s| pr_str(s, false) }
                               puts(strs.join(" "))
-                              return MalNil.new()
+                              return nil #MalNil.new()
                             },
     'pr-str'      => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
                               return(MalString.new(strs.join(" "), false))
@@ -91,7 +91,7 @@ module MalCore
                                   x.data.drop(1).each { |i| y.push(i) }
                                   return y
                             },
-    'throw'       => lambda { |x| x.is_a?(MalString) ? throw MalThrownError, x.data : throw MalThrownError }
+    'throw'       => lambda { |x| x.is_a?(MalString) ? (raise MalThrownError, x.data) : (raise MalThrownError) }
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
