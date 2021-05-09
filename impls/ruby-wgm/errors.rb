@@ -39,6 +39,18 @@ class MalNestedWithMetaError < StandardError
   end
 end
 
+class MalThrownError < StandardError
+  def initialize(msg = "Error thrown by Mal throw built-in")
+    super(msg)
+  end
+end
+
+class MalTryCatchError < StandardError
+  def initialize(msg = "try*/catch* block caught error")
+    super(msg)
+  end
+end
+
 class MalUnknownSymbolError < StandardError
   def initialize(msg = "Symbol not found.")
     super(msg)

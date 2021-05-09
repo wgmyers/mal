@@ -341,6 +341,30 @@ def EVAL(ast, env)
       # I have no idea how this is supposed to work.
       return macroexpand(ast.data[1], env)
 
+    when "try*"
+      well_formed_try = true
+      begin
+        # Enforce form: (try* A (catch* B C))
+        if (ast.data.length != 3) ||
+           !ast.data[2].is_a?(MalList) ||
+           !ast.data[2].data[0].is_a?(MalSymbol) ||
+           (ast.data[2].data[0].data != "catch*")
+          well_formed_try = false
+          raise MalTryCatchError, "Badly formed try*/catch* block"
+        end
+        EVAL(ast.data[1], env) # I'm guessing 'next' here won't work :(
+      rescue => e
+        # Don't try and handle malformed exceptions, just reraise
+        if !well_formed_try
+          raise e
+        end
+        # Ok, we have B and C.
+        err_str = MalString.new(e.msg)
+        err_env = Env.new(env)
+        err_env.set(ast.data[2].data[1], err_str)
+        EVAL(ast.data[2].data[2], err_env)
+      end
+
     else
       # DEFAULT EVALLER
       # Brutal hack to allow (list + 1 2) etc

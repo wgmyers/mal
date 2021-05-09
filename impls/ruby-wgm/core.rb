@@ -90,7 +90,8 @@ module MalCore
                                   return y unless !x.is_a?(MalNil) # back out now if x is nil
                                   x.data.drop(1).each { |i| y.push(i) }
                                   return y
-                            }
+                            },
+    'throw'       => lambda { |x| x.is_a?(MalString) ? throw MalThrownError, x.data : throw MalThrownError }
   }
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
