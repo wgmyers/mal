@@ -174,7 +174,7 @@ module MalCore
                                   if !h.is_a?(MalHashMap)
                                     raise MalBadHashMapError, "first arg to 'contains?' must be hash"
                                   end
-                                  return h.has_key?(k)
+                                  return h.data.has_key?(k)
                             },
     'keys'        => lambda { |h|
                                   if !h.is_a?(MalHashMap)
