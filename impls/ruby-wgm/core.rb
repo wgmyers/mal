@@ -41,6 +41,23 @@ module MalCore
                                  }
                                elsif (x.class != y.class)
                                  return MalFalse.new()
+                               elsif (x.is_a?(MalHashMap))
+                                 # QUERY - Shouldn't we try to do deep equality?
+                                 # For now, keep it simple.
+                                 # First: check keys match up exactly
+                                 if (x.keys.length != y.keys.length)
+                                   return MalFalse.new()
+                                 end
+                                 # Next: check each key points to same value
+                                 # NB: Will fail on arrays, vectors and nested hashes
+                                 #puts "in = comparing:"
+                                 #pp x
+                                 #pp y
+                                 x.keys.each { |k|
+                                                  if !y.exists(k) || (x.get(k).data != y.get(k).data)
+                                                    return MalFalse.new()
+                                                  end
+                                             }
                                elsif (x.data != y.data)
                                  return MalFalse.new()
                                end

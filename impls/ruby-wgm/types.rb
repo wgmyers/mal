@@ -185,9 +185,10 @@ class MalString < MalType
   # We are only called with strings that begin with quotes
   # We call this after checking there is a trailing quote
   def _strip_quotes(str)
-    str.sub!(/^\"/, "")
-    str.sub!(/\"$/, "")
-    return str;
+    nqstr = str.dup
+    nqstr.sub!(/^\"/, "")
+    nqstr.sub!(/\"$/, "")
+    return nqstr;
   end
 
   # _munge and _unmunge handle our backslash escaping 'sensibly'
@@ -195,18 +196,20 @@ class MalString < MalType
   # \\ => \
   # \n => actual newline
   def _munge(str)
-    str.gsub!(/\\\\/, "{esc-bs}")
-    str.gsub!(/\\\"/, "\"")
-    str.gsub!(/\\n/, "\n")
-    str.gsub!("{esc-bs}", "\\")
-    return str
+    mstr = str.dup
+    mstr.gsub!(/\\\\/, "{esc-bs}")
+    mstr.gsub!(/\\\"/, "\"")
+    mstr.gsub!(/\\n/, "\n")
+    mstr.gsub!("{esc-bs}", "\\")
+    return mstr
   end
 
   def _unmunge(str)
-    str.gsub!(/(\\)/, '\\1\\1') # MUST do this first
-    str.gsub!(/\n/, "\\n")
-    str.gsub!(/\"/, "\\\"")
-    return "\"" + str + "\""
+    umstr = str.dup
+    umstr.gsub!(/(\\)/, '\\1\\1') # MUST do this first
+    umstr.gsub!(/\n/, "\\n")
+    umstr.gsub!(/\"/, "\\\"")
+    return "\"" + umstr + "\""
   end
 
 end
