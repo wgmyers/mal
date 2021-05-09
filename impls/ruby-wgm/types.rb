@@ -77,8 +77,6 @@ class MalFunction < MalType
   attr_reader :ast, :params, :env, :closure, :data
   attr_accessor :is_macro
 
-  # Here we expect data to be a Proc
-  # FIXME We should complain if it isn't
   def initialize(ast, params, env, closure)
     @type = "MalFunction"
     @ast = ast
@@ -86,7 +84,7 @@ class MalFunction < MalType
     @env = env
     @closure = closure
     @is_macro = false
-    @data = self # Will this work or blow up?
+    #@data = self # Will this work or blow up?
   end
 
   # #<function> is what the guide says to do
