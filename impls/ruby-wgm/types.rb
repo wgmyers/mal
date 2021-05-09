@@ -297,29 +297,60 @@ class MalVector < MalList
 
 end
 
-class MalHashMap < MalList
+class MalHashMap < MalType
 
   def initialize()
     @type = "MalHashMap"
-    @data = []
+    @data = {}
+    @next_is_key = true
+    @last_key = nil
   end
 
-# FIXME
-# We should be doing it like this:
-#  def push(key, val)
-#    @data.push(key)
-#    @data.push(val)
-#  end
-# Instead, we are cheating, and doing it like this, while keeping count
-# of items over in reader.rb. Surely this is not the way.
+  # push
+  # Not sure if we should keep this around
+  # Might make life easier: allows us to use sequential push elsewhere
+  # to populate hashes, so long as we trust that we are always getting
+  # an even number of key,val pairs, or we will corrupt ourselves.
   def push(item)
-    @data.push(item)
+    if @next_is_key
+      @data[item] = nil
+      @last_key = item
+    else
+      @data[@last_key] = item
+      @last_key = nil
+    end
+    @next_is_key = !@next_is_key
   end
 
+  # set
+  # Take a key and a value
+  # Enforce key rules, raise error if problem
+  # Set key to value if all well
+  def set(key, val)
+    if (!key.is_a?(MalString) && !key.is_a?(MalKeyword))
+      raise MalBadHashMapError, "hash keys must be string or keyword"
+    end
+    @data[key] = val
+  end
 
+  # get
+  # Return a key's value if it exists
+  # Else return MalNil
+  def get(key)
+    if @data.has_key(key)
+      return @data[key]
+    end
+    return MalNil.new()
+  end
+
+  # print
+  # Zip our keys with their values, flatten that
+  # then treat it all as an array for ease of processing.
+  # FIXME Is this really a good idea / idiomatic? Or idiotic?
   def print(readably = true)
     strings = []
-    for item in data
+    munge = @data.keys.zip(@data.values).flatten
+    for item in munge
       strings.push(item.print(readably))
     end
     return "{" + strings.join(" ") + "}"

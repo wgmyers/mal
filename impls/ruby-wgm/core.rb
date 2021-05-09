@@ -126,10 +126,28 @@ module MalCore
                                    return y
                             },
     'vector?'     => lambda { |x| x.is_a?(MalVector) ? true : false },
-    'sequential?' => lambda { |*x| raise MalNotImplementedError },
-    'hash-map'    => lambda { |*x| raise MalNotImplementedError },
-    'map?'        => lambda { |*x| raise MalNotImplementedError },
-    'assoc'       => lambda { |*x| raise MalNotImplementedError },
+    'sequential?' => lambda { |x| (x.is_a?(MalVector) || x.is_a?(MalList)) ? true : false },
+    'hash-map'    => lambda { |*x|
+                                  if !x.length.is_even?
+                                    raise MalBadHashMapError
+                                  end
+                                  y = MalHashMap.new()
+                                  x.each { |i| y.push(i) }
+                                  return y
+                            },
+    'map?'        => lambda { |x| x.is_a?(MalHashMap) ? true : false },
+    'assoc'       => lambda { |hash, kvs|
+                                  if !hash.is_a?(MalHashMap)
+                                    raise MalBadHashMapError, "first arg to assoc must be hash"
+                                  end
+                                  if !kvs.length.is_even?
+                                    raise MalBadHashMapError
+                                  end
+                                  y = MalHashMap.new()
+                                  hash.data.each { |i| y.push(i) }
+                                  kvs.each { |i| y.push(i) }
+                                  return y
+                            },
     'dissoc'      => lambda { |*x| raise MalNotImplementedError },
     'get'         => lambda { |*x| raise MalNotImplementedError },
     'contains?'   => lambda { |*x| raise MalNotImplementedError },

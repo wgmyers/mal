@@ -39,7 +39,12 @@ Meanwhile, it's time to implement the deferrable functions, and also to add
 support for throw() to take a MalHashMap instead of a MalString and do something
 sensible with it such that it passes the tests.
 
-
+Finally we are being forced to fix our dodgy MalHashMap implementation. Until
+now this has been stored internally as an array, and added to with 'push'. Not
+only this, but MalHashMaps inherit from MalList, so is_a?(MalList) returns true
+on them. Time to fix this, use a Ruby hash internally, expose some functions to
+make the implementation of contains? and get work, and see what breaks from
+earlier tests. We should also enforce only strings/keywords as keys.
 
 ## Step 8 (2021-05-08)
 
