@@ -78,6 +78,16 @@ I think we're getting there.
 Remaining bugs are hash equality and dissoc, neither of which have yet been
 implemented properly, and a couple of try/catch failures I have no idea about.
 
+Nope, there was also a string handling bug test which we were failing. Now
+removed by making sure to dup any string we call sub! or gsub! on in the
+MalString munge/unmunge methods, and so not accidentally mangling the original.
+
+Hash equality /does/ want us to check values that are lists :(
+
+Hang on, we already figured that out last week with lists. We can refer to
+any of the lambdas in core.rb from within themselves (or any other one) using
+MalCore::Env['foo']. So deep hash equality is not hard.
+
 ## Step 8 (2021-05-08)
 
 Macros.

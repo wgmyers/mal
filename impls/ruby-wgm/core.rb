@@ -166,24 +166,29 @@ module MalCore
                                     raise MalBadHashMapError
                                   end
                                   y = MalHashMap.new()
-                                  h.data.keys.each { |k| y.set(k, h.get(k)) }
+                                  h.keys.each { |k| y.set(k, h.get(k)) }
                                   kv.each { |i| y.push(i) }
                                   return y
                             },
-    'dissoc'      => lambda { |h,l|
+    'dissoc'      => lambda { |h,*l|
                                   if !h.is_a?(MalHashMap)
                                     raise MalBadHashMapError, "first arg to 'dissoc' must be hash"
                                   end
-                                  if !l.is_a?(MalList)
-                                    # FIXME Really MalBadHashMapError?
-                                    raise MalBadHashMapError, "second arg to 'dissoc' must be list"
-                                  end
                                   y = MalHashMap.new()
-                                  h.data.keys.each { |k|
-                                                        if true # FIXME
-                                                          y.set(k, h.get(k))
-                                                        end
-                                                   }
+                                  # FIXME There must be a more idiomatic way to do this
+                                  # Map? We want all the keys in h not present in l.
+                                  h.keys.each { |k|
+                                                    add = true
+                                                    l.each { |item|
+                                                                if item.data == k.data
+                                                                  add = false
+                                                                  break
+                                                                end
+                                                           }
+                                                    if add
+                                                      y.set(k, h.get(k))
+                                                    end
+                                               }
                                   return y
                             },
     'get'         => lambda { |h,k|
