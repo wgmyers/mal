@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# step7_macros.rb
+# step8_macros.rb
 # In which we implement user macros.
 
 require "pp"
