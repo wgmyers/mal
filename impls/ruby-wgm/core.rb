@@ -98,8 +98,9 @@ module MalCore
                                      !x[-1].is_a?(MalList)
                                     raise MalBadApplyError
                                   end
+                                  f = x[0]
                                   args = x.pop()
-                                  x.drop(1).reverse.each { |i| args.data.unshift(i) }
+                                  x.drop(1).reverse.each { |i| args.unshift(i) }
                                   return f.call(args)
                             },
     'map'         => lambda { |*x|
@@ -108,6 +109,7 @@ module MalCore
                                      !x[1].is_a?(MalList)
                                     raise MalBadApplyError
                                   end
+                                  f = x[0]
                                   y = MalList.new()
                                   x[1].data.each { |i| y.push(f.call(i)) }
                                   return y
