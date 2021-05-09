@@ -22,7 +22,6 @@
           (println (rep line))
           (catch* exc
             (println "Uncaught exception:" exc))))
-      (println "poop")
       (repl-loop (readline "mal-user> "))))))
 
 ;; main
