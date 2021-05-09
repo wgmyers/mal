@@ -131,7 +131,7 @@ module MalCore
                             },
     'nil?'        => lambda { |x| x.is_a?(MalNil) ? MalTrue.new() : MalFalse.new() },
     'true?'       => lambda { |x| x.is_a?(MalTrue) ? MalTrue.new() : MalFalse.new() },
-    'false?'      => lambda { |x| x.is_a?(MalFalse) ? MalTrue.new() : MalFalse.new() }, 
+    'false?'      => lambda { |x| x.is_a?(MalFalse) ? MalTrue.new() : MalFalse.new() },
     'symbol?'     => lambda { |x| x.is_a?(MalSymbol) ? MalTrue.new() : MalFalse.new() },
     'symbol'      => lambda { |x| MalSymbol.new(x.data) },
     'keyword'     => lambda { |x| MalKeyword.new(x.data) },
@@ -230,7 +230,7 @@ module MalCore
                                    return MalNil.new()
                                  end
                             },
-    'time-ms'     => lambda { |*x| raise MalNotImplementedError },
+    'time-ms'     => lambda { |*x| (Time.new().to_f * 1000).to_i },
     'meta'        => lambda { |*x| raise MalNotImplementedError },
     'with-meta'   => lambda { |*x| raise MalNotImplementedError },
     'fn?'         => lambda { |*x| raise MalNotImplementedError },
