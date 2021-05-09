@@ -125,7 +125,7 @@ module MalCore
     'true?'       => lambda { |x| x.is_a?(MalTrue) ? true : false }, # Same...
     'false?'      => lambda { |x| x.is_a?(MalFalse) ? true : false }, # Etc...
     'symbol?'     => lambda { |x| x.is_a?(MalSymbol) ? true : false },
-    'symbol'      => lambda { |x| MalString.new(x.data) },
+    'symbol'      => lambda { |x| MalSymbol.new(x.data) },
     'keyword'     => lambda { |x| MalKeyword.new(x.data) },
     'keyword?'    => lambda { |x| x.is_a?(MalKeyword) ? true : false },
     'vector'      => lambda { |*x|
