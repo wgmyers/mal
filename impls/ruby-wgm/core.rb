@@ -136,7 +136,7 @@ module MalCore
                                   return y
                             },
     'map?'        => lambda { |x| x.is_a?(MalHashMap) ? true : false },
-    'assoc'       => lambda { |h, kv|
+    'assoc'       => lambda { |h, *kv|
                                   if !h.is_a?(MalHashMap)
                                     raise MalBadHashMapError, "first arg to 'assoc' must be hash"
                                   end
