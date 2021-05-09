@@ -17,7 +17,7 @@ require_relative 'types'
 DEBUG = {
   'show_ast'  => false,
   'show_env'  => false,
-  'backtrace' => false
+  'backtrace' => true
 }
 
 # READ
