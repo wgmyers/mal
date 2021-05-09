@@ -29,6 +29,16 @@ causes various tests to fail. Not sure I understand the purpose of this?
 
 nil?, true?, false? and symbol? implemented.
 
+Builtins apply and map now also implemented. Trickier than it should be because
+of the way we have to call builtins and MalFunctions differently. At some point
+it would probably good to fix that if possible. Why /am/ I insisting on lambdas?
+Is there not some other Ruby closure mechanism such that I can use the same
+call to call()? Need to think about this.
+
+Meanwhile, it's time to implement the deferrable functions, and also to add
+support for throw() to take a MalHashMap instead of a MalString and do something
+sensible with it such that it passes the tests.
+
 
 
 ## Step 8 (2021-05-08)
