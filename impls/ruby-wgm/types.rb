@@ -331,6 +331,10 @@ class MalKeyword < MalType
   def initialize(data)
     @type = "MalKeyword"
     @data = data
+    # Prepend ':' if not given
+    if @data[0] != ":"
+      @data = ":" + @data
+    end
   end
 
 end

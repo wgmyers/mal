@@ -113,10 +113,28 @@ module MalCore
                                   ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
                                   return y
                             },
-    'nil?'        => lambda { |x| x.is_a?(MalNil) ? true : false },
-    'true?'       => lambda { |x| x.is_a?(MalTrue) ? true : false },
-    'false?'      => lambda { |x| x.is_a?(MalFalse) ? true : false },
+    'nil?'        => lambda { |x| x.is_a?(MalNil) ? true : false }, # FIXME Why aren't we returning MalType here? Why does it still work?
+    'true?'       => lambda { |x| x.is_a?(MalTrue) ? true : false }, # Same...
+    'false?'      => lambda { |x| x.is_a?(MalFalse) ? true : false }, # Etc...
     'symbol?'     => lambda { |x| x.is_a?(MalSymbol) ? true : false },
+    'symbol'      => lambda { |x| MalString.new(x.data) },
+    'keyword'     => lambda { |x| MalKeyword.new(x.data) },
+    'keyword?'    => lambda { |x| x.is_a?(MalKeyword) ? true : false },
+    'vector'      => lambda { |*x|
+                                   y = MalVector.new()
+                                   x.each { |i| y.push(i) }
+                                   return y
+                            },
+    'vector?'     => lambda { |x| x.is_a?(MalVector) ? true : false },
+    'sequential?' => lambda { |*x| raise MalNotImplementedError },
+    'hash-map'    => lambda { |*x| raise MalNotImplementedError },
+    'map?'        => lambda { |*x| raise MalNotImplementedError },
+    'assoc'       => lambda { |*x| raise MalNotImplementedError },
+    'dissoc'      => lambda { |*x| raise MalNotImplementedError },
+    'get'         => lambda { |*x| raise MalNotImplementedError },
+    'contains?'   => lambda { |*x| raise MalNotImplementedError },
+    'keys'        => lambda { |*x| raise MalNotImplementedError },
+    'vals'        => lambda { |*x| raise MalNotImplementedError },
     'macavity'    => lambda { |*x| raise MalNotImplementedError },
   }
   Mal = {
