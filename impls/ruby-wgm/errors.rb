@@ -4,7 +4,7 @@
 # NB - Inherit from StandardError and not Exception or things don't work.
 
 class MalBadEnvError < StandardError
-  def initilize(msg = "Number of binds must match number of exprs in env creation")
+  def initialize(msg = "Number of binds must match number of exprs in env creation")
     super(msg)
   end
 end
