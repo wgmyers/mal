@@ -92,20 +92,21 @@ module MalCore
                                   return y
                             },
     'throw'       => lambda { |x| x.is_a?(MalString) ? (raise MalThrownError, x.data) : (raise MalThrownError) },
-    'apply'       => lambda { |*x|
-                                  if (x.length < 2) ||
-                                     !x[0].is_a?(MalFunction) ||
-                                     !x[-1].is_a?(MalList)
+    'apply'       => lambda { |f, *ins|
+                                  if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
+                                     !ins[-1].is_a?(MalList)
                                     raise MalBadApplyError
                                   end
-                                  f = x[0]
-                                  args = x.pop()
-                                  x.drop(1).reverse.each { |i| args.unshift(i) }
-                                  return f.call(args)
+                                  argsl = ins.pop()
+                                  ins.reverse.each { |i| argsl.data.unshift(i) }
+                                  if f.is_a?(Proc) # handle builtins
+                                    return f.call(*argsl.data)
+                                  end
+                                  return f.call(argsl.data)
                             },
     'map'         => lambda { |*x|
                                   if (x.length != 2) ||
-                                     !x[0].is_a?(MalFunction)
+                                     !(x[0].is_a?(MalFunction) || x[0].is_a?(Proc)) ||
                                      !x[1].is_a?(MalList)
                                     raise MalBadApplyError
                                   end
