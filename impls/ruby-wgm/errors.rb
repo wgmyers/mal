@@ -15,14 +15,20 @@ class MalBadEnvError < StandardError
   end
 end
 
+class MalBadHashMapError < StandardError
+  def initialize(msg = "Number of keys does not match number of values in hashmap")
+    super(msg)
+  end
+end
+
 class MalBadMapError < StandardError
   def initialize(msg = "Malformed call to 'map'")
     super(msg)
   end
 end
 
-class MalBadHashMapError < StandardError
-  def initialize(msg = "Number of keys does not match number of values in hashmap")
+class MalBadPromptError < StandardError
+  def initialize(msg = "arg to readline must be string")
     super(msg)
   end
 end

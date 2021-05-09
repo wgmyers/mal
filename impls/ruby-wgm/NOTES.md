@@ -4,6 +4,14 @@
 
 Wooo...
 
+Ok then.
+
+Added stubs for the eight new functions.
+
+Startup string with host-language symbol added.
+
+readline implemented. 
+
 ## Step 9 (2021-05-09)
 
 Try/catch.

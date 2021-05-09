@@ -129,20 +129,20 @@ module MalCore
                                   ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
                                   return y
                             },
-    'nil?'        => lambda { |x| x.is_a?(MalNil) ? true : false }, # FIXME Why aren't we returning MalType here? Why does it still work?
-    'true?'       => lambda { |x| x.is_a?(MalTrue) ? true : false }, # Same...
-    'false?'      => lambda { |x| x.is_a?(MalFalse) ? true : false }, # Etc...
-    'symbol?'     => lambda { |x| x.is_a?(MalSymbol) ? true : false },
+    'nil?'        => lambda { |x| x.is_a?(MalNil) ? MalTrue.new() : MalFalse.new() },
+    'true?'       => lambda { |x| x.is_a?(MalTrue) ? MalTrue.new() : MalFalse.new() },
+    'false?'      => lambda { |x| x.is_a?(MalFalse) ? MalTrue.new() : MalFalse.new() }, 
+    'symbol?'     => lambda { |x| x.is_a?(MalSymbol) ? MalTrue.new() : MalFalse.new() },
     'symbol'      => lambda { |x| MalSymbol.new(x.data) },
     'keyword'     => lambda { |x| MalKeyword.new(x.data) },
-    'keyword?'    => lambda { |x| x.is_a?(MalKeyword) ? true : false },
+    'keyword?'    => lambda { |x| x.is_a?(MalKeyword) ? MalTrue.new() : MalFalse.new() },
     'vector'      => lambda { |*x|
                                    y = MalVector.new()
                                    x.each { |i| y.push(i) }
                                    return y
                             },
-    'vector?'     => lambda { |x| x.is_a?(MalVector) ? true : false },
-    'sequential?' => lambda { |x| (x.is_a?(MalVector) || x.is_a?(MalList)) ? true : false },
+    'vector?'     => lambda { |x| x.is_a?(MalVector) ? MalTrue.new() : MalFalse.new() },
+    'sequential?' => lambda { |x| (x.is_a?(MalVector) || x.is_a?(MalList)) ? MalTrue.new() : MalFalse.new() },
     'hash-map'    => lambda { |*x|
                                   if !x.length.even?
                                     raise MalBadHashMapError
@@ -151,7 +151,7 @@ module MalCore
                                   x.each { |i| y.push(i) }
                                   return y
                             },
-    'map?'        => lambda { |x| x.is_a?(MalHashMap) ? true : false },
+    'map?'        => lambda { |x| x.is_a?(MalHashMap) ? MalTrue.new() : MalFalse.new() },
     'assoc'       => lambda { |h, *kv|
                                   if !h.is_a?(MalHashMap)
                                     raise MalBadHashMapError, "first arg to 'assoc' must be hash"
@@ -219,6 +219,25 @@ module MalCore
                                   h.data.values.each { |k| y.push(k) } # NB h.data.values and not h.values
                                   return y
                             },
+    'readline'    => lambda { |p|
+                                 if !p.is_a?(MalString)
+                                   raise MalBadPromptError
+                                 end
+                                 s = grabline(p.data) # readline.rb
+                                 if s
+                                   return MalString.new(s, false)
+                                 else
+                                   return MalNil.new()
+                                 end
+                            },
+    'time-ms'     => lambda { |*x| raise MalNotImplementedError },
+    'meta'        => lambda { |*x| raise MalNotImplementedError },
+    'with-meta'   => lambda { |*x| raise MalNotImplementedError },
+    'fn?'         => lambda { |*x| raise MalNotImplementedError },
+    'string?'     => lambda { |*x| raise MalNotImplementedError },
+    'number?'     => lambda { |*x| raise MalNotImplementedError },
+    'seq'         => lambda { |*x| raise MalNotImplementedError },
+    'conj'        => lambda { |*x| raise MalNotImplementedError },
     'macavity'    => lambda { |*x| raise MalNotImplementedError },
   }
   Mal = {

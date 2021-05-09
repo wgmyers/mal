@@ -21,6 +21,9 @@ DEBUG = {
   'backtrace' => false
 }
 
+# Set startup string
+STARTUP_STR = "(println (str \"Mal [\" *host-language* \"]\"))"
+
 # READ
 # Invokes the reader on its input
 # Returns a Mal data structure or blows up on error
@@ -489,6 +492,8 @@ def init_env
   DEBUG.keys.each { |k|
     repl_env.set(k, Proc.new { DEBUG[k] = !DEBUG[k] })
   }
+  # Add *host-language* symbol
+  repl_env.set("*host-language*", MalString.new("ruby-wgm", false))
   return repl_env
 end
 
@@ -498,6 +503,7 @@ end
 def main()
   repl_env = init_env()
   prompt = "user> "
+  puts rep(STARTUP_STR, repl_env)
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
