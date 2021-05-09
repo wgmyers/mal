@@ -106,7 +106,7 @@ module MalCore
                                   return y
                             },
     'throw'       => lambda { |e|
-                                  raise MalThrownError, e.print(false)
+                                  raise MalThrownError.new(malexp: e), e.print(false)
                             },
     'apply'       => lambda { |f, *ins|
                                   if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||

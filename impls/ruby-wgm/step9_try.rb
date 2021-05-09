@@ -354,16 +354,21 @@ def EVAL(ast, env)
       rescue => e
         # Don't try and handle malformed exceptions, just reraise
         if !well_formed_try
-          # FIXME I think we should re-raise the error here.
+          # QUERY I think we should re-raise the error here.
           #       HOWEVER, to pass the test as written in step 9, we
           #       need to attempt to evaluate the next item after try*
           return EVAL(ast.data[1], env)
           #raise e
         end
         # Ok, we have B and C.
-        err_str = MalString.new(e.message, false)
+        # Check to see if we haven't been given an evaluable MalType
+        if (!e.methods.include?(:malexp) || (e.malexp == nil))
+          err_exp = MalString.new(e.message, false)
+        else
+          err_exp = e.malexp
+        end
         err_env = Env.new(env)
-        err_env.set(tryB, err_str)
+        err_env.set(tryB, err_exp)
         return EVAL(tryC, err_env)
       end
 

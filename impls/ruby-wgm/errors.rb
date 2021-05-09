@@ -58,8 +58,10 @@ class MalNotImplementedError < StandardError
 end
 
 class MalThrownError < StandardError
-  def initialize(msg = "Error thrown by Mal throw built-in")
+  attr_reader :malexp
+  def initialize(msg = "Error thrown by Mal throw built-in", malexp: nil)
     super(msg)
+    @malexp = malexp
   end
 end
 
