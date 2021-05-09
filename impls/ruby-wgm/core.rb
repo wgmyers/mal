@@ -148,7 +148,22 @@ module MalCore
                                   kv.each { |i| y.push(i) }
                                   return y
                             },
-    'dissoc'      => lambda { |*x| raise MalNotImplementedError },
+    'dissoc'      => lambda { |h,l|
+                                  if !h.is_a?(MalHashMap)
+                                    raise MalBadHashMapError, "first arg to 'dissoc' must be hash"
+                                  end
+                                  if !l.is_a?(MalList)
+                                    # FIXME Really MalBadHashMapError?
+                                    raise MalBadHashMapError, "second arg to 'dissoc' must be list"
+                                  end
+                                  y = MalHashMap.new()
+                                  h.data.keys.each { |k|
+                                                        if true # FIXME
+                                                          y.set(k, h.get(k))
+                                                        end
+                                                   }
+                                  return y
+                            },
     'get'         => lambda { |h,k|
                                   if !h.is_a?(MalHashMap)
                                     raise MalBadHashMapError, "first arg to 'get' must be hash"
@@ -157,7 +172,7 @@ module MalCore
                             },
     'contains?'   => lambda { |h,k|
                                   if !h.is_a?(MalHashMap)
-                                    raise MalBadHashMapError, "first arg to 'get' must be hash"
+                                    raise MalBadHashMapError, "first arg to 'contains?' must be hash"
                                   end
                                   return h.has_key?(k)
                             },
