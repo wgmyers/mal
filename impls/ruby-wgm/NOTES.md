@@ -75,6 +75,9 @@ Properly. We are implementing a language here, we must Be Proper. Mostly.
 
 I think we're getting there.
 
+Remaining bugs are hash equality and dissoc, neither of which have yet been
+implemented properly, and a couple of try/catch failures I have no idea about.
+
 ## Step 8 (2021-05-08)
 
 Macros.
