@@ -39,7 +39,7 @@
 ;; repl
 (def! repl-env {"+" +
                 "-" -
-                "*" * 
+                "*" *
                 "/" /})
 (def! rep (fn* [strng]
   (PRINT (EVAL (READ strng) repl-env))))

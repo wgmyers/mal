@@ -113,17 +113,19 @@ module MalCore
                                      !(ins[-1].is_a?(MalList) || ins[-1].is_a?(MalVector))
                                     raise MalBadApplyError
                                   end
-                                  argsl = ins.pop()
-                                  ins.reverse.each { |i| argsl.data.unshift(i) }
+                                  argsl = ins[-1]
+                                  ins.reverse.each { |i| argsl.data.unshift(i) unless i == argsl }
                                   if f.is_a?(Proc) # handle builtins
                                     return f.call(*argsl.data)
                                   end
                                   return f.call(argsl.data)
                             },
     'map'         => lambda { |f, ins|
-                                  if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
-                                     !(ins.is_a?(MalList) || ins.is_a?(MalVector))
-                                    raise MalBadMapError
+                                  if !(f.is_a?(MalFunction) || f.is_a?(Proc))
+                                    raise MalBadMapError, "first arg to map must be function or builtin"
+                                  end
+                                  if !(ins.is_a?(MalList) || ins.is_a?(MalVector))
+                                    raise MalBadMapError, "second arg to map must be list or vector"
                                   end
                                   y = MalList.new()
                                   ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
@@ -207,8 +209,6 @@ module MalCore
                                   end
                                   y = MalList.new()
                                   h.keys.each { |k| y.push(k) && puts(k) } # NB h.keys and not h.data.keys
-                                  puts "in keys returning:"
-                                  pp y
                                   return y
                             },
     'vals'        => lambda { |h|
