@@ -1,0 +1,16 @@
+;; addone.mal
+;; An attempt to implement the ADDONE function from
+;; https://www.cis.upenn.edu/~matuszek/LispText/lisp-logic.html
+
+;; plusone
+(def! plusone (fn* [n]
+  (+ 1 n)))
+
+;; addone
+(def! addone (fn* [li]
+  (cond
+    (empty? li) li
+    "else" (cons (plusone (first li)) (addone (rest li))))))
+
+;; main
+(println (addone (list 1 2 3)))
