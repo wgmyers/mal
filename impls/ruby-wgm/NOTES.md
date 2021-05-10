@@ -10,7 +10,71 @@ Added stubs for the eight new functions.
 
 Startup string with host-language symbol added.
 
-readline implemented. 
+readline implemented.
+
+All non-optional tests passing.
+
+And... fallen at the first hurdle.
+
+None of the first mal steps recurse. They show the prompt, print out whatever
+is given to them (except Step 2, which raises an uncaught 'foo not found'
+exception for anything apart from attempts to use +, /, * or -, which get
+'Malformed call to map'.
+
+Then, from Step 3, they do not even load, all with the same error.
+
+The error is:
+
+/home/wayne/src/lisp/mal/impls/ruby-wgm/env.rb:87:in 'get': 'do' not found (MalUnknownSymbolError)
+        from ./stepA_mal.rb:138:in 'eval_ast'
+
+We get the same error when trying to run make "perf^ruby-wgm"
+
+Somehow a do is being parsed in eval_ast instead of EVAL, where, of course,
+it is looked up as a MalSymbol, and then not found, throwing the error.
+
+Time to make a local test dir, copy the ../mal/ stuff over to it, and try to
+reproduce this bug as minimally as possible.
+
+The following also does not work:
+
+```
+;; loop2
+(def! loop2 (fn* [num]
+  (if (not (= 0 num))
+    (do
+      (println num)
+      (loop2 (- num 1))))))
+
+;; main
+(loop2 10)
+```
+
+Trying it in the REPL and using (show_env) it seems that the ast attibute of
+the function is being modified when the function is called.
+
+That shouldn't happen. Where the hell is that happening?
+
+That, it turns out, is happening in the 'do' implementation, where I stupidly
+used 'pop' to save the last element of ast in order to iterate on all the
+others. This of course modifies ast in place, so each time a function is called
+it decays by one element until it no longer runs at all.
+
+So now we can run steps 0 and 1 of the mal implementation, and some of step 2.
+
+In step 2, we should be able to say (+ 1 2), but we can't, because there is a
+bug involving map, and we get another error:
+
+Uncaught exception: Malformed call to 'map'.
+
+Trying again, we get
+
+Uncaught exception: (+ 1 2) not found
+
+Looks like something else is mutating our environment.
+
+Oh look, the map is wrapped in two apply calls, and in our apply implementation,
+we have another 'pop'. Doh. Lost that. Doesn't help.
 
 ## Step 9 (2021-05-09)
 
