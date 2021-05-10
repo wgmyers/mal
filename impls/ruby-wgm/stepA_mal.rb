@@ -240,7 +240,7 @@ def EVAL(ast, env)
       # and return the result. New env is discarded, so we return the old env.
       #retval, letenv = EVAL(ast.data[2], letenv)
       # Convert retval to a Mal data object if it isn't one.
-      # FIXME This shouldn't be.
+      # OLDFIXME This shouldn't be.
       #if !/^Mal/.match(retval.class.to_s)
       #  retval = READ(retval.to_s)
       #end
@@ -503,7 +503,7 @@ end
 def main()
   repl_env = init_env()
   prompt = "user> "
-  puts rep(STARTUP_STR, repl_env)
+  puts rep(STARTUP_STR, repl_env)[0...-4] # range suppresses trailing \nnil
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
