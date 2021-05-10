@@ -18,7 +18,7 @@ require_relative 'types'
 DEBUG = {
   'show_ast'  => false,
   'show_env'  => false,
-  'backtrace' => false
+  'backtrace' => true
 }
 
 # Set startup string
@@ -41,9 +41,9 @@ end
 # the first element is the symbol of an is_macro function.
 def macroexpand(ast, env)
   while is_macro_call(ast, env)
-    funcsym = ast.data.shift
+    funcsym = ast.data[0]
     func = env.get(funcsym.data)
-    ast = func.call(ast.data)
+    ast = func.call(ast.data.drop(1))
   end
   return ast
 end
