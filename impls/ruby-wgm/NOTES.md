@@ -76,6 +76,14 @@ Looks like something else is mutating our environment.
 Oh look, the map is wrapped in two apply calls, and in our apply implementation,
 we have another 'pop'. Doh. Lost that. Doesn't help.
 
+Tweaking our error checking on 'map' we find that (+ 1 2) results in 'map' just
+being given '+', the symbol, and not a list or vector. Guide is very clear that
+it should just get a list or vector.
+
+So how to reproduce this in a minimal way?
+
+First off, we get some sleep and come back to this tomorrow.
+
 ## Step 9 (2021-05-09)
 
 Try/catch.
