@@ -84,6 +84,11 @@ So how to reproduce this in a minimal way?
 
 First off, we get some sleep and come back to this tomorrow.
 
+Ok, so we had a hideous bug in macroexpand where we were using shift on the
+ast array, causing cond to degenerate weirdly the longer the (recursive) cond
+expression were called, causing all kinds of things to fail, including, in
+particular, step2_eval.mal.
+
 ## Step 9 (2021-05-09)
 
 Try/catch.
