@@ -208,7 +208,7 @@ module MalCore
                                     raise MalBadHashMapError, "arg to 'keys' must be hash"
                                   end
                                   y = MalList.new()
-                                  h.keys.each { |k| y.push(k) && puts(k) } # NB h.keys and not h.data.keys
+                                  h.keys.each { |k| y.push(k) } # NB h.keys and not h.data.keys
                                   return y
                             },
     'vals'        => lambda { |h|
