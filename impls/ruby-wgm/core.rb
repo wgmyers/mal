@@ -247,7 +247,11 @@ module MalCore
                                        x.is_a?(MalHashMap))
                                     raise MalMetaError
                                   end
+                                  # FIXME THIS IS WRONG.
+                                  # IF FUNCTION, WE COPY IT.
+                                  # Not sure about other types?
                                   x.metadata = y
+                                  return x
                             },
     'fn?'         => lambda { |x| ((x.is_a?(MalFunction) && !x.is_macro) || x.is_a?(Proc)) ? MalTrue.new() : MalFalse.new() },
     'string?'     => lambda { |x| x.is_a?(MalString) ? MalTrue.new() : MalFalse.new() },
