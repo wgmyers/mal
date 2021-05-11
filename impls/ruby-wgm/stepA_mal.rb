@@ -472,6 +472,8 @@ def init_env
   # Guide says we must define eval here. Is so we can close over repl_env?
   eval_proc = Proc.new { |ast| EVAL(ast, repl_env) }
   repl_env.set("eval", eval_proc)
+  # Add *host-language* symbol
+  repl_env.set("*host-language*", MalString.new("ruby-wgm", false))
   # Populate a dummy *ARGV* symbol
   argv = MalList.new()
   repl_env.set("*ARGV*", argv)
@@ -492,8 +494,6 @@ def init_env
   DEBUG.keys.each { |k|
     repl_env.set(k, Proc.new { DEBUG[k] = !DEBUG[k] })
   }
-  # Add *host-language* symbol
-  repl_env.set("*host-language*", MalString.new("ruby-wgm", false))
   return repl_env
 end
 
