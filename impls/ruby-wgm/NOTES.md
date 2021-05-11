@@ -1,6 +1,63 @@
 # Notes
 
-## Step A (2021-05-09)
+### Step A - Part Three: Meta and friends (2021-05-11)
+
+Implemented 'meta', 'fn?', 'string?', 'number?' and 'macro?'.
+
+Added metadata attribute to MalFunction, MalList, MalVector and MalHashMap.
+
+Next up: with-meta, conj and seq.
+
+### Step A - Part Two: Self Hosting (2021-05-10)
+
+Ok, so we had a hideous bug in macroexpand where we were using shift on the
+ast array, causing cond to degenerate weirdly the longer the (recursive) cond
+expression were called, causing all kinds of things to fail, including, in
+particular, step2_eval.mal.
+
+So, shift and pop have not been my friends here. The only remaining pop is in
+reader.rb where we genuinely want to throw away a spurious empty string, so
+that's ok.
+
+We have two more instances of shift left, both in the horrible hack at the
+beginning of the default evaller that allows things like (list + 1 2) to work.
+I will leave those there for now, but I bet they come back to bite us later on.
+
+Anyway, now we've fixed that, the self hosted Step 2 tests all pass, and so
+do the self hosted Step 3 tests.
+
+Um.
+
+So, discovering that I could just run `make MAL_IMPL=ruby-wgm "test^mal^stepX`
+has sped this process up somewhat, as at this point, we are passing all the
+self-hosting tests up to and including Step 9. Eep.
+
+And fixing the problem triggering failure in the Step A self-hosting tests was
+as simple as hoisting the definition of *host-language* to just before the test
+for commandline input.
+
+We are now self-hosting, modulo the optional features of Step A, which it is now
+time to implement. Weirdly, self-hosted mal currently fails 74 of the optional
+tests, while ruby-wgm mal fails 80 of them.
+
+Wow!
+
+A bunch of stuff still to do:
+
+* We have yet to implement the optional bits of Step A
+* Performance tests won't run and I don't know why - we did implement time-ms.
+Perhaps that alone isn't enough? Or perhaps we have another subtle bug to fix.
+Probably the latter.
+* We should go through and eliminate everything marked FIXME.
+* A good bit of cleanup in the comments aisle is needed
+* While the REGRESS=1 tests now pass, modulo missing optional Step A items, the
+individual steps no longer all pass, presumably due to changes in included files,
+and we should fix that. Steps 2, 4, 5, 6 and 7 need attention. The others are
+fine.
+* This document says 'we' a lot instead of I, and it's driving us, er, me, mad.
+Shall I fix it?
+
+## Step A - Part One: Self-hosting? (2021-05-09)
 
 Wooo...
 
@@ -83,55 +140,6 @@ it should just get a list or vector.
 So how to reproduce this in a minimal way?
 
 First off, we get some sleep and come back to this tomorrow.
-
-### Step A Part Two (2021-05-10)
-
-Ok, so we had a hideous bug in macroexpand where we were using shift on the
-ast array, causing cond to degenerate weirdly the longer the (recursive) cond
-expression were called, causing all kinds of things to fail, including, in
-particular, step2_eval.mal.
-
-So, shift and pop have not been my friends here. The only remaining pop is in
-reader.rb where we genuinely want to throw away a spurious empty string, so
-that's ok.
-
-We have two more instances of shift left, both in the horrible hack at the
-beginning of the default evaller that allows things like (list + 1 2) to work.
-I will leave those there for now, but I bet they come back to bite us later on.
-
-Anyway, now we've fixed that, the self hosted Step 2 tests all pass, and so
-do the self hosted Step 3 tests.
-
-Um.
-
-So, discovering that I could just run `make MAL_IMPL=ruby-wgm "test^mal^stepX`
-has sped this process up somewhat, as at this point, we are passing all the
-self-hosting tests up to and including Step 9. Eep.
-
-And fixing the problem triggering failure in the Step A self-hosting tests was
-as simple as hoisting the definition of *host-language* to just before the test
-for commandline input.
-
-We are now self-hosting, modulo the optional features of Step A, which it is now
-time to implement. Weirdly, self-hosted mal currently fails 74 of the optional
-tests, while ruby-wgm mal fails 80 of them.
-
-Wow!
-
-A bunch of stuff still to do:
-
-* We have yet to implement the optional bits of Step A
-* Performance tests won't run and I don't know why - we did implement time-ms.
-Perhaps that alone isn't enough? Or perhaps we have another subtle bug to fix.
-Probably the latter.
-* We should go through and eliminate everything marked FIXME.
-* A good bit of cleanup in the comments aisle is needed
-* While the REGRESS=1 tests now pass, modulo missing optional Step A items, the
-individual steps no longer all pass, presumably due to changes in included files,
-and we should fix that. Steps 2, 4, 5, 6 and 7 need attention. The others are
-fine.
-* This document says 'we' a lot instead of I, and it's driving us, er, me, mad.
-Shall I fix it?
 
 ## Step 9 (2021-05-09)
 

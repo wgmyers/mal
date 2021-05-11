@@ -74,7 +74,7 @@ end
 # Tee hee
 class MalFunction < MalType
 
-  attr_reader :ast, :params, :env, :closure, :data
+  attr_reader :ast, :params, :env, :closure, :data, :metadata
   attr_accessor :is_macro
 
   def initialize(ast, params, env, closure)
@@ -84,6 +84,7 @@ class MalFunction < MalType
     @env = env
     @closure = closure
     @is_macro = false
+    @metadata = MalNil.new()
     #@data = self # Will this work or blow up?
   end
 
@@ -253,9 +254,12 @@ end
 
 class MalList < MalType
 
+  attr_reader :metadata
+
   def initialize()
     @type = "MalList"
     @data = []
+    @metadata = MalNil.new()
   end
 
   def push(item)
@@ -288,6 +292,7 @@ class MalVector < MalList
   def initialize()
     @type = "MalVector"
     @data = []
+    @metadata = MalNil.new()
   end
 
   def print(readably = true)
@@ -302,11 +307,14 @@ end
 
 class MalHashMap < MalType
 
+  attr_reader :metadata
+
   def initialize()
     @type = "MalHashMap"
     @data = {}
     @next_is_key = true
     @last_key = nil
+    @metadata = MalNil.new()
   end
 
   # make_internal_key
