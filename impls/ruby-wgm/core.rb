@@ -231,8 +231,24 @@ module MalCore
                                  end
                             },
     'time-ms'     => lambda { |*x| (Time.new().to_f * 1000).to_i },
-    'meta'        => lambda { |x| x.metadata },
-    'with-meta'   => lambda { |*x| raise MalNotImplementedError },
+    'meta'        => lambda { |x|
+                                  if(x.is_a?(MalFunction) ||
+                                     x.is_a?(MalList) ||
+                                     x.is_a?(MalVector) ||
+                                     x.is_a?(MalHashMap))
+                                    return x.metadata
+                                  end
+                                  raise MalMetaError
+                            },
+    'with-meta'   => lambda { |x, y|
+                                  if !(x.is_a?(MalFunction) ||
+                                       x.is_a?(MalList) ||
+                                       x.is_a?(MalVector) ||
+                                       x.is_a?(MalHashMap))
+                                    raise MalMetaError
+                                  end
+                                  x.metadata = y
+                            },
     'fn?'         => lambda { |x| ((x.is_a?(MalFunction) && !x.is_macro) || x.is_a?(Proc)) ? MalTrue.new() : MalFalse.new() },
     'string?'     => lambda { |x| x.is_a?(MalString) ? MalTrue.new() : MalFalse.new() },
     'number?'     => lambda { |x| x.is_a?(MalNumber) ? MalTrue.new() : MalFalse.new() },

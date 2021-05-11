@@ -74,8 +74,8 @@ end
 # Tee hee
 class MalFunction < MalType
 
-  attr_reader :ast, :params, :env, :closure, :data, :metadata
-  attr_accessor :is_macro
+  attr_reader :ast, :params, :env, :closure, :data
+  attr_accessor :is_macro, :metadata
 
   def initialize(ast, params, env, closure)
     @type = "MalFunction"
@@ -254,7 +254,7 @@ end
 
 class MalList < MalType
 
-  attr_reader :metadata
+  attr_accessor :metadata
 
   def initialize()
     @type = "MalList"
@@ -307,7 +307,7 @@ end
 
 class MalHashMap < MalType
 
-  attr_reader :metadata
+  attr_accessor :metadata
 
   def initialize()
     @type = "MalHashMap"

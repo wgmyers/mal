@@ -39,6 +39,12 @@ class MalIndexOutOfRangeError < StandardError
   end
 end
 
+class MalMetaError < StandardError
+  def initialize(msg = "only lists, vectors, hashes and functions take metadata")
+    super(msg)
+  end
+end
+
 class MalMismatchParensError < StandardError
   def initialize(msg = "Mismatched parentheses at EOF")
     super(msg)
