@@ -89,6 +89,31 @@ ast array, causing cond to degenerate weirdly the longer the (recursive) cond
 expression were called, causing all kinds of things to fail, including, in
 particular, step2_eval.mal.
 
+So, shift and pop have not been my friends here. The only remaining pop is in
+reader.rb where we genuinely want to throw away a spurious empty string, so
+that's ok.
+
+We have two more instances of shift left, both in the horrible hack at the
+beginning of the default evaller that allows things like (list + 1 2) to work.
+I will leave those there for now, but I bet they come back to bite us later on.
+
+Anyway, now we've fixed that, the self hosted Step 2 tests all pass, and so
+do the self hosted Step 3 tests.
+
+Um.
+
+So, discovering that I could just run `make MAL_IMPL=ruby-wgm "test^mal^stepX`
+has sped this process up somewhat, as at this point, we are passing all the
+self-hosting tests up to and including Step 9. Eep.
+
+And fixing the problem triggering failure in the Step A self-hosting tests was
+as simple as hoisting the definition of *host-language* to just before the test
+for commandline input.
+
+We are now self-hosting, modulo the optional features of Step A, which it is now
+time to implement. Weirdly, self-hosted mal currently fails 74 of the optional
+tests, while ruby-wgm mal fails 80 of them.
+
 ## Step 9 (2021-05-09)
 
 Try/catch.
