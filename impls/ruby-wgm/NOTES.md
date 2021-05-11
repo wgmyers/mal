@@ -84,6 +84,8 @@ So how to reproduce this in a minimal way?
 
 First off, we get some sleep and come back to this tomorrow.
 
+### Step A Part Two (2021-05-10)
+
 Ok, so we had a hideous bug in macroexpand where we were using shift on the
 ast array, causing cond to degenerate weirdly the longer the (recursive) cond
 expression were called, causing all kinds of things to fail, including, in
@@ -113,6 +115,23 @@ for commandline input.
 We are now self-hosting, modulo the optional features of Step A, which it is now
 time to implement. Weirdly, self-hosted mal currently fails 74 of the optional
 tests, while ruby-wgm mal fails 80 of them.
+
+Wow!
+
+A bunch of stuff still to do:
+
+* We have yet to implement the optional bits of Step A
+* Performance tests won't run and I don't know why - we did implement time-ms.
+Perhaps that alone isn't enough? Or perhaps we have another subtle bug to fix.
+Probably the latter.
+* We should go through and eliminate everything marked FIXME.
+* A good bit of cleanup in the comments aisle is needed
+* While the REGRESS=1 tests now pass, modulo missing optional Step A items, the
+individual steps no longer all pass, presumably due to changes in included files,
+and we should fix that. Steps 2, 4, 5, 6 and 7 need attention. The others are
+fine.
+* This document says 'we' a lot instead of I, and it's driving us, er, me, mad.
+Shall I fix it?
 
 ## Step 9 (2021-05-09)
 
