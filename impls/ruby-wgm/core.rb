@@ -285,7 +285,20 @@ module MalCore
                                   end
                                   return retval # NB MalList input is returned unchanged
                             },
-    'conj'        => lambda { |*x| raise MalNotImplementedError },
+    'conj'        => lambda { |col, *l|
+                               if col.is_a?(MalVector)
+                                 ret = MalVector.new()
+                                 col.data.each { |i| ret.push(i) }
+                                 l.each { |i| ret.push(i) }
+                               elsif col.is_a?(MalList)
+                                 ret = MalList.new()
+                                 col.data.each { |i| ret.push(i) }
+                                 l.reverse.each { |i| ret.push(i) }
+                               else
+                                 raise MalConjError
+                               end
+                               return ret
+                            },
     'macavity'    => lambda { |*x| raise MalNotImplementedError },
   }
   Mal = {

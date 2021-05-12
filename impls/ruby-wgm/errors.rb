@@ -33,6 +33,12 @@ class MalBadPromptError < StandardError
   end
 end
 
+class MalConjError < StandardError
+  def intitialize(msg = "first arg to conj must be list or vector")
+    super(msg)
+  end
+end
+
 class MalIndexOutOfRangeError < StandardError
   def initialize(msg = "'nth' index out of bounds")
     super(msg)
