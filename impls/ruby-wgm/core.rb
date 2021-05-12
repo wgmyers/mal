@@ -251,9 +251,13 @@ module MalCore
                                        x.is_a?(MalHashMap))
                                     raise MalMetaError
                                   end
-                                  # FIXME THIS IS WRONG.
-                                  # IF FUNCTION, WE COPY IT.
-                                  # Not sure about other types?
+                                  # If it's a function, we duplicate it
+                                  if x.is_a?(MalFunction)
+                                    newx = x.dup
+                                    newx.metadata = y
+                                    return newx
+                                  end
+                                  # Otherwise, just add metadata 
                                   x.metadata = y
                                   return x
                             },

@@ -99,6 +99,16 @@ class MalFunction < MalType
     return @closure.call(*args)
   end
 
+  # def
+  # Return a duplicate of ourselves
+  # Needed for with-meta and defmacro!
+  def dup()
+    ret = MalFunction.new(self.ast, self.params, self.env, self.closure)
+    ret.is_macro = self.is_macro
+    ret.metadata = self.metadata
+    return ret
+  end
+
 end
 
 # MalString
