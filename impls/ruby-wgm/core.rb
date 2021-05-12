@@ -238,6 +238,10 @@ module MalCore
                                      x.is_a?(MalHashMap))
                                     return x.metadata
                                   end
+                                  # meta on builtins returns nil
+                                  if (x.is_a?(Proc))
+                                    return MalNil.new()
+                                  end
                                   raise MalMetaError
                             },
     'with-meta'   => lambda { |x, y|
