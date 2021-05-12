@@ -251,15 +251,10 @@ module MalCore
                                        x.is_a?(MalHashMap))
                                     raise MalMetaError
                                   end
-                                  # If it's a function, we duplicate it
-                                  if x.is_a?(MalFunction)
-                                    newx = x.dup
-                                    newx.metadata = y
-                                    return newx
-                                  end
-                                  # Otherwise, just add metadata 
-                                  x.metadata = y
-                                  return x
+                                  # Duplicate our result before returning it
+                                  newx = x.dup
+                                  newx.metadata = y
+                                  return newx
                             },
     'fn?'         => lambda { |x| ((x.is_a?(MalFunction) && !x.is_macro) || x.is_a?(Proc)) ? MalTrue.new() : MalFalse.new() },
     'string?'     => lambda { |x| x.is_a?(MalString) ? MalTrue.new() : MalFalse.new() },

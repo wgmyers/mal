@@ -295,6 +295,14 @@ class MalList < MalType
   #  return "<#builtin>"
   #end
 
+  # dup
+  # Needed for with-meta
+  def dup()
+    new = MalList.new()
+    self.each { |i| new.push(i) }
+    return new
+  end
+
 end
 
 class MalVector < MalList
@@ -311,6 +319,14 @@ class MalVector < MalList
       strings.push(item.print(readably))
     end
     return "[" + strings.join(" ") + "]"
+  end
+
+  # dup
+  # Needed for with-meta
+  def dup()
+    new = MalVector.new()
+    self.each { |i| new.push(i) }
+    return new
   end
 
 end
@@ -430,6 +446,15 @@ class MalHashMap < MalType
     end
     return "{" + strings.join(" ") + "}"
   end
+
+  # dup
+  # Needed for with-meta
+  def dup
+    new = MalHashMap.new()
+    self.keys.each { |k| new.set(k, self.data[k]) }
+    return new
+  end
+
 end
 
 class MalKeyword < MalType
