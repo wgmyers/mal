@@ -261,7 +261,30 @@ module MalCore
     'string?'     => lambda { |x| x.is_a?(MalString) ? MalTrue.new() : MalFalse.new() },
     'number?'     => lambda { |x| x.is_a?(MalNumber) ? MalTrue.new() : MalFalse.new() },
     'macro?'      => lambda { |x| x.is_a?(MalFunction) ? x.is_macro() : MalFalse.new() },
-    'seq'         => lambda { |*x| raise MalNotImplementedError },
+    'seq'         => lambda { |x|
+                                  if !(x.is_a?(MalString) ||
+                                       x.is_a?(MalList) ||
+                                       x.is_a?(MalVector) ||
+                                       x.is_a?(MalNil))
+                                    raise MalSeqError
+                                  end
+                                  if (x.is_a?(MalNil) ||
+                                     (x.is_a?(MalString) && x.data == "") ||
+                                     (x.is_a?(MalList) && x.length == 0) ||
+                                     (x.is_a?(MalVector) && x.length == 0))
+                                    return MalNil.new()
+                                  end
+                                  retval = x
+                                  if x.is_a?(MalVector) # Convert vector to list
+                                    retval = MalList.new()
+                                    x.data.each { |i| retval.push(i) }
+                                  elsif x.is_a?(MalString) # Convert string to list of single char strings
+                                    retval = MalList.new()
+                                    chars = x.data.split("")
+                                    chars.each { |c| retval.push(MalString.new(c, false)) }
+                                  end
+                                  return retval # NB MalList input is returned unchanged
+                            },
     'conj'        => lambda { |*x| raise MalNotImplementedError },
     'macavity'    => lambda { |*x| raise MalNotImplementedError },
   }

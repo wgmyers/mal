@@ -1,12 +1,17 @@
 # Notes
 
-### Step A - Part Three: Meta and friends (2021-05-11)
+### Step A - Part Three: Meta and friends (2021-05-11/12)
 
 Implemented 'meta', 'fn?', 'string?', 'number?' and 'macro?'.
 
 Added metadata attribute to MalFunction, MalList, MalVector and MalHashMap.
 
 Next up: with-meta, conj and seq.
+
+Partially done with-meta, but we don't yet duplicate the function as required.
+Not clear if we should also duplicate lists, vectors and hashes.
+
+Seq implemented now.
 
 ### Step A - Part Two: Self Hosting (2021-05-10)
 

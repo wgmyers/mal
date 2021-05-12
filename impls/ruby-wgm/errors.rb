@@ -69,6 +69,12 @@ class MalNotImplementedError < StandardError
   end
 end
 
+class MalSeqError < StandardError
+  def initialize(msg = "arg to seq must be string, list, vector or nil")
+    super(msg)
+  end
+end
+
 class MalThrownError < StandardError
   attr_reader :malexp
   def initialize(msg = "Error thrown by Mal throw built-in", malexp: nil)
