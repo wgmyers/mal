@@ -299,7 +299,7 @@ class MalList < MalType
   # Needed for with-meta
   def dup()
     new = MalList.new()
-    self.each { |i| new.push(i) }
+    self.data.each { |i| new.push(i) }
     return new
   end
 
@@ -325,7 +325,7 @@ class MalVector < MalList
   # Needed for with-meta
   def dup()
     new = MalVector.new()
-    self.each { |i| new.push(i) }
+    self.data.each { |i| new.push(i) }
     return new
   end
 
