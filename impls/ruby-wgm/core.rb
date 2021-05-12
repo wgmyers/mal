@@ -292,8 +292,8 @@ module MalCore
                                  l.each { |i| ret.push(i) }
                                elsif col.is_a?(MalList)
                                  ret = MalList.new()
-                                 col.data.each { |i| ret.push(i) }
                                  l.reverse.each { |i| ret.push(i) }
+                                 col.data.each { |i| ret.push(i) }
                                else
                                  raise MalConjError
                                end
