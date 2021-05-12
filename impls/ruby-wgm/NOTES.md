@@ -39,6 +39,18 @@ Trying it, anyway.
 
 Yeah, we're passing all the tests, but it feels very wrong.
 
+Not all the tests, to be fair.
+
+make REGRESS=1 "test^ruby-wgm^stepA" passes.
+make MAL_IMPL=ruby-wgm "test^mal" also.
+
+BUT:
+
+make "test^ruby-wgm" does not - fails on Step 2.
+make "perf^ruby-wgm" doesn't even run for some reason.
+
+Made a start on ruby-eval and it doesn't work at all. I have no idea why.
+
 ### Step A - Part Two: Self Hosting (2021-05-10)
 
 Ok, so we had a hideous bug in macroexpand where we were using shift on the
