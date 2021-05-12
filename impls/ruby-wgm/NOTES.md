@@ -11,7 +11,33 @@ Next up: with-meta, conj and seq.
 Partially done with-meta, but we don't yet duplicate the function as required.
 Not clear if we should also duplicate lists, vectors and hashes.
 
-Seq implemented now.
+Seq implemented now. Conj too.
+
+All with-meta test pass except this one:
+
+```
+;; Testing metadata on builtin functions
+(meta +)
+;=>nil
+(def! f-wm3 ^{"def" 2} +)
+(meta f-wm3)
+;=>{"def" 2}
+(meta +)
+;=>nil
+```
+
+What happens here is the call to def! fails as with-meta has no idea how to
+handle being given a builtin. And it's really not obvious how to handle it.
+The test shows that f-wm3 should be defined as /something/ that has a metadata
+attribute, so presumably we have to figure out what to do with the built-in.
+Could we create a new MalFunction with nil ast, env and params, and set the
+closure to be the given Proc? This will work in terms of passing the test, but
+it won't work in that calling the function through the name will almost certainly
+fail as we won't call it properly. Probably?
+
+Trying it, anyway.
+
+Yeah, we're passing all the tests, but it feels very wrong.
 
 ### Step A - Part Two: Self Hosting (2021-05-10)
 

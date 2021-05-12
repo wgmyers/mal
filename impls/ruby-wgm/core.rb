@@ -248,8 +248,18 @@ module MalCore
                                   if !(x.is_a?(MalFunction) ||
                                        x.is_a?(MalList) ||
                                        x.is_a?(MalVector) ||
-                                       x.is_a?(MalHashMap))
+                                       x.is_a?(MalHashMap) ||
+                                       x.is_a?(Proc))
                                     raise MalMetaError
+                                  end
+                                  # FIXME Not at all sure this is how to handle the
+                                  # case where with-meta gets a built-in.
+                                  # For now, create a dummy function with empty ast, empty params,
+                                  # nil environment and the given Proc as the closure.
+                                  if (x.is_a?(Proc))
+                                    newx = MalFunction.new(MalList.new(), MalList.new(), MalNil.new(), x)
+                                    newx.metadata = y
+                                    return newx
                                   end
                                   # Duplicate our result before returning it
                                   newx = x.dup
