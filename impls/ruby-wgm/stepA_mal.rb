@@ -210,6 +210,7 @@ def EVAL(ast, env)
       begin
         item = EVAL(ast.data[2], env)
         if is_defmacro && item.is_a?(MalFunction)
+          item = item.dup  # Don't mutate existing functions, duplicate them
           item.is_macro = true
         end
         env = env.set(ast.data[1], item)
