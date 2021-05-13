@@ -38,19 +38,19 @@ def eval_ast(ast, repl_env)
       raise MalUnknownSymbolError
     end
   when "MalList"
-    retval = MalList.new()
+    retval = MalList.new
     for item in ast.data
       retval.push(EVAL(item, repl_env))
     end
     return retval
   when "MalVector"
-    retval = MalVector.new()
+    retval = MalVector.new
     for item in ast.data
       retval.push(EVAL(item, repl_env))
     end
     return retval
   when "MalHashMap"
-    retval = MalHashMap.new()
+    retval = MalHashMap.new
     key = true
     # We alternatve between blindly returning the untouched key and
     # calling eval on key values.

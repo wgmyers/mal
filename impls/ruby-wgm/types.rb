@@ -84,7 +84,7 @@ class MalFunction < MalType
     @env = env
     @closure = closure
     @is_macro = false
-    @metadata = MalNil.new()
+    @metadata = MalNil.new
     #@data = self # Will this work or blow up?
   end
 
@@ -269,7 +269,7 @@ class MalList < MalType
   def initialize()
     @type = "MalList"
     @data = []
-    @metadata = MalNil.new()
+    @metadata = MalNil.new
   end
 
   def push(item)
@@ -298,7 +298,7 @@ class MalList < MalType
   # dup
   # Needed for with-meta
   def dup()
-    new = MalList.new()
+    new = MalList.new
     self.data.each { |i| new.push(i) }
     return new
   end
@@ -310,7 +310,7 @@ class MalVector < MalList
   def initialize()
     @type = "MalVector"
     @data = []
-    @metadata = MalNil.new()
+    @metadata = MalNil.new
   end
 
   def print(readably = true)
@@ -324,7 +324,7 @@ class MalVector < MalList
   # dup
   # Needed for with-meta
   def dup()
-    new = MalVector.new()
+    new = MalVector.new
     self.data.each { |i| new.push(i) }
     return new
   end
@@ -340,7 +340,7 @@ class MalHashMap < MalType
     @data = {}
     @next_is_key = true
     @last_key = nil
-    @metadata = MalNil.new()
+    @metadata = MalNil.new
   end
 
   # make_internal_key
@@ -424,7 +424,7 @@ class MalHashMap < MalType
     if @data.has_key?(ikey)
       return @data[ikey]
     end
-    return MalNil.new()
+    return MalNil.new
   end
 
   # print
@@ -450,7 +450,7 @@ class MalHashMap < MalType
   # dup
   # Needed for with-meta
   def dup
-    new = MalHashMap.new()
+    new = MalHashMap.new
     self.keys.each { |k| new.set(k, self.data[k]) }
     return new
   end

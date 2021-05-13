@@ -31,7 +31,7 @@ class Env
     if variadic
       binds.each_with_index do |b, i|
         if b.data == "&"
-          nl = MalList.new()
+          nl = MalList.new
           exprs.drop(i).each { |e| nl.push(e) }
           set(binds[i+1], nl)
           break

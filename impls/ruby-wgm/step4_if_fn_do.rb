@@ -41,21 +41,21 @@ def eval_ast(ast, env)
       raise e
     end
   when "MalList"
-    retval = MalList.new()
+    retval = MalList.new
     for item in ast.data
       newitem, env = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalVector"
-    retval = MalVector.new()
+    retval = MalVector.new
     for item in ast.data
       newitem, env = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalHashMap"
-    retval = MalHashMap.new()
+    retval = MalHashMap.new
     key = true
     # We alternatve between blindly returning the untouched key and
     # calling eval on key values.
@@ -157,7 +157,7 @@ def EVAL(ast, env)
       if(ast.data[3])
         return EVAL(ast.data[3], env)
       else
-        return MalNil.new(), env
+        return MalNil.new, env
       end
     else
       # Truthy. Return eval of second item (or raise error)
@@ -202,9 +202,9 @@ def EVAL(ast, env)
     # Oops. We /might/ need to convert back to a Mal data type.
     case res.class.to_s
     when "TrueClass"
-      return MalTrue.new(), env
+      return MalTrue.new, env
     when "FalseClass"
-      return MalFalse.new(), env
+      return MalFalse.new, env
     when "Integer"
       return MalNumber.new(res), env
     else
@@ -237,7 +237,7 @@ end
 # Initialise our environment
 # Use set to create the numeric functions
 def init_env
-  repl_env = Env.new()
+  repl_env = Env.new
   # Core environment now defined in core.rb
   MalCore::Env.each do |key, val|
     repl_env.set(key, val)

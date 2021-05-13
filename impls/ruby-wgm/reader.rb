@@ -105,11 +105,11 @@ def read_atom(reader, matcher)
   when /^:/
     retval = MalKeyword.new(data)
   when "true"
-    retval = MalTrue.new()
+    retval = MalTrue.new
   when "false"
-    retval = MalFalse.new()
+    retval = MalFalse.new
   when "nil"
-    retval = MalNil.new()
+    retval = MalNil.new
   else
     retval = MalSymbol.new(data)
   end
@@ -126,11 +126,11 @@ def read_list(reader, matcher, type)
   ishash = false
   case type
   when "("
-    retval = MalList.new()
+    retval = MalList.new
   when "["
-    retval = MalVector.new()
+    retval = MalVector.new
   when "{"
-    retval = MalHashMap.new()
+    retval = MalHashMap.new
     ishash = true
   else
     raise MalUnknownListTypeError
@@ -355,7 +355,7 @@ def read_str(str)
   tokens = expand_metadata(tokens)
   tokens = expand_macros(tokens)
   reader = Reader.new(tokens)
-  matcher = Matcher.new()
+  matcher = Matcher.new
   retval = read_form(reader, matcher)
   # Check our parentheses have matched and our hashmaps are ok
   begin

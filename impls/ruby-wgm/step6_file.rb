@@ -49,21 +49,21 @@ def eval_ast(ast, env)
       raise e
     end
   when "MalList"
-    retval = MalList.new()
+    retval = MalList.new
     for item in ast.data
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalVector"
-    retval = MalVector.new()
+    retval = MalVector.new
     for item in ast.data
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalHashMap"
-    retval = MalHashMap.new()
+    retval = MalHashMap.new
     key = true
     # We alternatve between blindly returning the untouched key and
     # calling eval on key values.
@@ -191,7 +191,7 @@ def EVAL(ast, env)
           # Pre TCO - return EVAL(ast.data[3], env)
           ast = ast.data[3]
         else
-          return MalNil.new()
+          return MalNil.new
         end
       else
         # Truthy. Return eval of second item (or raise error)
@@ -267,9 +267,9 @@ def EVAL(ast, env)
       # FIXME I'm sure this shouldn't ever be the case.
       case res.class.to_s
       when "TrueClass"
-        return MalTrue.new()
+        return MalTrue.new
       when "FalseClass"
-        return MalFalse.new()
+        return MalFalse.new
       when "Integer"
         return MalNumber.new(res)
       else
@@ -308,7 +308,7 @@ end
 # Initialise our environment
 # Use set to create the numeric functions
 def init_env
-  repl_env = Env.new()
+  repl_env = Env.new
   # Core environment now defined in core.rb
   MalCore::Env.each do |key, val|
     repl_env.set(key, val)
@@ -321,7 +321,7 @@ def init_env
   eval_proc = Proc.new { |ast| EVAL(ast, repl_env) }
   repl_env.set("eval", eval_proc)
   # Populate a dummy *ARGV* symbol
-  argv = MalList.new()
+  argv = MalList.new
   repl_env.set("*ARGV*", argv)
   # If ARGV is non-empty we should treat the first item as a filename and load it
   if ARGV.length > 0

@@ -29,21 +29,21 @@ def eval_ast(ast, env)
       raise e
     end
   when "MalList"
-    retval = MalList.new()
+    retval = MalList.new
     for item in ast.data
       newitem, env = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalVector"
-    retval = MalVector.new()
+    retval = MalVector.new
     for item in ast.data
       newitem, env = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalHashMap"
-    retval = MalHashMap.new()
+    retval = MalHashMap.new
     key = true
     # We alternatve between blindly returning the untouched key and
     # calling eval on key values.
@@ -174,7 +174,7 @@ end
 # Initialise our environment
 # Use set to create the numeric functions
 def init_env
-  repl_env = Env.new()
+  repl_env = Env.new
   # A simple environment for basic numeric functions
   numeric_env = {
     '+' => lambda { |x,y| x + y },

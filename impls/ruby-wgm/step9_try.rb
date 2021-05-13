@@ -72,17 +72,17 @@ def quasiquote(ast)
     if (ast.data.length > 1) && ast.data[0].is_a?(MalSymbol) && (ast.data[0].data == "unquote")
       retval = ast.data[1]
     else
-      result = MalList.new()
+      result = MalList.new
       ast.data.reverse.each { |elt|
         if elt.is_a?(MalList) && (elt.data.length > 1) &&
            elt.data[0].is_a?(MalSymbol) && (elt.data[0].data == "splice-unquote")
           # Handle splice-unquote
-          spliceresult = MalList.new()
+          spliceresult = MalList.new
           spliceresult.push(MalSymbol.new("concat"))
           spliceresult.push(elt.data[1])
           spliceresult.push(result)
         else
-          spliceresult = MalList.new()
+          spliceresult = MalList.new
           spliceresult.push(MalSymbol.new("cons"))
           spliceresult.push(quasiquote(elt))
           spliceresult.push(result)
@@ -92,14 +92,14 @@ def quasiquote(ast)
       retval = result
     end
   when "MalHashMap", "MalSymbol"
-    retval = MalList.new()
+    retval = MalList.new
     retval.push(MalSymbol.new("quote"))
     retval.push(ast)
   when "MalVector"
-    retval = MalList.new()
+    retval = MalList.new
     retval.push(MalSymbol.new("vec"))
     # Now add "the result of processing ast as if it were a list not starting with unquote"
-    tmplist = MalList.new()
+    tmplist = MalList.new
     ast.data.each { |item| tmplist.push(item) }
     # If list *does* begin with unquote, squirrel it away and add it back after processing
     if (tmplist.data.length > 0) &&
@@ -137,21 +137,21 @@ def eval_ast(ast, env)
       raise e
     end
   when "MalList"
-    retval = MalList.new()
+    retval = MalList.new
     for item in ast.data
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalVector"
-    retval = MalVector.new()
+    retval = MalVector.new
     for item in ast.data
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when "MalHashMap"
-    retval = MalHashMap.new()
+    retval = MalHashMap.new
     # Now the MalHashMap is a real hash we can do this sensibly
     for key in ast.data.keys
       retval.set(key, EVAL(ast.data[key], env))
@@ -283,7 +283,7 @@ def EVAL(ast, env)
           # Pre TCO - return EVAL(ast.data[3], env)
           ast = ast.data[3]
         else
-          return MalNil.new()
+          return MalNil.new
         end
       else
         # Truthy. Return eval of second item (or raise error)
@@ -412,9 +412,9 @@ def EVAL(ast, env)
       # FIXME I'm sure this shouldn't ever be the case.
       case res.class.to_s
       when "TrueClass"
-        return MalTrue.new()
+        return MalTrue.new
       when "FalseClass"
-        return MalFalse.new()
+        return MalFalse.new
       when "Integer"
         return MalNumber.new(res)
       else
@@ -457,7 +457,7 @@ end
 # Initialise our environment
 # Use set to create the numeric functions
 def init_env
-  repl_env = Env.new()
+  repl_env = Env.new
   # Core environment now defined in core.rb
   MalCore::Env.each do |key, val|
     repl_env.set(key, val)
@@ -470,7 +470,7 @@ def init_env
   eval_proc = Proc.new { |ast| EVAL(ast, repl_env) }
   repl_env.set("eval", eval_proc)
   # Populate a dummy *ARGV* symbol
-  argv = MalList.new()
+  argv = MalList.new
   repl_env.set("*ARGV*", argv)
   # If ARGV is non-empty we should treat the first item as a filename and load it
   if ARGV.length > 0
