@@ -201,10 +201,7 @@ def main()
       break
     end
     begin
-      #puts "Response:"
       puts rep(line, repl_env)
-      #puts "Environment:"
-      #p repl_env
     rescue => e
       puts 'Error: ' + e.message
       puts e.backtrace
