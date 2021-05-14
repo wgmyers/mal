@@ -28,7 +28,7 @@ end
 # If input is EOF then stop
 # Otherwise pass input through rep and print it
 def main()
-  prompt = "user> "
+  prompt = 'user> '
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF

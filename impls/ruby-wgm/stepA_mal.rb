@@ -3,7 +3,7 @@
 # stepA_mal.rb
 # In which we attempt self-hosting
 
-require "pp"
+require 'pp'
 
 require_relative 'core'
 require_relative 'env'
@@ -22,7 +22,7 @@ DEBUG = {
 }
 
 # Set startup string
-STARTUP_STR = "(println (str \"Mal [\" *host-language* \"]\"))"
+STARTUP_STR = '(println (str "Mal [" *host-language* "]"))'
 
 # READ
 # Invokes the reader on its input
@@ -70,23 +70,23 @@ end
 def quasiquote(ast)
   type = ast.class.to_s
   case type
-  when "MalList"
+  when 'MalList'
     # If first element of list is 'unquote' symbol, return second element
-    if (ast.data.length > 1) && ast.data[0].is_a?(MalSymbol) && (ast.data[0].data == "unquote")
+    if (ast.data.length > 1) && ast.data[0].is_a?(MalSymbol) && (ast.data[0].data == 'unquote')
       retval = ast.data[1]
     else
       result = MalList.new
       ast.data.reverse.each { |elt|
         if elt.is_a?(MalList) && (elt.data.length > 1) &&
-           elt.data[0].is_a?(MalSymbol) && (elt.data[0].data == "splice-unquote")
+           elt.data[0].is_a?(MalSymbol) && (elt.data[0].data == 'splice-unquote')
           # Handle splice-unquote
           spliceresult = MalList.new
-          spliceresult.push(MalSymbol.new("concat"))
+          spliceresult.push(MalSymbol.new('concat'))
           spliceresult.push(elt.data[1])
           spliceresult.push(result)
         else
           spliceresult = MalList.new
-          spliceresult.push(MalSymbol.new("cons"))
+          spliceresult.push(MalSymbol.new('cons'))
           spliceresult.push(quasiquote(elt))
           spliceresult.push(result)
         end
@@ -94,23 +94,23 @@ def quasiquote(ast)
       }
       retval = result
     end
-  when "MalHashMap", "MalSymbol"
+  when 'MalHashMap', 'MalSymbol'
     retval = MalList.new
-    retval.push(MalSymbol.new("quote"))
+    retval.push(MalSymbol.new('quote'))
     retval.push(ast)
-  when "MalVector"
+  when 'MalVector'
     retval = MalList.new
-    retval.push(MalSymbol.new("vec"))
+    retval.push(MalSymbol.new('vec'))
     # Now add "the result of processing ast as if it were a list not starting with unquote"
     tmplist = MalList.new
     ast.data.each { |item| tmplist.push(item) }
     # If list *does* begin with unquote, squirrel it away and add it back after processing
     if (tmplist.data.length > 0) &&
        tmplist.data[0].is_a?(MalSymbol) &&
-       (tmplist.data[0].data == "unquote")
-      tmplist.data[0] = MalSymbol.new("hidden-unquote") # hide the 'unquote'
+       (tmplist.data[0].data == 'unquote')
+      tmplist.data[0] = MalSymbol.new('hidden-unquote') # hide the 'unquote'
       tmplist = quasiquote(tmplist)
-      tmplist.data[1].data[1] = MalSymbol.new("unquote") # put it back (it's now wrapped in cons and quote)
+      tmplist.data[1].data[1] = MalSymbol.new('unquote') # put it back (it's now wrapped in cons and quote)
     else
       tmplist = quasiquote(tmplist)
     end
@@ -131,7 +131,7 @@ end
 def eval_ast(ast, env)
   type = ast.class.to_s
   case type
-  when "MalSymbol"
+  when 'MalSymbol'
     sym = ast.print()
     # If the symbol isn't found, an error will be raised in env.rb
     begin
@@ -139,21 +139,21 @@ def eval_ast(ast, env)
     rescue => e
       raise e
     end
-  when "MalList"
+  when 'MalList'
     retval = MalList.new
     for item in ast.data
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
-  when "MalVector"
+  when 'MalVector'
     retval = MalVector.new
     for item in ast.data
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
-  when "MalHashMap"
+  when 'MalHashMap'
     retval = MalHashMap.new
     # Now the MalHashMap is a real hash we can do this sensibly
     for key in ast.data.keys
@@ -200,13 +200,13 @@ def EVAL(ast, env)
     # FIXME This wants its own function now (or soon) surely
     case ast.data[0].data
 
-    when "def!", "defmacro!"
+    when 'def!', 'defmacro!'
       # Do the def! stuff
       # If defmacro! do that too
       # Only difference is we set is_macro in the MalFunction (tee hee)
 
       # Set is_defmacro if we are behaving as defmacro!
-      is_defmacro = ast.data[0].data == "defmacro!" ? true : false
+      is_defmacro = ast.data[0].data == 'defmacro!' ? true : false
       begin
         item = EVAL(ast.data[2], env)
         if is_defmacro && item.is_a?(MalFunction)
@@ -219,7 +219,7 @@ def EVAL(ast, env)
         raise e
       end
 
-    when "let*"
+    when 'let*'
       # Do the let* stuff
       # Create a new environment with current env as outer
       letenv = Env.new(env)
@@ -253,7 +253,7 @@ def EVAL(ast, env)
       next
       # ... and loop to start of EVAL
 
-    when "do"
+    when 'do'
       # Do the do
       # Call eval_ast on every member of the list
       # Return the value of the last one
@@ -272,7 +272,7 @@ def EVAL(ast, env)
       next
       # ... and loop to start of EVAL
 
-    when "if"
+    when 'if'
       # Handle if statements
       # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
       retval = EVAL(ast.data[1], env)
@@ -281,7 +281,7 @@ def EVAL(ast, env)
       else
         type = nil
       end
-      if(!type || type == "MalFalse" || type == "MalNil")
+      if(!type || type == 'MalFalse' || type == 'MalNil')
       # Falsy. Return eval of third item if there is one
         if(ast.data[3])
           # Pre TCO - return EVAL(ast.data[3], env)
@@ -297,7 +297,7 @@ def EVAL(ast, env)
       next
       # ... and loop to start of EVAL
 
-    when "fn*"
+    when 'fn*'
       # Second element of the list is parameters. Third is function body.
       # So create a closure which:
       # 1 - creates a new env using our env as outer and binds /it's/
@@ -323,21 +323,21 @@ def EVAL(ast, env)
       myfn = MalFunction.new(ast.data[2], ast.data[1], env, closure)
       return myfn
 
-    when "quote"
+    when 'quote'
       return ast.data[1]
 
-    when "quasiquoteexpand"
+    when 'quasiquoteexpand'
       return quasiquote(ast.data[1])
 
-    when "quasiquote"
+    when 'quasiquote'
       ast = quasiquote(ast.data[1])
       next  # TCO fallthrough
 
-    when "macroexpand"
+    when 'macroexpand'
       # I have no idea how this is supposed to work.
       return macroexpand(ast.data[1], env)
 
-    when "try*"
+    when 'try*'
       well_formed_try = true
       begin
         # Enforce form: (try* A (catch* B C))
@@ -346,10 +346,10 @@ def EVAL(ast, env)
            !ast.data[2].is_a?(MalList) ||
            ast.data[2].data.length != 3 ||
            !ast.data[2].data[0].is_a?(MalSymbol) ||
-           (ast.data[2].data[0].data != "catch*") ||
+           (ast.data[2].data[0].data != 'catch*') ||
            !ast.data[2].data[1].is_a?(MalSymbol)
           well_formed_try = false
-          raise MalTryCatchError, "Badly formed try*/catch* block"
+          raise MalTryCatchError, 'Badly formed try*/catch* block'
         end
         tryA = ast.data[1]
         tryB = ast.data[2].data[1]
@@ -415,11 +415,11 @@ def EVAL(ast, env)
       # Oops. We /might/ need to convert back to a Mal data type.
       # FIXME I'm sure this shouldn't ever be the case.
       case res.class.to_s
-      when "TrueClass"
+      when 'TrueClass'
         return MalTrue.new
-      when "FalseClass"
+      when 'FalseClass'
         return MalFalse.new
-      when "Integer"
+      when 'Integer'
         return MalNumber.new(res)
       else
         return res
@@ -445,12 +445,12 @@ def rep(input, repl_env)
     raise e
   end
   if DEBUG['show_ast']
-    puts "ast (pre EVAL):"
+    puts 'ast (pre EVAL):'
     pp ast
   end
   ast = EVAL(ast, repl_env)
   if DEBUG['show_env']
-    puts "Env:"
+    puts 'Env:'
     pp repl_env
   end
   output = PRINT(ast)
@@ -472,19 +472,19 @@ def init_env
   end
   # Guide says we must define eval here. Is so we can close over repl_env?
   eval_proc = Proc.new { |ast| EVAL(ast, repl_env) }
-  repl_env.set("eval", eval_proc)
+  repl_env.set('eval', eval_proc)
   # Add *host-language* symbol
-  repl_env.set("*host-language*", MalString.new("ruby-wgm", false))
+  repl_env.set('*host-language*', MalString.new('ruby-wgm', false))
   # Populate a dummy *ARGV* symbol
   argv = MalList.new
-  repl_env.set("*ARGV*", argv)
+  repl_env.set('*ARGV*', argv)
   # If ARGV is non-empty we should treat the first item as a filename and load it
   if ARGV.length > 0
     # Populate *ARGV* 'properly'
     # NB We need to use arg.dup as command line strings are frozen in Ruby
     # but outputting them requires a call to unmunge, which blows up on frozen strings.
     ARGV.drop(1).each { |arg| argv.push(MalString.new(arg.dup, false)) }
-    repl_env.set("*ARGV*", argv)
+    repl_env.set('*ARGV*', argv)
     # Now call rep with load-file and ARGV[0], print the result and exit
     # The [0...-4] bit is to suppress here and here only the trailing \nnil
     filename = ARGV[0]
@@ -503,20 +503,20 @@ end
 # Otherwise pass input through rep and print it
 def main()
   repl_env = init_env()
-  prompt = "user> "
+  prompt = 'user> '
   puts rep(STARTUP_STR, repl_env)[0...-4] # range suppresses trailing \nnil
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
     # Adding 'q' to quit because Ctrl-D at the wrong time is doing my head in
-    if line == nil || line == "q"
+    if line == nil || line == 'q'
       break
     end
     begin
       out = rep(line, repl_env)
       puts out if out # Don't print spurious blank lines
     rescue => e
-      puts "Error: " + e.message
+      puts 'Error: ' + e.message
       if DEBUG['backtrace']
         puts e.backtrace
       end

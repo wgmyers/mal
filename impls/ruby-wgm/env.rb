@@ -4,7 +4,7 @@
 
 # Implement a Lisp environment
 
-require_relative "errors"
+require_relative 'errors'
 
 class Env
 
@@ -17,7 +17,7 @@ class Env
     # First check if we've been given variadic bindings
     variadic = false
     binds.each do |b|
-      if b.data == "&"
+      if b.data == '&'
         variadic = true
         break
       end
@@ -30,7 +30,7 @@ class Env
     # to all the remaining items in expr.
     if variadic
       binds.each_with_index do |b, i|
-        if b.data == "&"
+        if b.data == '&'
           nl = MalList.new
           exprs.drop(i).each { |e| nl.push(e) }
           set(binds[i+1], nl)

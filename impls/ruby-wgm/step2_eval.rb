@@ -30,26 +30,26 @@ repl_env = {
 def eval_ast(ast, repl_env)
   type = ast.class.to_s
   case type
-  when "MalSymbol"
+  when 'MalSymbol'
     sym = ast.print()
     if repl_env.has_key?(sym)
       return repl_env[sym]
     else
       raise MalUnknownSymbolError
     end
-  when "MalList"
+  when 'MalList'
     retval = MalList.new
     for item in ast.data
       retval.push(EVAL(item, repl_env))
     end
     return retval
-  when "MalVector"
+  when 'MalVector'
     retval = MalVector.new
     for item in ast.data
       retval.push(EVAL(item, repl_env))
     end
     return retval
-  when "MalHashMap"
+  when 'MalHashMap'
     retval = MalHashMap.new
     key = true
     # We alternatve between blindly returning the untouched key and
@@ -132,7 +132,7 @@ end
 # If input is EOF then stop
 # Otherwise pass input through rep and print it
 def main(repl_env)
-  prompt = "user> "
+  prompt = 'user> '
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
@@ -142,7 +142,7 @@ def main(repl_env)
     begin
       puts rep(line, repl_env)
     rescue => e
-      puts "Error: " + e.message
+      puts 'Error: ' + e.message
       puts e.backtrace
     end
   end

@@ -5,8 +5,8 @@
 # Parses and tokenises input into data structure
 # Data structure is defined in types.rb
 
-require_relative "types"
-require_relative "errors"
+require_relative 'types'
+require_relative 'errors'
 
 class Reader
 
@@ -92,23 +92,23 @@ def read_atom(reader, matcher)
   case data
   when nil
     retval = nil
-  when ")"
-    retval = ")"
-  when "]"
-    retval = "]"
-  when "}"
-    retval = "}"
+  when ')'
+    retval = ')'
+  when ']'
+    retval = ']'
+  when '}'
+    retval = '}'
   when /^-?\d+$/
     retval = MalNumber.new(data)
   when /^\"/
     retval = MalString.new(data)
   when /^:/
     retval = MalKeyword.new(data)
-  when "true"
+  when 'true'
     retval = MalTrue.new
-  when "false"
+  when 'false'
     retval = MalFalse.new
-  when "nil"
+  when 'nil'
     retval = MalNil.new
   else
     retval = MalSymbol.new(data)
@@ -125,11 +125,11 @@ end
 def read_list(reader, matcher, type)
   ishash = false
   case type
-  when "("
+  when '('
     retval = MalList.new
-  when "["
+  when '['
     retval = MalVector.new
-  when "{"
+  when '{'
     retval = MalHashMap.new
     ishash = true
   else
@@ -162,7 +162,7 @@ def read_form(reader, matcher)
     retval = read_list(reader, matcher, cur_tok)
   else
     retval = read_atom(reader, matcher)
-    if (retval == ")" || retval == "]" || retval == "}")
+    if (retval == ')' || retval == ']' || retval == '}')
       matcher.close() # Count our close parentheses
     end
   end
@@ -202,23 +202,23 @@ def expand_macros(tok_arr)
   for item in tok_arr
     case item
     # Handle splice-unquote
-    when "~@"
-      ret_arr.push("(")
-      ret_arr.push("splice-unquote")
+    when '~@'
+      ret_arr.push('(')
+      ret_arr.push('splice-unquote')
       in_macro = in_macro + 1
       last_was_macro = true
     # Handle quote, quasiquote, unquote and deref
     when /^[\'|`|~|@]$/
-      ret_arr.push("(")
+      ret_arr.push('(')
       case item
       when "\'"
-        ret_arr.push("quote")
-      when "`"
-        ret_arr.push("quasiquote")
-      when "~"
-        ret_arr.push("unquote")
-      when "@"
-        ret_arr.push("deref")
+        ret_arr.push('quote')
+      when '`'
+        ret_arr.push('quasiquote')
+      when '~'
+        ret_arr.push('unquote')
+      when '@'
+        ret_arr.push('deref')
       end
       in_macro = in_macro + 1
       last_was_macro = true
@@ -226,14 +226,14 @@ def expand_macros(tok_arr)
       if in_macro > 0
         case item
         # When we're in a macro, we need to start counting brackets
-        when "(", "["
+        when '(', '['
           ret_arr.push(item)
           in_brackets = in_brackets + 1
         else
           if in_brackets > 0
-            if (item == ")") || (item == "]")
+            if (item == ')') || (item == ']')
               ret_arr.push(item)
-              ret_arr.push(")")
+              ret_arr.push(')')
               in_brackets = in_brackets - 1
               in_macro = in_macro - 1
             else
@@ -246,7 +246,7 @@ def expand_macros(tok_arr)
               # * But if last_was_macro is true, we're the first item after the
               # last macro, so we should also end it
               if (in_brackets < in_macro) || last_was_macro
-                ret_arr.push(")")
+                ret_arr.push(')')
                 in_macro = in_macro - 1
               end
             end
@@ -254,7 +254,7 @@ def expand_macros(tok_arr)
             ret_arr.push(item)
             # We're not in brackets. End all open macros now.
             while in_macro > 0
-              ret_arr.push(")")
+              ret_arr.push(')')
               in_macro = in_macro - 1
             end
           end # if in_brackets > 0
@@ -282,11 +282,11 @@ def expand_metadata(tok_arr)
   item_one_arr = []
   item_two_arr = []
   item_count = 0
-  cur_bracket = ""
+  cur_bracket = ''
   bracket_depth = 0
   for item in tok_arr
     case item
-    when "^"
+    when '^'
       # We found a metadata macro
       # If we are already in one, blow up. We aren't nesting these.
       if in_macro
@@ -294,8 +294,8 @@ def expand_metadata(tok_arr)
       end
       in_macro = true
       item_count = 2
-      ret_arr.push("(")
-      ret_arr.push("with-meta")
+      ret_arr.push('(')
+      ret_arr.push('with-meta')
     else
       if in_macro
         # If we haven't seen two items, start counting brackets
@@ -323,7 +323,7 @@ def expand_metadata(tok_arr)
           in_macro = false
           ret_arr.push(item_two_arr)
           ret_arr.push(item_one_arr)
-          ret_arr.push(")")
+          ret_arr.push(')')
           ret_arr.flatten!
         end
       else
@@ -376,12 +376,12 @@ end
 # Some tests
 
 if __FILE__ == $0
-  t1 = read_str("123")
+  t1 = read_str('123')
   p t1
-  t2 = read_str("( 123 )")
+  t2 = read_str('( 123 )')
   p t2
-  t3 = read_str("(123 456)")
+  t3 = read_str('(123 456)')
   p t3
-  t4 = read_str("( + 1 ( * 2 3 ) )")
+  t4 = read_str('( + 1 ( * 2 3 ) )')
   p t4
 end

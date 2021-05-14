@@ -4,7 +4,7 @@
 
 # Classes to define the different types we support in Mal
 
-require_relative "errors"
+require_relative 'errors'
 
 KEYWORD_PREFIX = "\u029e"  # Not wholly sure about this.
 
@@ -14,7 +14,7 @@ class MalType
   attr_reader :type, :data
 
   def initialize()
-    @type = "MalBaseType"
+    @type = 'MalBaseType'
     @data = nil
   end
 
@@ -30,7 +30,7 @@ class MalAtom < MalType
 
   # data must be a Mal object
   def initialize(data)
-    @type = "MalAtom"
+    @type = 'MalAtom'
     @data = data
   end
 
@@ -78,7 +78,7 @@ class MalFunction < MalType
   attr_accessor :is_macro, :metadata
 
   def initialize(ast, params, env, closure)
-    @type = "MalFunction"
+    @type = 'MalFunction'
     @ast = ast
     @params = params
     @env = env
@@ -91,7 +91,7 @@ class MalFunction < MalType
   # #<function> is what the guide says to do
   # It would be nice to have a way of reading the function back too somehow.
   def print(readably = true)
-    return "#<function>"
+    return '#<function>'
   end
 
   # This way we don't have to access @closure directly
@@ -119,7 +119,7 @@ class MalString < MalType
   # But when we print from core.rb, we don't want to, so from there
   # we call with the sanitise flag set to false.
   def initialize(data, sanitise=true)
-    @type = "MalString"
+    @type = 'MalString'
     @data = data
     if sanitise
       @data = _sanitise(@data)
@@ -166,7 +166,7 @@ class MalString < MalType
   # _single_quote_check
   # Raise an error if all we have is a lone quote
   def _single_quote_check(str)
-    if str == "\""
+    if str == '"'
       raise MalMismatchQuotesError
     end
   end
@@ -195,8 +195,8 @@ class MalString < MalType
   # We call this after checking there is a trailing quote
   def _strip_quotes(str)
     nqstr = str.dup
-    nqstr.sub!(/^\"/, "")
-    nqstr.sub!(/\"$/, "")
+    nqstr.sub!(/^\"/, '')
+    nqstr.sub!(/\"$/, '')
     return nqstr;
   end
 
@@ -206,19 +206,19 @@ class MalString < MalType
   # \n => actual newline
   def _munge(str)
     mstr = str.dup
-    mstr.gsub!(/\\\\/, "{esc-bs}")
-    mstr.gsub!(/\\\"/, "\"")
+    mstr.gsub!(/\\\\/, '{esc-bs}')
+    mstr.gsub!(/\\\"/, '"')
     mstr.gsub!(/\\n/, "\n")
-    mstr.gsub!("{esc-bs}", "\\")
+    mstr.gsub!('{esc-bs}', '\\')
     return mstr
   end
 
   def _unmunge(str)
     umstr = str.dup
     umstr.gsub!(/(\\)/, '\\1\\1') # MUST do this first
-    umstr.gsub!(/\n/, "\\n")
-    umstr.gsub!(/\"/, "\\\"")
-    return "\"" + umstr + "\""
+    umstr.gsub!(/\n/, '\\n')
+    umstr.gsub!(/\"/, '\\"')
+    return '"' + umstr + '"'
   end
 
 end
@@ -227,24 +227,24 @@ end
 class MalTrue < MalType
 
   def initialize()
-    @type = "MalTrue"
+    @type = 'MalTrue'
     @data = true
   end
 
   def print(readably = true)
-    return "true"
+    return 'true'
   end
 
 end
 class MalFalse < MalType
 
   def initialize()
-    @type = "MalFalse"
+    @type = 'MalFalse'
     @data = false
   end
 
   def print(readably = true)
-    return "false"
+    return 'false'
   end
 
 end
@@ -252,12 +252,12 @@ end
 class MalNil < MalType
 
   def initialise()
-    @type = "MalNil"
+    @type = 'MalNil'
     @data = nil
   end
 
   def print(readably = true)
-    return "nil"
+    return 'nil'
   end
 
 end
@@ -267,7 +267,7 @@ class MalList < MalType
   attr_accessor :metadata
 
   def initialize()
-    @type = "MalList"
+    @type = 'MalList'
     @data = []
     @metadata = MalNil.new
   end
@@ -282,7 +282,7 @@ class MalList < MalType
       strings.push(item.print(readably))
       #strings.push(item.is_a?(Proc) ? print_proc() : item.print(readably))
     end
-    return "(" + strings.join(" ") + ")"
+    return '(' + strings.join(' ') + ')'
   end
 
   def length()
@@ -308,7 +308,7 @@ end
 class MalVector < MalList
 
   def initialize()
-    @type = "MalVector"
+    @type = 'MalVector'
     @data = []
     @metadata = MalNil.new
   end
@@ -318,7 +318,7 @@ class MalVector < MalList
     for item in data
       strings.push(item.print(readably))
     end
-    return "[" + strings.join(" ") + "]"
+    return '[' + strings.join(' ') + ']'
   end
 
   # dup
@@ -336,7 +336,7 @@ class MalHashMap < MalType
   attr_accessor :metadata
 
   def initialize()
-    @type = "MalHashMap"
+    @type = 'MalHashMap'
     @data = {}
     @next_is_key = true
     @last_key = nil
@@ -441,10 +441,10 @@ class MalHashMap < MalType
       elsif item[0] == KEYWORD_PREFIX # magic MalKeyword prefix
         strings.push(item[1..-1])
       else
-        strings.push("\"" + item + "\"")
+        strings.push('"' + item + '"')
       end
     end
-    return "{" + strings.join(" ") + "}"
+    return '{' + strings.join(' ') + '}'
   end
 
   # dup
@@ -460,11 +460,11 @@ end
 class MalKeyword < MalType
 
   def initialize(data)
-    @type = "MalKeyword"
+    @type = 'MalKeyword'
     @data = data
     # Prepend ':' if not given
-    if @data[0] != ":"
-      @data = ":" + @data
+    if @data[0] != ':'
+      @data = ':' + @data
     end
   end
 
@@ -477,7 +477,7 @@ end
 class MalSymbol < MalType
 
   def initialize(data)
-    @type = "MalSymbol"
+    @type = 'MalSymbol'
     @data = data
   end
 
@@ -486,7 +486,7 @@ end
 class MalNumber < MalType
 
   def initialize(data)
-    @type = "MalNumber"
+    @type = 'MalNumber'
     @data = data.to_i # FIXME AHEM
   end
 

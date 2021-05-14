@@ -8,18 +8,18 @@ module MalCore
     '*'           => lambda { |x, y| MalNumber.new(x.data * y.data) },
     '/'           => lambda { |x, y| MalNumber.new(x.data / y.data) }, # NB Divide by zero caught by Ruby, not us
     'prn'         => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
-                                   puts(strs.join(" "))
+                                   puts(strs.join(' '))
                                    return MalNil.new # NB - return nil instead to suppress 'nil' print
                      },
     'println'     => lambda { |*x| strs = x.map { |s| pr_str(s, false) }
-                                   puts(strs.join(" "))
+                                   puts(strs.join(' '))
                                    return MalNil.new # NB - same as above.
                      },
     'pr-str'      => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
-                                   return(MalString.new(strs.join(" "), false))
+                                   return(MalString.new(strs.join(' '), false))
                      },
     'str'         => lambda { |*x| strs = x.map { |s| pr_str(s, false) }
-                                   return(MalString.new(strs.join(""), false))
+                                   return(MalString.new(strs.join(''), false))
                      },
     'list'        => lambda { |*x| l = MalList.new
                                    x.each { |i| l.push(i) }
@@ -122,10 +122,10 @@ module MalCore
                      },
     'map'         => lambda { |f, ins|
                                   if !(f.is_a?(MalFunction) || f.is_a?(Proc))
-                                    raise MalBadMapError, "first arg to map must be function or builtin"
+                                    raise MalBadMapError, 'first arg to map must be function or builtin'
                                   end
                                   if !(ins.is_a?(MalList) || ins.is_a?(MalVector))
-                                    raise MalBadMapError, "second arg to map must be list or vector"
+                                    raise MalBadMapError, 'second arg to map must be list or vector'
                                   end
                                   y = MalList.new
                                   ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
@@ -278,7 +278,7 @@ module MalCore
                                     raise MalSeqError
                                   end
                                   if (x.is_a?(MalNil) ||
-                                     (x.is_a?(MalString) && x.data == "") ||
+                                     (x.is_a?(MalString) && x.data == '') ||
                                      (x.is_a?(MalList) && x.length == 0) ||
                                      (x.is_a?(MalVector) && x.length == 0))
                                     return MalNil.new
@@ -289,7 +289,7 @@ module MalCore
                                     x.data.each { |i| retval.push(i) }
                                   elsif x.is_a?(MalString) # Convert string to list of single char strings
                                     retval = MalList.new
-                                    chars = x.data.split("")
+                                    chars = x.data.split('')
                                     chars.each { |c| retval.push(MalString.new(c, false)) }
                                   end
                                   return retval # NB MalList input is returned unchanged
@@ -310,7 +310,7 @@ module MalCore
                      },
     'ruby-eval'   => lambda { |x|
                                   if !x.is_a?(MalString)
-                                    raise MalEvalError, "arg to ruby-eval must be string"
+                                    raise MalEvalError, 'arg to ruby-eval must be string'
                                   end
                                   evil = Evaller.new(x.data)
                                   evil.do_eval

@@ -3,7 +3,7 @@
 # step6_file.rb
 # In which we implement loading of files, eval, and atoms
 
-require "pp"
+require 'pp'
 
 require_relative 'core'
 require_relative 'env'
@@ -40,7 +40,7 @@ end
 def eval_ast(ast, env)
   type = ast.class.to_s
   case type
-  when "MalSymbol"
+  when 'MalSymbol'
     sym = ast.print()
     # If the symbol isn't found, an error will be raised in env.rb
     begin
@@ -48,21 +48,21 @@ def eval_ast(ast, env)
     rescue => e
       raise e
     end
-  when "MalList"
+  when 'MalList'
     retval = MalList.new
     for item in ast.data
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
-  when "MalVector"
+  when 'MalVector'
     retval = MalVector.new
     for item in ast.data
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
-  when "MalHashMap"
+  when 'MalHashMap'
     retval = MalHashMap.new
     key = true
     # We alternatve between blindly returning the untouched key and
@@ -111,7 +111,7 @@ def EVAL(ast, env)
     # FIXME This wants its own function now (or soon) surely
     case ast.data[0].data
 
-    when "def!"
+    when 'def!'
       # Do the def! stuff
       # QUERY - how does this fail? Should we raise our own BadDefError?
       # NB - No TCO here. We return.
@@ -123,7 +123,7 @@ def EVAL(ast, env)
         raise e
       end
 
-    when "let*"
+    when 'let*'
       # Do the let* stuff
       # Create a new environment with current env as outer
       letenv = Env.new(env)
@@ -157,7 +157,7 @@ def EVAL(ast, env)
       next
       # ... and loop to start of EVAL
 
-    when "do"
+    when 'do'
       # Do the do
       # Call eval_ast on every member of the list
       # Return the value of the last one
@@ -176,7 +176,7 @@ def EVAL(ast, env)
       next
       # ... and loop to start of EVAL
 
-    when "if"
+    when 'if'
       # Handle if statements
       # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
       retval = EVAL(ast.data[1], env)
@@ -185,7 +185,7 @@ def EVAL(ast, env)
       else
         type = nil
       end
-      if(!type || type == "MalFalse" || type == "MalNil")
+      if(!type || type == 'MalFalse' || type == 'MalNil')
       # Falsy. Return eval of third item if there is one
         if(ast.data[3])
           # Pre TCO - return EVAL(ast.data[3], env)
@@ -201,7 +201,7 @@ def EVAL(ast, env)
       next
       # ... and loop to start of EVAL
 
-    when "fn*"
+    when 'fn*'
       # Second element of the list is parameters. Third is function body.
       # So create a closure which:
       # 1 - creates a new env using our env as outer and binds /it's/
@@ -266,11 +266,11 @@ def EVAL(ast, env)
       # Oops. We /might/ need to convert back to a Mal data type.
       # FIXME I'm sure this shouldn't ever be the case.
       case res.class.to_s
-      when "TrueClass"
+      when 'TrueClass'
         return MalTrue.new
-      when "FalseClass"
+      when 'FalseClass'
         return MalFalse.new
-      when "Integer"
+      when 'Integer'
         return MalNumber.new(res)
       else
         return res
@@ -297,7 +297,7 @@ def rep(input, repl_env)
   end
   ast = EVAL(ast, repl_env)
   if DEBUG['show_env']
-    puts "Env:"
+    puts 'Env:'
     pp repl_env
   end
   output = PRINT(ast)
@@ -319,17 +319,17 @@ def init_env
   end
   # Guide says we must define eval here. Is so we can close over repl_env?
   eval_proc = Proc.new { |ast| EVAL(ast, repl_env) }
-  repl_env.set("eval", eval_proc)
+  repl_env.set('eval', eval_proc)
   # Populate a dummy *ARGV* symbol
   argv = MalList.new
-  repl_env.set("*ARGV*", argv)
+  repl_env.set('*ARGV*', argv)
   # If ARGV is non-empty we should treat the first item as a filename and load it
   if ARGV.length > 0
     # Populate *ARGV* 'properly'
     # NB We need to use arg.dup as command line strings are frozen in Ruby
     # but outputting them requires a call to unmunge, which blows up on frozen strings.
     ARGV.drop(1).each { |arg| argv.push(MalString.new(arg.dup, false)) }
-    repl_env.set("*ARGV*", argv)
+    repl_env.set('*ARGV*', argv)
     # Now call rep with load-file and ARGV[0], print the result and exit
     # The [0...-4] bit is to suppress here and here only the trailing \nnil
     filename = ARGV[0]
@@ -344,19 +344,19 @@ end
 # Otherwise pass input through rep and print it
 def main()
   repl_env = init_env()
-  prompt = "user> "
+  prompt = 'user> '
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
     # Adding 'q' to quit because Ctrl-D at the wrong time is doing my head in
-    if line == nil || line == "q"
+    if line == nil || line == 'q'
       break
     end
     begin
       out = rep(line, repl_env)
       puts out if out # Don't print spurious blank lines
     rescue => e
-      puts "Error: " + e.message
+      puts 'Error: ' + e.message
       if DEBUG['backtrace']
         puts e.backtrace
       end
