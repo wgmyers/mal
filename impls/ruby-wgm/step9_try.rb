@@ -232,18 +232,7 @@ def EVAL(ast, env)
         is_key = !is_key
       end
 
-      # Pre TCO
-      # Finally, call EVAL on our last parameter in the new enviroment
-      # and return the result. New env is discarded, so we return the old env.
-      #retval, letenv = EVAL(ast.data[2], letenv)
-      # Convert retval to a Mal data object if it isn't one.
-      # FIXME This shouldn't be.
-      #if !/^Mal/.match(retval.class.to_s)
-      #  retval = READ(retval.to_s)
-      #end
-      #return retval, env
-
-      # TCO way
+      # TCO
       env = letenv
       ast = ast.data[2]
       next
@@ -254,15 +243,8 @@ def EVAL(ast, env)
       # Call eval_ast on every member of the list
       # Return the value of the last one
 
-      # Pre TCO do - NB
-      #for item in ast.data.drop(1)
-      #  retval, env = EVAL(item, env)
-      #end
-      #return retval, env
-
-      # TCO do
+      # TCO
       lastel = ast.data.pop()                # save last element of ast
-      #ast = eval_ast(ast.data.drop(1), env) # eval ast the rest
       ast.data.drop(1).each { |i| EVAL(i, env) }
       ast = lastel                          # set ast to saved last element
       next
@@ -280,14 +262,12 @@ def EVAL(ast, env)
       if(!type || type == 'MalFalse' || type == 'MalNil')
       # Falsy. Return eval of third item if there is one
         if(ast.data[3])
-          # Pre TCO - return EVAL(ast.data[3], env)
           ast = ast.data[3]
         else
           return MalNil.new
         end
       else
         # Truthy. Return eval of second item (or raise error)
-        # Pre TCO - return EVAL(ast.data[2], env)
         ast = ast.data[2]
       end
       next
@@ -306,16 +286,9 @@ def EVAL(ast, env)
       closure = Proc.new { |*x|
         cl_env = Env.new(env, ast.data[1].data, x)
         retval = EVAL(ast.data[2], cl_env)
-        #retval
       }
 
-      # Pre TCO way
-      #myfn = MalFunction.new(closure)
-      #return myfn, env
-
-      # TCO way
-      # NB - We also modify MalFunction over in types.rb to reflect the new
-      #      function design:  MalFunction.new(ast, params, env, closure)
+      # TCO
       myfn = MalFunction.new(ast.data[2], ast.data[1], env, closure)
       return myfn
 
@@ -358,7 +331,7 @@ def EVAL(ast, env)
           #       HOWEVER, to pass the test as written in step 9, we
           #       need to attempt to evaluate the next item after try*
           return EVAL(ast.data[1], env)
-          #raise e
+          # raise e
         end
         # Ok, we have B and C.
         # Check to see if we haven't been given an evaluable MalType
@@ -391,8 +364,6 @@ def EVAL(ast, env)
       begin
         # If it's a MalFunction, we can do TCO
         if(f.is_a?(MalFunction))
-          # pre TCO
-          #res = f.call(args)
           # TCO
           ast = f.ast
           env = Env.new(f.env, f.params.data, args)
@@ -436,7 +407,6 @@ end
 def rep(input, repl_env)
   begin
     ast = READ(input)
-    #p ast
   rescue => e
     raise e
   end
