@@ -197,7 +197,7 @@ class MalString < MalType
     nqstr = str.dup
     nqstr.sub!(/^\"/, '')
     nqstr.sub!(/\"$/, '')
-    return nqstr;
+    return nqstr
   end
 
   # _munge and _unmunge handle our backslash escaping 'sensibly'
