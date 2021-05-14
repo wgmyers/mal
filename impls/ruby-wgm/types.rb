@@ -85,7 +85,6 @@ class MalFunction < MalType
     @closure = closure
     @is_macro = false
     @metadata = MalNil.new
-    #@data = self # Will this work or blow up?
   end
 
   # #<function> is what the guide says to do
@@ -156,7 +155,6 @@ class MalString < MalType
   # If the number is odd, the last one will escape the quote, and we have an error
   def _trailing_backslash_check(str)
     if(m = /(\\+)$/.match(str))
-      #puts "_trailing_backslash_check found #{m[0].length} trailing backslashes"
       if m[0].length.odd?
         raise MalMismatchQuotesError
       end
@@ -176,7 +174,6 @@ class MalString < MalType
   # Raise an error if not
   def _trailing_quote_check(str)
     if !/\"$/.match(str)
-      #puts "MalString _trailing_quote_check: rejecting #{str}"
       raise MalMismatchQuotesError
     end
   end
@@ -280,7 +277,6 @@ class MalList < MalType
     strings = []
     for item in data
       strings.push(item.print(readably))
-      #strings.push(item.is_a?(Proc) ? print_proc() : item.print(readably))
     end
     return '(' + strings.join(' ') + ')'
   end
@@ -288,12 +284,6 @@ class MalList < MalType
   def length()
     return @data.length
   end
-
-  # FIXME - We may need to reinstate this if we go for allowing
-  # Procs to filter through  as far as print() above.
-  #def print_proc()
-  #  return "<#builtin>"
-  #end
 
   # dup
   # Needed for with-meta
@@ -487,18 +477,7 @@ class MalNumber < MalType
 
   def initialize(data)
     @type = 'MalNumber'
-    @data = data.to_i # FIXME AHEM
+    @data = data.to_i # FIXME: We should also handle non-integers
   end
-
-  # We didn't need either of these after all.
-  # Keeping here for now, though, because we may need to revisit the way we
-  # convert from Mal data types to types we can actualy process.
-  #def to_i
-  #  return data.to_i
-  #end
-
-  #def to_s
-  #  return data.to_s
-  #end
 
 end
