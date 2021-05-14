@@ -141,15 +141,15 @@ def EVAL(ast, env)
       end
 
       # Pre TCO
-      # Finally, call EVAL on our last parameter in the new enviroment
-      # and return the result. New env is discarded, so we return the old env.
-      #retval, letenv = EVAL(ast.data[2], letenv)
+      # # Finally, call EVAL on our last parameter in the new enviroment
+      # # and return the result. New env is discarded, so we return the old env.
+      # # retval, letenv = EVAL(ast.data[2], letenv)
       # Convert retval to a Mal data object if it isn't one.
-      # FIXME This shouldn't be.
-      #if !/^Mal/.match(retval.class.to_s)
-      #  retval = READ(retval.to_s)
-      #end
-      #return retval, env
+      # # FIXME: This shouldn't be.
+      # if !/^Mal/.match(retval.class.to_s)
+      #   retval = READ(retval.to_s)
+      # end
+      # return retval, env
 
       # TCO way
       env = letenv
@@ -162,15 +162,14 @@ def EVAL(ast, env)
       # Call eval_ast on every member of the list
       # Return the value of the last one
 
-      # Pre TCO do - NB
-      #for item in ast.data.drop(1)
-      #  retval, env = EVAL(item, env)
-      #end
-      #return retval, env
+      # Pre TCO do
+      # for item in ast.data.drop(1)
+      #   retval, env = EVAL(item, env)
+      # end
+      # return retval, env
 
       # TCO do
       lastel = ast.data.pop                 # save last element of ast
-      #ast = eval_ast(ast.data.drop(1), env) # eval ast the rest
       ast.data.drop(1).each { |i| EVAL(i, env) }
       ast = lastel                          # set ast to saved last element
       next
@@ -214,12 +213,11 @@ def EVAL(ast, env)
       closure = Proc.new { |*x|
         cl_env = Env.new(env, ast.data[1].data, x)
         retval = EVAL(ast.data[2], cl_env)
-        #retval
       }
 
       # Pre TCO way
-      #myfn = MalFunction.new(closure)
-      #return myfn, env
+      # myfn = MalFunction.new(closure)
+      # return myfn, env
 
       # TCO way
       # NB - We also modify MalFunction over in types.rb to reflect the new
@@ -235,7 +233,7 @@ def EVAL(ast, env)
         # If it's a MalFunction, we can do TCO
         if(f.is_a?(MalFunction))
           # pre TCO
-          #res = f.call(args)
+          # res = f.call(args)
           # TCO
           ast = f.ast
           env = Env.new(f.env, f.params.data, args)
