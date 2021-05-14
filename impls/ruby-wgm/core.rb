@@ -2,28 +2,6 @@
 
 # Define our core functions here
 module MalCore
-  # ruby2mal
-  # Needed for ruby-eval
-  # Recursive so we can convert contents of hashes and lists to MalValues
-  def ruby2mal(rubyval)
-    case rubyval.class.to_s
-    when 'String'
-      return MalString.new(rubyval, false)
-    when 'Integer'
-      return MalNumber.new(rubyval)
-    when 'Array'
-      arr = MalList.new
-      rubyval.each { |i| arr.push(ruby2mal(i)) }
-      return arr
-    when 'Hash'
-      hash = MalHashMap.new
-      rubyval.each_key { |k| hash.set(ruby2mal(k), ruby2mal(rubyval[k])) }
-      return hash
-    else
-      raise MalEvalError, "could not convert #{rubyval.class.to_s} to Mal type"
-    end
-  end
-
   Env = {
     '+'           => lambda { |x, y| MalNumber.new(x.data + y.data) },
     '-'           => lambda { |x, y| MalNumber.new(x.data - y.data) },
@@ -334,19 +312,57 @@ module MalCore
                                   if !x.is_a?(MalString)
                                     raise MalEvalError, "arg to ruby-eval must be string"
                                   end
-                                  begin
-                                    ret = eval(x.data)
-                                  rescue => e
-                                    raise MalEvalError, e.message
-                                  end
-                                  # Now we have to convert ret from a Ruby type to a Mal type
-                                  MalCore::ruby2mal(ret)
+                                  evil = Evaller.new(x.data)
+                                  evil.do_eval
+                                  return evil.ret
                      },
     'macavity'    => lambda { |*x| raise MalNotImplementedError },
   }
+
   Mal = {
     'not' => '(def! not (fn* (a) (if a false true)))',
     'load-file' => '(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) "\nnil)")))))',
     'cond' => "(defmacro! cond (fn* (& xs) (if (> (count xs) 0) (list \'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw \"odd number of forms to cond\")) (cons \'cond (rest (rest xs)))))))"
   }
+
+  # Evaller
+  # A class to handle calls to Ruby eval
+  # and the recursive conversion of their result to Mal types 
+  class Evaller
+
+    attr_reader :str, :ret
+
+    def initialize(str)
+      @str = str
+      @ret = nil
+    end
+
+    def do_eval
+      begin
+        rubyval = eval(str)
+      rescue => e
+        raise MalEvalError, e.message
+      end
+      @ret = ruby2mal(rubyval)
+    end
+
+    def ruby2mal(rubyval)
+      case rubyval.class.to_s
+      when 'String'
+        return MalString.new(rubyval, false)
+      when 'Integer'
+        return MalNumber.new(rubyval)
+      when 'Array'
+        arr = MalList.new
+        rubyval.each { |i| arr.push(ruby2mal(i)) }
+        return arr
+      when 'Hash'
+        hash = MalHashMap.new
+        rubyval.each_key { |k| hash.set(ruby2mal(k), ruby2mal(rubyval[k])) }
+        return hash
+      else
+        raise MalEvalError, "could not convert #{rubyval.class.to_s} to Mal type"
+      end
+    end
+  end
 end
