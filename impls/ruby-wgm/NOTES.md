@@ -51,6 +51,22 @@ make "perf^ruby-wgm" doesn't even run for some reason.
 
 Made a start on ruby-eval and it doesn't work at all. I have no idea why.
 
+In other news, I installed and ran rubocop, and oh dear, this is not remotely
+idiomatic Ruby, is it. So much to correct that I don't want to autocorrect it
+because I need to go through and learn what mistakes I am making.
+
+Lots of:
+* redundant parens after new()
+* redundant parens in general
+* redundant returns
+* formatting issues
+* non-Rubyisms like x.length == 0 for x.length.zero?
+
+Eep.
+
+Meanwhile, ruby-eval has been fixed by implementing it in Ruby, with a class
+and everything.
+
 ### Step A - Part Two: Self Hosting (2021-05-10)
 
 Ok, so we had a hideous bug in macroexpand where we were using shift on the
