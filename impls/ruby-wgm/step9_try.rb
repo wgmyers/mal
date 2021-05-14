@@ -378,7 +378,7 @@ def EVAL(ast, env)
       # FIXME This really really can't be right.
       if (ast.data[0].is_a?(MalSymbol) &&
           (ast.data[0].data == 'list') &&
-          (ast.data[1].is_a?(MalSymbol)))
+          ast.data[1].is_a?(MalSymbol))
         f = eval_ast(ast.data.shift, env)
         squirrel = ast.data.shift
         args = eval_ast(ast, env)

@@ -33,7 +33,7 @@ module MalCore
                                    (y.instance_of?(MalList) || y.instance_of?(MalVector)))
                                  return MalFalse.new unless x.length == y.length
                                  x.data.each_with_index { |item, idx|
-                                   if (item.is_a?(MalList))
+                                   if item.is_a?(MalList)
                                      return MalFalse.new unless MalCore::Env['='].call(item, y.data[idx])
                                    else
                                      return MalFalse.new if item.data != y.data[idx].data
@@ -41,7 +41,7 @@ module MalCore
                                  }
                                elsif (x.class != y.class)
                                  return MalFalse.new
-                               elsif (x.is_a?(MalHashMap))
+                               elsif x.is_a?(MalHashMap)
                                  # QUERY - Shouldn't we try to do deep equality?
                                  # For now, keep it simple.
                                  # First: check keys match up exactly
@@ -51,7 +51,7 @@ module MalCore
                                  # Next: check each key points to same value
                                  x.keys.each { |k|
                                                   if !y.exists(k) ||
-                                                     (MalCore::Env['='].call(x.get(k), y.get(k)).is_a?(MalFalse))
+                                                     MalCore::Env['='].call(x.get(k), y.get(k)).is_a?(MalFalse)
                                                     return MalFalse.new
                                                   end
                                              }
@@ -239,7 +239,7 @@ module MalCore
                                     return x.metadata
                                   end
                                   # meta on builtins returns nil
-                                  if (x.is_a?(Proc))
+                                  if x.is_a?(Proc)
                                     return MalNil.new
                                   end
                                   raise MalMetaError
@@ -256,7 +256,7 @@ module MalCore
                                   # case where with-meta gets a built-in.
                                   # For now, create a dummy function with empty ast, empty params,
                                   # nil environment and the given Proc as the closure.
-                                  if (x.is_a?(Proc))
+                                  if x.is_a?(Proc)
                                     newx = MalFunction.new(MalList.new, MalList.new, MalNil.new, x)
                                     newx.metadata = y
                                     return newx

@@ -75,7 +75,7 @@ class Matcher
   end
 
   def goodhash
-    if (@hashcount.even?)
+    if @hashcount.even?
       return true
     end
     return false

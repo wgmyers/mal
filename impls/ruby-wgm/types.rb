@@ -61,7 +61,7 @@ class MalAtom < MalType
   def swap(arr)
     fn = arr.shift()
     args = arr.unshift(@data)
-    if (fn.is_a?(MalFunction))
+    if fn.is_a?(MalFunction)
       @data = fn.call(args)
     else
       @data = fn.call(*args)
@@ -175,7 +175,7 @@ class MalString < MalType
   # Check there /is/ a trailing quote at the end of the string
   # Raise an error if not
   def _trailing_quote_check(str)
-    if !(/\"$/.match(str))
+    if !/\"$/.match(str)
       #puts "MalString _trailing_quote_check: rejecting #{str}"
       raise MalMismatchQuotesError
     end
@@ -184,7 +184,7 @@ class MalString < MalType
   # _unescaped_quote_check
   # Run this after we have stripped our leading and trailing quotes.
   def _unescaped_quote_check(str)
-    if (/[^\\]\"/.match(str))
+    if /[^\\]\"/.match(str)
       raise MalMisMatchQuotesError
     end
   end
