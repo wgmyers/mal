@@ -176,7 +176,6 @@ end
 def tokenize(str)
   token_re = /[\s,]*(~@|[\[\]{}()'`~^@]|"(?:\\.|[^\\"])*"?|;.*|[^\s\[\]{}('"`,;)]*)/
   matches = str.scan(token_re).flatten
-  #p matches
   matches.pop # Lose spurious empty string at the end created by str.scan
   return matches
 end
