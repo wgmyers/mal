@@ -186,7 +186,6 @@ def EVAL(ast, env)
     f = evaller.data[0]
     args = evaller.data.drop(1)
     begin
-      #puts "args: #{args}"
       # If it's a MalFunction, we splat the args in the closure
       if(f.is_a?(MalFunction))
         res = f.call(args)
