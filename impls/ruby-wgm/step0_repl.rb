@@ -33,6 +33,7 @@ def main()
     line = grabline(prompt)
     # The readline library returns nil on EOF
     break if line == nil
+
     puts rep(line)
   end
 end

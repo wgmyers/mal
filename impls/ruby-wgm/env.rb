@@ -24,6 +24,7 @@ class Env
     end
     # Sanity check inputs a bit
     raise MalBadEnvError if ((binds.length != exprs.length) && !variadic)
+
     # Variadic binding: if we encounter a "&" we bind the next bind item
     # to all the remaining items in expr.
     if variadic
@@ -70,6 +71,7 @@ class Env
     elsif @outer != nil
       return @outer.find(key)
     end
+
     return nil
   end
 

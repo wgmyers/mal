@@ -69,11 +69,13 @@ class Matcher
 
   def matched
     return true if @open == @close
+
     return false
   end
 
   def goodhash
     return true if @hashcount.even?
+
     return false
   end
 
@@ -283,6 +285,7 @@ def expand_metadata(tok_arr)
       # We found a metadata macro
       # If we are already in one, blow up. We aren't nesting these.
       raise MalNestedWithMetaError if in_macro
+
       in_macro = true
       item_count = 2
       ret_arr.push('(')

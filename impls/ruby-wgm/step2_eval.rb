@@ -137,6 +137,7 @@ def main(repl_env)
     line = grabline(prompt)
     # The readline library returns nil on EOF
     break if line == nil
+
     begin
       puts rep(line, repl_env)
     rescue => e

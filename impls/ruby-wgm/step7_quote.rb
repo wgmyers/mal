@@ -159,6 +159,7 @@ def EVAL(ast, env)
     return eval_ast(ast, env) if !ast.is_a?(MalList)
     # It's a list. If it's empty, just return it.
     return ast if ast.data.length == 0
+
     # APPLY section
     # Switch on the first item of the list
     # FIXME This wants its own function now (or soon) surely
@@ -387,6 +388,7 @@ def main()
     # The readline library returns nil on EOF
     # Adding 'q' to quit because Ctrl-D at the wrong time is doing my head in
     break if line == nil || line == 'q'
+
     begin
       out = rep(line, repl_env)
       puts out if out # Don't print spurious blank lines

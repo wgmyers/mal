@@ -125,6 +125,7 @@ class MalString < MalType
 
   def print(readably = true)
     return _unmunge(@data) if readably
+
     return @data
   end
 
@@ -340,6 +341,7 @@ class MalHashMap < MalType
   # back into MalTypes for external usage
   def return_internal_key(key)
     return MalKeyword.new(key[1..-1]) if key[0] == KEYWORD_PREFIX
+
     return MalString.new(key.dup, false) # NB key.dup as string may be frozen
   end
 
@@ -398,6 +400,7 @@ class MalHashMap < MalType
   def get(key)
     ikey = make_internal_key(key)
     return @data[ikey] if @data.has_key?(ikey)
+
     return MalNil.new
   end
 
