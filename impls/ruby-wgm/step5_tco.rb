@@ -99,13 +99,9 @@ def EVAL(ast, env)
   # TCO YOLO
   loop do
     # If it's not a list, call eval_ast on it
-    if !ast.is_a?(MalList)
-      return eval_ast(ast, env)
-    end
+    return eval_ast(ast, env) if !ast.is_a?(MalList)
     # It's a list. If it's empty, just return it.
-    if ast.data.length == 0
-      return ast
-    end
+    return ast if ast.data.length == 0
     # APPLY section
     # Switch on the first item of the list
     # FIXME This wants its own function now (or soon) surely
@@ -315,16 +311,12 @@ def main()
     line = grabline(prompt)
     # The readline library returns nil on EOF
     # Adding 'q' to quit because Ctrl-D at the wrong time is doing my head in
-    if line == nil || line == 'q'
-      break
-    end
+    break if line == nil || line == 'q'
     begin
       puts rep(line, repl_env)
     rescue => e
       puts 'Error: ' + e.message
-      if DEBUG['backtrace']
-        puts e.backtrace
-      end
+      puts e.backtrace if DEBUG['backtrace']
     end
   end
 end

@@ -136,9 +136,7 @@ def main(repl_env)
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
-    if line == nil
-      break
-    end
+    break if line == nil
     begin
       puts rep(line, repl_env)
     rescue => e

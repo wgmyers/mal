@@ -90,13 +90,9 @@ end
 # having to use a global, at the cost of some readability.
 def EVAL(ast, env)
   # If it's not a list, call eval_ast on it
-  if !ast.is_a?(MalList)
-    return eval_ast(ast, env), env
-  end
+  return eval_ast(ast, env), env if !ast.is_a?(MalList)
   # It's a list. If it's empty, just return it.
-  if ast.data.length == 0
-    return ast, env
-  end
+  return ast, env if ast.data.length == 0
   # APPLY section
   # Switch on the first item of the list
   # FIXME This wants its own function now (or soon) surely
@@ -131,9 +127,7 @@ def EVAL(ast, env)
     retval, letenv = EVAL(ast.data[2], letenv)
     # Convert retval to a Mal data object if it isn't one.
     # FIXME This shouldn't be.
-    if !/^Mal/.match(retval.class.to_s)
-      retval = READ(retval.to_s)
-    end
+    retval = READ(retval.to_s) if !/^Mal/.match(retval.class.to_s)
     return retval, env
   when 'do'
     # Do the do
@@ -257,9 +251,7 @@ def main()
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
-    if line == nil
-      break
-    end
+    break if line == nil
     begin
       puts rep(line, repl_env)
     rescue => e

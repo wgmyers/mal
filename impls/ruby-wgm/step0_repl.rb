@@ -32,9 +32,7 @@ def main()
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
-    if line == nil
-      break
-    end
+    break if line == nil
     puts rep(line)
   end
 end

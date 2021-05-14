@@ -120,15 +120,11 @@ class MalString < MalType
   def initialize(data, sanitise=true)
     @type = 'MalString'
     @data = data
-    if sanitise
-      @data = _sanitise(@data)
-    end
+    @data = _sanitise(@data) if sanitise
   end
 
   def print(readably = true)
-    if readably
-      return _unmunge(@data)
-    end
+    return _unmunge(@data) if readably
     return @data
   end
 
@@ -155,35 +151,27 @@ class MalString < MalType
   # If the number is odd, the last one will escape the quote, and we have an error
   def _trailing_backslash_check(str)
     if(m = /(\\+)$/.match(str))
-      if m[0].length.odd?
-        raise MalMismatchQuotesError
-      end
+      raise MalMismatchQuotesError if m[0].length.odd?
     end
   end
 
   # _single_quote_check
   # Raise an error if all we have is a lone quote
   def _single_quote_check(str)
-    if str == '"'
-      raise MalMismatchQuotesError
-    end
+    raise MalMismatchQuotesError if str == '"'
   end
 
   # _trailing_quote_check
   # Check there /is/ a trailing quote at the end of the string
   # Raise an error if not
   def _trailing_quote_check(str)
-    if !/\"$/.match(str)
-      raise MalMismatchQuotesError
-    end
+    raise MalMismatchQuotesError if !/\"$/.match(str)
   end
 
   # _unescaped_quote_check
   # Run this after we have stripped our leading and trailing quotes.
   def _unescaped_quote_check(str)
-    if /[^\\]\"/.match(str)
-      raise MalMisMatchQuotesError
-    end
+    raise MalMisMatchQuotesError if /[^\\]\"/.match(str)
   end
 
   # _strip_quotes
@@ -351,9 +339,7 @@ class MalHashMap < MalType
   # Utility function to convert internal representation
   # back into MalTypes for external usage
   def return_internal_key(key)
-    if key[0] == KEYWORD_PREFIX
-      return MalKeyword.new(key[1..-1])
-    end
+    return MalKeyword.new(key[1..-1]) if key[0] == KEYWORD_PREFIX
     return MalString.new(key.dup, false) # NB key.dup as string may be frozen
   end
 
@@ -411,9 +397,7 @@ class MalHashMap < MalType
   # Accept both raw strings and MalTypes
   def get(key)
     ikey = make_internal_key(key)
-    if @data.has_key?(ikey)
-      return @data[ikey]
-    end
+    return @data[ikey] if @data.has_key?(ikey)
     return MalNil.new
   end
 
@@ -453,9 +437,7 @@ class MalKeyword < MalType
     @type = 'MalKeyword'
     @data = data
     # Prepend ':' if not given
-    if @data[0] != ':'
-      @data = ':' + @data
-    end
+    @data = ':' + @data if @data[0] != ':'
   end
 
   def unimunge()

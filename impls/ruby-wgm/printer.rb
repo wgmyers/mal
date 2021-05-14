@@ -9,8 +9,6 @@
 # Returns a string representation
 # Each data type knows how to print itself
 def pr_str(mal_data, readably = true)
-  if mal_data == nil
-    return nil
-  end
+  return nil if mal_data == nil
   return mal_data.print(readably)
 end

@@ -127,9 +127,7 @@ def EVAL(ast, env)
         retval, letenv = EVAL(ast.data[2], letenv)
         # Convert retval to a Mal data object if it isn't one.
         # FIXME This shouldn't be.
-        if !/^Mal/.match(retval.class.to_s)
-          retval = READ(retval.to_s)
-        end
+        retval = READ(retval.to_s) if !/^Mal/.match(retval.class.to_s)
         return retval, env
       else
         evaller = eval_ast(ast, env)
@@ -197,9 +195,7 @@ def main()
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
-    if line == nil
-      break
-    end
+    break if line == nil
     begin
       puts rep(line, repl_env)
     rescue => e

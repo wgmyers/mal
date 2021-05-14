@@ -53,9 +53,7 @@ def is_macro_call(ast, env)
     if ast.data[0].is_a?(MalSymbol)
       key = ast.data[0].data
       menv = env.find(key)
-      if menv && menv.data[key].is_a?(MalFunction)
-        return menv.data[key].is_macro
-      end
+      return menv.data[key].is_macro if menv && menv.data[key].is_a?(MalFunction)
     end
   end
   return false
@@ -186,13 +184,9 @@ def EVAL(ast, env)
   # TCO YOLO
   loop do
     # If it's not a list, call eval_ast on it
-    if !ast.is_a?(MalList)
-      return eval_ast(ast, env)
-    end
+    return eval_ast(ast, env) if !ast.is_a?(MalList)
     # It's a list. If it's empty, just return it.
-    if ast.data.length == 0
-      return ast
-    end
+    return ast if ast.data.length == 0
 
     # Macro expansion
     ast = macroexpand(ast, env)
@@ -214,9 +208,7 @@ def EVAL(ast, env)
       is_defmacro = ast.data[0].data == 'defmacro!' ? true : false
       begin
         item = EVAL(ast.data[2], env)
-        if is_defmacro && item.is_a?(MalFunction)
-          item.is_macro = true
-        end
+        item.is_macro = true if is_defmacro && item.is_a?(MalFunction)
         env = env.set(ast.data[1], item)
         return item
       rescue => e
@@ -437,17 +429,13 @@ def main()
     line = grabline(prompt)
     # The readline library returns nil on EOF
     # Adding 'q' to quit because Ctrl-D at the wrong time is doing my head in
-    if line == nil || line == 'q'
-      break
-    end
+    break if line == nil || line == 'q'
     begin
       out = rep(line, repl_env)
       puts out if out # Don't print spurious blank lines
     rescue => e
       puts 'Error: ' + e.message
-      if DEBUG['backtrace']
-        puts e.backtrace
-      end
+      puts e.backtrace if DEBUG['backtrace']
     end
   end
 end

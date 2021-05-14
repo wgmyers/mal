@@ -68,16 +68,12 @@ class Matcher
   end
 
   def matched
-    if @open == @close
-      return true
-    end
+    return true if @open == @close
     return false
   end
 
   def goodhash
-    if @hashcount.even?
-      return true
-    end
+    return true if @hashcount.even?
     return false
   end
 
@@ -145,9 +141,7 @@ def read_list(reader, matcher, type)
       break
     else
       retval.push(res)
-      if ishash
-        matcher.hashcount()
-      end
+      matcher.hashcount() if ishash
       reader.next()
     end
   end
@@ -288,9 +282,7 @@ def expand_metadata(tok_arr)
     when '^'
       # We found a metadata macro
       # If we are already in one, blow up. We aren't nesting these.
-      if in_macro
-        raise MalNestedWithMetaError
-      end
+      raise MalNestedWithMetaError if in_macro
       in_macro = true
       item_count = 2
       ret_arr.push('(')
@@ -303,20 +295,14 @@ def expand_metadata(tok_arr)
         # (probably) seen a complete item. Either go onto the next, or
         # add both items to the main array and complete the macro.
         if item_count > 0
-          if(/^[\(\[\{]$/.match(item))
-            bracket_depth = bracket_depth + 1
-          end
-          if(/^[\)\]\}]$/.match(item))
-            bracket_depth = bracket_depth - 1
-          end
+          bracket_depth += 1 if /^[\(\[\{]$/.match(item)
+          bracket_depth -= 1 if /^[\)\]\}]$/.match(item)
           if item_count == 2
             item_one_arr.push(item)
           elsif item_count == 1
             item_two_arr.push(item)
           end
-          if bracket_depth == 0
-            item_count = item_count - 1
-          end
+          item_count -= 1 if bracket_depth == 0
         end
         if item_count == 0
           in_macro = false
