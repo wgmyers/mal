@@ -316,7 +316,7 @@ module MalCore
                                   evil.do_eval
                                   return evil.ret
                      },
-    'macavity'    => lambda { |*x| raise MalNotImplementedError },
+    'macavity'    => lambda { |*x| raise MalNotImplementedError }
   }
 
   Mal = {
@@ -327,9 +327,8 @@ module MalCore
 
   # Evaller
   # A class to handle calls to Ruby eval
-  # and the recursive conversion of their result to Mal types 
+  # and the recursive conversion of their result to Mal types
   class Evaller
-
     attr_reader :str, :ret
 
     def initialize(str)
@@ -349,19 +348,19 @@ module MalCore
     def ruby2mal(rubyval)
       case rubyval.class.to_s
       when 'String'
-        return MalString.new(rubyval, false)
+        MalString.new(rubyval, false)
       when 'Integer'
-        return MalNumber.new(rubyval)
+        MalNumber.new(rubyval)
       when 'Array'
         arr = MalList.new
         rubyval.each { |i| arr.push(ruby2mal(i)) }
-        return arr
+        arr
       when 'Hash'
         hash = MalHashMap.new
         rubyval.each_key { |k| hash.set(ruby2mal(k), ruby2mal(rubyval[k])) }
-        return hash
+        hash
       else
-        raise MalEvalError, "could not convert #{rubyval.class.to_s} to Mal type"
+        raise MalEvalError, "could not convert #{rubyval.class} to Mal type"
       end
     end
   end
