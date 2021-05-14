@@ -34,7 +34,13 @@ class MalBadPromptError < StandardError
 end
 
 class MalConjError < StandardError
-  def intitialize(msg = "first arg to conj must be list or vector")
+  def initialize(msg = "first arg to conj must be list or vector")
+    super(msg)
+  end
+end
+
+class MalEvalError < StandardError
+  def initialize(msg ="error in Ruby eval")
     super(msg)
   end
 end
