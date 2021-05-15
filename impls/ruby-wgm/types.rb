@@ -196,7 +196,7 @@ class MalString < MalType
     umstr.gsub!(/(\\)/, '\\1\\1') # MUST do this first
     umstr.gsub!(/\n/, '\\n')
     umstr.gsub!(/\"/, '\\"')
-    return '"' + umstr + '"'
+    return "\"#{umstr}\""
   end
 end
 
@@ -251,7 +251,7 @@ class MalList < MalType
     data.each do |item|
       strings.push(item.print(readably))
     end
-    return '(' + strings.join(' ') + ')'
+    return "(#{strings.join(' ')})"
   end
 
   def length
@@ -279,7 +279,7 @@ class MalVector < MalList
     data.each do |item|
       strings.push(item.print(readably))
     end
-    return '[' + strings.join(' ') + ']'
+    return "[#{strings.join(' ')}]"
   end
 
   # dup
@@ -396,10 +396,10 @@ class MalHashMap < MalType
       elsif item[0] == KEYWORD_PREFIX # magic MalKeyword prefix
         strings.push(item[1..-1])
       else
-        strings.push('"' + item + '"')
+        strings.push("\"#{item}\"")
       end
     end
-    return '{' + strings.join(' ') + '}'
+    return "{#{strings.join(' ')}}"
   end
 
   # dup
@@ -416,7 +416,7 @@ class MalKeyword < MalType
     @type = 'MalKeyword'
     @data = data
     # Prepend ':' if not given
-    @data = ':' + @data if @data[0] != ':'
+    @data = ":#{@data}" if @data[0] != ':'
   end
 
   def unimunge
