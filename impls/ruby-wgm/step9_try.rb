@@ -312,10 +312,10 @@ def EVAL(ast, env)
           well_formed_try = false
           raise MalTryCatchError, 'Badly formed try*/catch* block'
         end
-        tryA = ast.data[1]
-        tryB = ast.data[2].data[1]
-        tryC = ast.data[2].data[2]
-        return EVAL(tryA, env)
+        try_cand = ast.data[1]
+        try_err = ast.data[2].data[1]
+        try_catcher = ast.data[2].data[2]
+        return EVAL(try_cand, env)
       rescue => e
         # Don't try and handle malformed exceptions, just reraise
         unless well_formed_try
@@ -334,8 +334,8 @@ def EVAL(ast, env)
           err_exp = e.malexp
         end
         err_env = Env.new(env)
-        err_env.set(tryB, err_exp)
-        return EVAL(tryC, err_env)
+        err_env.set(try_err, err_exp)
+        return EVAL(try_catcher, err_env)
       end
 
     else
