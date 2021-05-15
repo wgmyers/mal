@@ -51,7 +51,7 @@ def main
     begin
       puts rep(line)
     rescue => e
-      puts 'Error: ' + e.message
+      puts "Error: #{e.message}"
     end
   end
 end

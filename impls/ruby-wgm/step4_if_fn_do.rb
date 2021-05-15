@@ -251,7 +251,7 @@ def main
     begin
       puts rep(line, repl_env)
     rescue => e
-      puts 'Error: ' + e.message
+      puts "Error: #{e.message}"
       puts e.backtrace
     end
   end
