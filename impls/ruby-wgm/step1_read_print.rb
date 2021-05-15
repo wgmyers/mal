@@ -13,11 +13,9 @@ require_relative 'printer'
 # our main loop. Later, presumably, we catch errors from EVAL also, and
 # for completeness, from PRINT.
 def READ(arg)
-  begin
-    return read_str(arg)
-  rescue => e
-    raise e
-  end
+  return read_str(arg)
+rescue => e
+  raise e
 end
 def EVAL(arg)
   return arg

@@ -32,11 +32,9 @@ STARTUP_STR = '(println (str "Mal [" *host-language* "]"))'
 # Invokes the reader on its input
 # Returns a Mal data structure or blows up on error
 def READ(input)
-  begin
-    return read_str(input)
-  rescue => e
-    raise e
-  end
+  return read_str(input)
+rescue => e
+  raise e
 end
 
 # macroexpand
