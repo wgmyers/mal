@@ -184,9 +184,9 @@ def EVAL(ast, env)
       else
         type = nil
       end
-      if(!type || type == 'MalFalse' || type == 'MalNil')
+      if !type || type == 'MalFalse' || type == 'MalNil'
       # Falsy. Return eval of third item if there is one
-        if(ast.data[3])
+        if ast.data[3]
           # Pre TCO - return EVAL(ast.data[3], env)
           ast = ast.data[3]
         else
@@ -231,7 +231,7 @@ def EVAL(ast, env)
       args = evaller.data.drop(1)
       begin
         # If it's a MalFunction, we can do TCO
-        if(f.is_a?(MalFunction))
+        if f.is_a?(MalFunction)
           # pre TCO
           # res = f.call(args)
           # TCO
@@ -239,7 +239,7 @@ def EVAL(ast, env)
           env = Env.new(f.env, f.params.data, args)
           next
           # ... and loop to start for TCO
-        elsif(f.is_a?(Proc))
+        elsif f.is_a?(Proc)
           # No TCO here - we can return a result
           # Here we must splat the args with * so our lambdas can see them
           res = f.call(*args)

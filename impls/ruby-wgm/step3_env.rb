@@ -89,7 +89,7 @@ end
 # having to use a global, at the cost of some readability.
 def EVAL(ast, env)
   type = ast.class.to_s
-  if(type == 'MalList')
+  if type == 'MalList'
     if ast.data.length == 0
       return ast, env
     else

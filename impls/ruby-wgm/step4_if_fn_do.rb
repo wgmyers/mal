@@ -150,9 +150,9 @@ def EVAL(ast, env)
     else
       type = nil
     end
-    if(!type || type == 'MalFalse' || type == 'MalNil')
+    if !type || type == 'MalFalse' || type == 'MalNil'
     # Falsy. Return eval of third item if there is one
-      if(ast.data[3])
+      if ast.data[3]
         return EVAL(ast.data[3], env)
       else
         return MalNil.new, env
@@ -185,9 +185,9 @@ def EVAL(ast, env)
     args = evaller.data.drop(1)
     begin
       # If it's a MalFunction, we splat the args in the closure
-      if(f.is_a?(MalFunction))
+      if f.is_a?(MalFunction)
         res = f.call(args)
-      elsif(f.is_a?(Proc))
+      elsif f.is_a?(Proc)
         # Here we must splat the args with * so our lambdas can see them
         res = f.call(*args)
       else

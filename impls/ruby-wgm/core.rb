@@ -214,7 +214,7 @@ module MalCore
                      },
     'time-ms'     => lambda { |*x| (Time.new.to_f * 1000).to_i },
     'meta'        => lambda { |x|
-                                  if(x.is_a?(MalFunction) ||
+                                  if (x.is_a?(MalFunction) ||
                                      x.is_a?(MalList) ||
                                      x.is_a?(MalVector) ||
                                      x.is_a?(MalHashMap))

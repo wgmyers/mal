@@ -88,7 +88,7 @@ end
 # parameters, and try and call that, returning the result.
 def EVAL(ast, repl_env)
   type = ast.class.to_s
-  if(type == 'MalList')
+  if type == 'MalList'
     if ast.data.length == 0
       return ast
     else

@@ -151,7 +151,7 @@ class MalString < MalType
   # If the number is even, we're ok
   # If the number is odd, the last one will escape the quote, and we have an error
   def _trailing_backslash_check(str)
-    if(m = /(\\+)$/.match(str))
+    if (m = /(\\+)$/.match(str))
       raise MalMismatchQuotesError if m[0].length.odd?
     end
   end
@@ -413,7 +413,7 @@ class MalHashMap < MalType
     strings = []
     munge = @data.keys.zip(@data.values).flatten
     munge.each do |item|
-      if(item.is_a?(MalType))
+      if item.is_a?(MalType)
         strings.push(item.print(readably))
       elsif item[0] == KEYWORD_PREFIX # magic MalKeyword prefix
         strings.push(item[1..-1])
