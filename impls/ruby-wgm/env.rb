@@ -69,11 +69,9 @@ class Env
   # Otherwise recurse up the environment tree, looking there
   # Return nil if nothing found
   def find(key)
-    if @data.has_key?(key)
-      return self
-    elsif @outer != nil
-      return @outer.find(key)
-    end
+    return self if @data.has_key?(key)
+
+    return @outer.find(key) unless @outer.nil?
 
     return nil
   end
@@ -84,10 +82,8 @@ class Env
   # If we don't, throw MalUnknownSymbolError
   def get(key)
     env = find(key)
-    if env
-      return env.data[key]
-    else
-      raise MalUnknownSymbolError, "'#{key}' not found"
-    end
+    return env.data[key] if env
+
+    raise MalUnknownSymbolError, "'#{key}' not found"
   end
 end

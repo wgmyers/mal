@@ -344,15 +344,11 @@ def read_str(str)
   retval = read_form(reader, matcher)
   # Check our parentheses have matched and our hashmaps are ok
   begin
-    if matcher.goodhash
-      if matcher.matched
-        return retval
-      else
-        raise MalMismatchParensError
-      end
-    else
-      raise MalBadHashMapError
-    end
+    raise MalBadHashMapError unless matcher.goodhash
+
+    raise MalMismatchParensError unless matcher.matched
+
+    return retval
   rescue MalBadHashMapError, MalMismatchParensError => e
     raise e
   end

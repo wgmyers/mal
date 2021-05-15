@@ -144,9 +144,7 @@ class MalString < MalType
   # If the number is even, we're ok
   # If the number is odd, the last one will escape the quote, and we have an error
   def _trailing_backslash_check(str)
-    if (m = /(\\+)$/.match(str))
-      raise MalMismatchQuotesError if m[0].length.odd?
-    end
+    raise MalMismatchQuotesError if (m = /(\\+)$/.match(str)) && m[0].length.odd?
   end
 
   # _single_quote_check
@@ -306,15 +304,13 @@ class MalHashMap < MalType
   # make_internal_key
   # Utility function to make internal keys
   def make_internal_key(key)
-    if key.is_a?(MalString)
-      return key.data
-    elsif key.is_a?(MalKeyword)
-      return key.unimunge
-    elsif key.is_a?(String)
-      return key.dup # make sure it's unfrozen?
-    else
-      throw "MalHashMap got weird internal key #{key}"
-    end
+    return key.data if key.is_a?(MalString)
+
+    return key.unimunge if key.is_a?(MalKeyword)
+
+    return key.dup if key.is_a?(String)
+
+    throw "MalHashMap got weird internal key #{key}"
   end
 
   # return_internal_key

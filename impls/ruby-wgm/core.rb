@@ -183,11 +183,9 @@ module MalCore
     'readline'    => lambda { |p| raise MalBadPromptError unless p.is_a?(MalString)
 
                                   s = grabline(p.data) # readline.rb
-                                  if s
-                                    return MalString.new(s, false)
-                                  else
-                                    return MalNil.new
-                                  end
+                                  return MalNil.new unless s
+
+                                  return MalString.new(s, false)
                      },
     'time-ms'     => lambda { |*x| (Time.new.to_f * 1000).to_i },
     'meta'        => lambda { |x| if (x.is_a?(MalFunction) ||
