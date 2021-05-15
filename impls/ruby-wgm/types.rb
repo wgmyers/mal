@@ -18,7 +18,7 @@ class MalType
     @data = nil
   end
 
-  def print(readably = true)
+  def print(readably: true)
     return @data
   end
 end
@@ -33,7 +33,7 @@ class MalAtom < MalType
   end
 
   # Produce output indicated by the test case
-  def print(readably = true)
+  def print(readably: true)
     return "(atom #{@data.print})"
   end
 
@@ -85,7 +85,7 @@ class MalFunction < MalType
 
   # #<function> is what the guide says to do
   # It would be nice to have a way of reading the function back too somehow.
-  def print(readably = true)
+  def print(readably: true)
     return '#<function>'
   end
 
@@ -117,7 +117,7 @@ class MalString < MalType
     @data = _sanitise(@data) if sanitise
   end
 
-  def print(readably = true)
+  def print(readably: true)
     return _unmunge(@data) if readably
 
     return @data
@@ -207,7 +207,7 @@ class MalTrue < MalType
     @data = true
   end
 
-  def print(readably = true)
+  def print(readably: true)
     return 'true'
   end
 end
@@ -217,7 +217,7 @@ class MalFalse < MalType
     @data = false
   end
 
-  def print(readably = true)
+  def print(readably: true)
     return 'false'
   end
 end
@@ -228,7 +228,7 @@ class MalNil < MalType
     @data = nil
   end
 
-  def print(readably = true)
+  def print(readably: true)
     return 'nil'
   end
 end
@@ -246,10 +246,10 @@ class MalList < MalType
     @data.push(item)
   end
 
-  def print(readably = true)
+  def print(readably: true)
     strings = []
     data.each do |item|
-      strings.push(item.print(readably))
+      strings.push(item.print(readably: readably))
     end
     return "(#{strings.join(' ')})"
   end
@@ -274,10 +274,10 @@ class MalVector < MalList
     @metadata = MalNil.new
   end
 
-  def print(readably = true)
+  def print(readably: true)
     strings = []
     data.each do |item|
-      strings.push(item.print(readably))
+      strings.push(item.print(readably: readably))
     end
     return "[#{strings.join(' ')}]"
   end
@@ -387,12 +387,12 @@ class MalHashMap < MalType
   # then treat it all as an array for ease of processing.
   # FIXME Is this really a good idea / idiomatic? Or idiotic?
   # FIXME Shouldn't we just use return_internal_key here?
-  def print(readably = true)
+  def print(readably: true)
     strings = []
     munge = @data.keys.zip(@data.values).flatten
     munge.each do |item|
       if item.is_a?(MalType)
-        strings.push(item.print(readably))
+        strings.push(item.print(readably: readably))
       elsif item[0] == KEYWORD_PREFIX # magic MalKeyword prefix
         strings.push(item[1..-1])
       else

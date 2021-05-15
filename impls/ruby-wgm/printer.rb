@@ -12,5 +12,5 @@
 def pr_str(mal_data, readably: true)
   return nil if mal_data.nil?
 
-  return mal_data.print(readably)
+  return mal_data.print(readably: readably)
 end

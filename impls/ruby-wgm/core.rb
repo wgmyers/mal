@@ -64,8 +64,8 @@ module MalCore
     '<='          => lambda { |x, y| x.data <= y.data ? MalTrue.new : MalFalse.new },
     '>'           => lambda { |x, y| x.data > y.data ? MalTrue.new : MalFalse.new },
     '>='          => lambda { |x, y| x.data >= y.data ? MalTrue.new : MalFalse.new },
-    'read-string' => lambda { |x| return read_str(x.print(false)) },
-    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(false)), false) }, # FIXME: Error checking?
+    'read-string' => lambda { |x| return read_str(x.print(readably: false)) },
+    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(readably: false)), false) }, # FIXME: Error checking?
     'atom'        => lambda { |x| return MalAtom.new(x) },
     'atom?'       => lambda { |x| return x.is_a?(MalAtom) },
     'deref'       => lambda { |x| return x.deref },
@@ -99,7 +99,7 @@ module MalCore
                                   x.data.drop(1).each { |i| y.push(i) }
                                   return y
                      },
-    'throw'       => lambda { |e| raise MalThrownError.new(malexp: e), e.print(false) },
+    'throw'       => lambda { |e| raise MalThrownError.new(malexp: e), e.print(readably: false) },
     'apply'       => lambda { |f, *ins| if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
                                            !(ins[-1].is_a?(MalList) || ins[-1].is_a?(MalVector))
                                           raise MalBadApplyError
