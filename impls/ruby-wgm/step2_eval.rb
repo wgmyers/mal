@@ -96,7 +96,6 @@ end
 # PRINT
 # We should probably set the 'readably' flag here.
 def PRINT(ast)
-  pp ast
   return pr_str(ast)
 end
 
