@@ -111,7 +111,7 @@ class MalString < MalType
   # By default we sanitise our string inputs
   # But when we print from core.rb, we don't want to, so from there
   # we call with the sanitise flag set to false.
-  def initialize(data, sanitise=true)
+  def initialize(data, sanitise: true)
     @type = 'MalString'
     @data = data
     @data = _sanitise(@data) if sanitise
@@ -320,7 +320,7 @@ class MalHashMap < MalType
   def return_internal_key(key)
     return MalKeyword.new(key[1..-1]) if key[0] == KEYWORD_PREFIX
 
-    return MalString.new(key.dup, false) # NB key.dup as string may be frozen
+    return MalString.new(key.dup, sanitise: false) # NB key.dup as string may be frozen
   end
 
   # keys

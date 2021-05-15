@@ -335,7 +335,7 @@ def EVAL(ast, env)
         # Ok, we have B and C.
         # Check to see if we haven't been given an evaluable MalType
         if !e.methods.include?(:malexp) || e.malexp.nil?
-          err_exp = MalString.new(e.message, false)
+          err_exp = MalString.new(e.message, sanitise: false)
         else
           err_exp = e.malexp
         end
@@ -439,7 +439,7 @@ def init_env
   eval_proc = proc { |ast| EVAL(ast, repl_env) }
   repl_env.set('eval', eval_proc)
   # Add *host-language* symbol
-  repl_env.set('*host-language*', MalString.new('ruby-wgm', false))
+  repl_env.set('*host-language*', MalString.new('ruby-wgm', sanitise: false))
   # Populate a dummy *ARGV* symbol
   argv = MalList.new
   repl_env.set('*ARGV*', argv)
@@ -448,7 +448,7 @@ def init_env
     # Populate *ARGV* 'properly'
     # NB We need to use arg.dup as command line strings are frozen in Ruby
     # but outputting them requires a call to unmunge, which blows up on frozen strings.
-    ARGV.drop(1).each { |arg| argv.push(MalString.new(arg.dup, false)) }
+    ARGV.drop(1).each { |arg| argv.push(MalString.new(arg.dup, sanitise: false)) }
     repl_env.set('*ARGV*', argv)
     # Now call rep with load-file and ARGV[0], print the result and exit
     # The [0...-4] bit is to suppress here and here only the trailing \nnil

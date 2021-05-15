@@ -358,7 +358,7 @@ def init_env
     # Populate *ARGV* 'properly'
     # NB We need to use arg.dup as command line strings are frozen in Ruby
     # but outputting them requires a call to unmunge, which blows up on frozen strings.
-    ARGV.drop(1).each { |arg| argv.push(MalString.new(arg.dup, false)) }
+    ARGV.drop(1).each { |arg| argv.push(MalString.new(arg.dup, sanitise: false)) }
     repl_env.set('*ARGV*', argv)
     # Now call rep with load-file and ARGV[0], print the result and exit
     # The [0...-4] bit is to suppress here and here only the trailing \nnil

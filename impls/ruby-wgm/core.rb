@@ -18,10 +18,10 @@ module MalCore
                                    return MalNil.new # NB - same as above.
                      },
     'pr-str'      => lambda { |*x| strs = x.map { |s| pr_str(s, readably: true) }
-                                   return(MalString.new(strs.join(' '), false))
+                                   return(MalString.new(strs.join(' '), sanitise: false))
                      },
     'str'         => lambda { |*x| strs = x.map { |s| pr_str(s, readably: false) }
-                                   return(MalString.new(strs.join(''), false))
+                                   return(MalString.new(strs.join(''), sanitise: false))
                      },
     'list'        => lambda { |*x| l = MalList.new
                                    x.each { |i| l.push(i) }
@@ -65,7 +65,7 @@ module MalCore
     '>'           => lambda { |x, y| x.data > y.data ? MalTrue.new : MalFalse.new },
     '>='          => lambda { |x, y| x.data >= y.data ? MalTrue.new : MalFalse.new },
     'read-string' => lambda { |x| return read_str(x.print(readably: false)) },
-    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(readably: false)), false) }, # FIXME: Error checking?
+    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(readably: false)), sanitise: false) }, # FIXME: Error checking?
     'atom'        => lambda { |x| return MalAtom.new(x) },
     'atom?'       => lambda { |x| return x.is_a?(MalAtom) },
     'deref'       => lambda { |x| return x.deref },
@@ -187,7 +187,7 @@ module MalCore
                                   s = grabline(p.data) # readline.rb
                                   return MalNil.new unless s
 
-                                  return MalString.new(s, false)
+                                  return MalString.new(s, sanitise: false)
                      },
     'time-ms'     => lambda { |*x| (Time.new.to_f * 1000).to_i },
     'meta'        => lambda { |x| if x.is_a?(MalFunction) ||
@@ -247,7 +247,7 @@ module MalCore
                                   elsif x.is_a?(MalString) # Convert string to list of single char strings
                                     retval = MalList.new
                                     chars = x.data.split('')
-                                    chars.each { |c| retval.push(MalString.new(c, false)) }
+                                    chars.each { |c| retval.push(MalString.new(c, sanitise: false)) }
                                   end
                                   return retval # NB MalList input is returned unchanged
                      },
@@ -305,7 +305,7 @@ module MalCore
     def ruby2mal(rubyval)
       case rubyval.class.to_s
       when 'String'
-        MalString.new(rubyval, false)
+        MalString.new(rubyval, sanitise: false)
       when 'Integer'
         MalNumber.new(rubyval)
       when 'Array'
