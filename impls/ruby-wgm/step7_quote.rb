@@ -42,7 +42,7 @@ def quasiquote(ast)
       retval = ast.data[1]
     else
       result = MalList.new
-      ast.data.reverse.each { |elt|
+      ast.data.reverse.each do |elt|
         if elt.is_a?(MalList) && (elt.data.length > 1) &&
            elt.data[0].is_a?(MalSymbol) && (elt.data[0].data == 'splice-unquote')
           # Handle splice-unquote
@@ -57,7 +57,7 @@ def quasiquote(ast)
           spliceresult.push(result)
         end
         result = spliceresult
-      }
+      end
       retval = result
     end
   when 'MalHashMap', 'MalSymbol'

@@ -75,9 +75,9 @@ module MalCore
                                      return z
                      }, # FIXME: Error checking?
     'concat'      => lambda { |*x| y = MalList.new
-                                   x.each { |l|
+                                   x.each do |l|
                                      l.data.each { |i| y.push(i) }
-                                   }
+                                   end
                                    return y
                      }, # FIXME: Error checking? What if not list?
     'vec'         => lambda { |x| return x if x.is_a?(MalVector)
@@ -149,14 +149,14 @@ module MalCore
                                       y = MalHashMap.new
                                       # FIXME: There must be a more idiomatic way to do this
                                       # Map? We want all the keys in h not present in l.
-                                      h.keys.each { |k| add = true
-                                                        l.each { |item| if item.data == k.data
-                                                                          add = false
-                                                                          break
-                                                                        end
-                                                               }
-                                                        y.set(k, h.get(k)) if add
-                                                   }
+                                      h.keys.each do |k| add = true
+                                                         l.each do |item| if item.data == k.data
+                                                                            add = false
+                                                                            break
+                                                                          end
+                                                                end
+                                                         y.set(k, h.get(k)) if add
+                                                   end
                                       return y
                      },
     'get'         => lambda { |h, k| return MalNil.new if h.is_a?(MalNil)
