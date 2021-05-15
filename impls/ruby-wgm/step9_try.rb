@@ -423,7 +423,7 @@ def init_env
     repl_env.set(key, val)
   end
   # Support for functions defined in mal in core.rb
-  MalCore::Mal.each do |key, val|
+  MalCore::Mal.each_value do |val|
     rep(val, repl_env)
   end
   # Guide says we must define eval here. Is so we can close over repl_env?

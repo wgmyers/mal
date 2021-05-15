@@ -189,7 +189,7 @@ module MalCore
 
                                   return MalString.new(s, sanitise: false)
                      },
-    'time-ms'     => lambda { |*x| (Time.new.to_f * 1000).to_i },
+    'time-ms'     => lambda { |*_| (Time.new.to_f * 1000).to_i },
     'meta'        => lambda { |x| if x.is_a?(MalFunction) ||
                                      x.is_a?(MalList) ||
                                      x.is_a?(MalVector) ||
@@ -272,7 +272,7 @@ module MalCore
                                   evil.do_eval
                                   return evil.ret
                      },
-    'macavity'    => lambda { |*x| raise MalNotImplementedError }
+    'macavity'    => lambda { |*_| raise MalNotImplementedError }
   }.freeze
 
   Mal = {
