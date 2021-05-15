@@ -36,7 +36,7 @@ class MalAtom < MalType
 
   # Produce output indicated by the test case
   def print(readably = true)
-    return "(atom #{@data.print()})"
+    return "(atom #{@data.print})"
   end
 
   # deref
@@ -59,7 +59,7 @@ class MalAtom < MalType
   # to get the calling semantics right.
   # FIXME - Error checking here? What if we aren't given a function at all?
   def swap(arr)
-    fn = arr.shift()
+    fn = arr.shift
     args = arr.unshift(@data)
     if fn.is_a?(MalFunction)
       @data = fn.call(args)
@@ -330,7 +330,7 @@ class MalHashMap < MalType
     elsif key.is_a?(MalKeyword)
       return key.unimunge
     elsif key.is_a?(String)
-      return key.dup() # make sure it's unfrozen?
+      return key.dup # make sure it's unfrozen?
     else
       throw "MalHashMap got weird internal key #{key}"
     end

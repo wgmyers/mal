@@ -31,7 +31,7 @@ def eval_ast(ast, repl_env)
   type = ast.class.to_s
   case type
   when 'MalSymbol'
-    sym = ast.print()
+    sym = ast.print
     if repl_env.has_key?(sym)
       return repl_env[sym]
     else

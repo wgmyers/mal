@@ -68,7 +68,7 @@ module MalCore
     'slurp'       => lambda { |x| return MalString.new(File.read(x.print(false)), false) }, # FIXME: Error checking?
     'atom'        => lambda { |x| return MalAtom.new(x) },
     'atom?'       => lambda { |x| return x.is_a?(MalAtom) },
-    'deref'       => lambda { |x| return x.deref() },
+    'deref'       => lambda { |x| return x.deref },
     'reset!'      => lambda { |x, y| return x.reset(y) },
     'swap!'       => lambda { |x, *y| return x.swap(y) },
     'cons'        => lambda { |x, y| # NB - Original list y must be unchanged.
@@ -251,7 +251,7 @@ module MalCore
     'fn?'         => lambda { |x| ((x.is_a?(MalFunction) && !x.is_macro) || x.is_a?(Proc)) ? MalTrue.new : MalFalse.new },
     'string?'     => lambda { |x| x.is_a?(MalString) ? MalTrue.new : MalFalse.new },
     'number?'     => lambda { |x| x.is_a?(MalNumber) ? MalTrue.new : MalFalse.new },
-    'macro?'      => lambda { |x| x.is_a?(MalFunction) ? x.is_macro() : MalFalse.new },
+    'macro?'      => lambda { |x| x.is_a?(MalFunction) ? x.is_macro : MalFalse.new },
     'seq'         => lambda { |x|
                                   if !(x.is_a?(MalString) ||
                                        x.is_a?(MalList) ||

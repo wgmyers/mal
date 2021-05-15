@@ -33,7 +33,7 @@ def eval_ast(ast, env)
   type = ast.class.to_s
   case type
   when 'MalSymbol'
-    sym = ast.print()
+    sym = ast.print
     # If the symbol isn't found, an error will be raised in env.rb
     begin
       return env.get(sym)
@@ -250,7 +250,7 @@ end
 # If input is EOF then stop
 # Otherwise pass input through rep and print it
 def main()
-  repl_env = init_env()
+  repl_env = init_env
   prompt = 'user> '
   loop do
     line = grabline(prompt)

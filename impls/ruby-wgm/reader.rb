@@ -23,7 +23,7 @@ class Reader
   # NB - Correct behaviour in case where @pos is too large for array is not
   #      explicitly specified by guide dox, so returning nil is a guess.
   def next
-    if @pos == @tokens.length()
+    if @pos == @tokens.length
       retval = nil
     else
       retval = @tokens[@pos]
@@ -86,7 +86,7 @@ end
 # FIXME does not yet reliably return error on mismatched parens.
 
 def read_atom(reader, matcher)
-  data = reader.peek()
+  data = reader.peek
   case data
   when nil
     retval = nil
@@ -133,7 +133,7 @@ def read_list(reader, matcher, type)
   else
     raise MalUnknownListTypeError
   end
-  reader.next()
+  reader.next
   loop do
     res = read_form(reader, matcher)
     case res
@@ -143,23 +143,23 @@ def read_list(reader, matcher, type)
       break
     else
       retval.push(res)
-      matcher.hashcount() if ishash
-      reader.next()
+      matcher.hashcount if ishash
+      reader.next
     end
   end
   return retval
 end
 
 def read_form(reader, matcher)
-  cur_tok = reader.peek()
+  cur_tok = reader.peek
   case cur_tok
   when /^[\(\[\{]$/
-    matcher.open()  # Count our open parentheses
+    matcher.open  # Count our open parentheses
     retval = read_list(reader, matcher, cur_tok)
   else
     retval = read_atom(reader, matcher)
     if (retval == ')' || retval == ']' || retval == '}')
-      matcher.close() # Count our close parentheses
+      matcher.close # Count our close parentheses
     end
   end
   return retval
