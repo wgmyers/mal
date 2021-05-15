@@ -173,7 +173,7 @@ def EVAL(ast, env)
             when MalFunction
               f.call(args)
             when Proc
-        # Here we must splat the args with * so our lambdas can see them
+              # Here we must splat the args with * so our lambdas can see them
               f.call(*args)
             else
               evaller # Here we just return our input

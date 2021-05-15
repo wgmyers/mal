@@ -250,7 +250,7 @@ def EVAL(ast, env)
       retval = EVAL(ast.data[1], env)
       type = (retval.class.to_s if retval)
       if !type || type == 'MalFalse' || type == 'MalNil'
-      # Falsy. Return eval of third item if there is one
+        # Falsy. Return eval of third item if there is one
         return MalNil.new unless ast.data[3]
 
         ast = ast.data[3]
