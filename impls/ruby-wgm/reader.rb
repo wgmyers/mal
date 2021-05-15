@@ -29,7 +29,7 @@ class Reader
       retval = nil
     else
       retval = @tokens[@pos]
-      @pos = @pos + 1
+      @pos += 1
     end
     return retval
   end
@@ -55,15 +55,15 @@ class Matcher
   end
 
   def open
-    @open = @open + 1
+    @open += 1
   end
 
   def close
-    @close = @close + 1
+    @close += 1
   end
 
   def hashcount
-    @hashcount = @hashcount + 1
+    @hashcount += 1
   end
 
   def matched
