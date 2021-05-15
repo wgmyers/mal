@@ -168,12 +168,10 @@ def EVAL(ast, env)
         type = nil
       end
       if (!type || type == 'MalFalse' || type == 'MalNil')
-      # Falsy. Return eval of third item if there is one
-        if ast.data[3]
-          ast = ast.data[3]
-        else
-          return MalNil.new
-        end
+        # Falsy. Return eval of third item if there is one
+        return MalNil.new unless ast.data[3]
+
+        ast = ast.data[3]
       else
         # Truthy. Return eval of second item (or raise error)
         ast = ast.data[2]
