@@ -75,19 +75,17 @@ def quasiquote(ast)
     else
       result = MalList.new
       ast.data.reverse.each do |elt|
+        spliceresult = MalList.new
         if elt.is_a?(MalList) && (elt.data.length > 1) &&
            elt.data[0].is_a?(MalSymbol) && (elt.data[0].data == 'splice-unquote')
           # Handle splice-unquote
-          spliceresult = MalList.new
           spliceresult.push(MalSymbol.new('concat'))
           spliceresult.push(elt.data[1])
-          spliceresult.push(result)
         else
-          spliceresult = MalList.new
           spliceresult.push(MalSymbol.new('cons'))
           spliceresult.push(quasiquote(elt))
-          spliceresult.push(result)
         end
+        spliceresult.push(result)
         result = spliceresult
       end
       retval = result
