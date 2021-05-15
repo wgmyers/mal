@@ -31,31 +31,21 @@ def eval_ast(ast, env)
   when 'MalList'
     retval = MalList.new
     ast.data.each do |item|
-      newitem, env = EVAL(item, env)
+      newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when 'MalVector'
     retval = MalVector.new
     ast.data.each do |item|
-      newitem, env = EVAL(item, env)
+      newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when 'MalHashMap'
     retval = MalHashMap.new
-    key = true
-    # We alternatve between blindly returning the untouched key and
-    # calling eval on key values.
-    # FIXME This is obviously nonsense behaviour and we need to revisit MalHashMap
-    ast.data.each do |item|
-      if key
-        retval.push(item)
-      else
-        newitem, env = EVAL(item, env)
-        retval.push(newitem)
-      end
-      key = !key
+    ast.data.each_key do |key|
+      retval.set(key, EVAL(ast.data[key], env))
     end
     return retval
   end
@@ -84,70 +74,63 @@ end
 # Otherwise we go ahead as in Step 2:
 # Call eval_ast on the list, assume we now have a function and some
 # parameters, and try and call that, returning the result.
-# NB - We now return the environment along with our result, so that the env
-# object persists. Not quite what the guide asks for but this way we avoid
-# having to use a global, at the cost of some readability.
 def EVAL(ast, env)
-  type = ast.class.to_s
-  if type == 'MalList'
-    if ast.data.length.zero?
-      return ast, env
-    else
-      # APPLY section
-      # Switch on the first item of the list
-      # FIXME This wants its own function now (or soon) surely
-      case ast.data[0].data
-      when 'def!'
-        # Do the def! stuff
-        # QUERY - how does this fail? Should we raise our own BadDefError?
-        begin
-          item, env = EVAL(ast.data[2], env)
-          return item, env.set(ast.data[1], item)
-        rescue => e
-          raise e
-        end
-      when 'let*'
-        # Do the let* stuff
-        # Create a new environment with current env as outer
-        letenv = Env.new(env)
-        # Iterate over our parameters, calling set on new environment with
-        # each key, value pair, first calling EVAL on the value w/ new env.
-        is_key = true
-        # NB Using 'each' here fails. I have no idea why.
-        # rubocop:disable Style/For
-        for item in ast.data[1].data
-          if is_key
-            key = item
-          else
-            val, letenv = EVAL(item, letenv)
-            letenv = letenv.set(key, val)
-          end
-          is_key = !is_key
-        end
-        # rubocop:enable Style/For
-        # Finally, call EVAL on our last parameter in the new enviroment
-        # and return the result. New env is discarded, so we return the old env.
-        retval, letenv = EVAL(ast.data[2], letenv)
-        # Convert retval to a Mal data object if it isn't one.
-        # FIXME This shouldn't be.
-        retval = READ(retval.to_s) unless /^Mal/.match(retval.class.to_s)
-        return retval, env
-      else
-        evaller = eval_ast(ast, env)
-        begin
-          # We need to convert our MalNumbers to actual numbers somehow. Here?
-          args = evaller.data.drop(1).map{ |x| x.data }
-          # We still need to splat the args with * so the lambda can see them
-          res = evaller.data[0].call(*args)
-        rescue => e
-          raise e
-        end
-        # Oops. We need to convert back to a Mal data type.
-        return MalNumber.new(res), env
-      end
+  return eval_ast(ast, env) unless ast.instance_of?(MalList)
+
+  return ast if ast.data.length.zero?
+
+  # APPLY section
+  # Switch on the first item of the list
+  # FIXME This wants its own function now (or soon) surely
+  case ast.data[0].data
+  when 'def!'
+    # Do the def! stuff
+    # QUERY - how does this fail? Should we raise our own BadDefError?
+    begin
+      item = EVAL(ast.data[2], env)
+      env = env.set(ast.data[1], item)
+      return item
+    rescue => e
+      raise e
     end
+  when 'let*'
+    # Do the let* stuff
+    # Create a new environment with current env as outer
+    letenv = Env.new(env)
+    # Iterate over our parameters, calling set on new environment with
+    # each key, value pair, first calling EVAL on the value w/ new env.
+    is_key = true
+    # NB Using 'each' here fails. I have no idea why.
+    # rubocop:disable Style/For
+    for item in ast.data[1].data
+      if is_key
+        key = item
+      else
+        val = EVAL(item, letenv)
+        letenv = letenv.set(key, val)
+      end
+      is_key = !is_key
+    end
+    # rubocop:enable Style/For
+    # Finally, call EVAL on our last parameter in the new enviroment
+    # and return the result.
+    retval = EVAL(ast.data[2], letenv)
+    # Convert retval to a Mal data object if it isn't one.
+    # FIXME This shouldn't be.
+    retval = READ(retval.to_s) unless /^Mal/.match(retval.class.to_s)
+    return retval
   else
-    return eval_ast(ast, env), env
+    evaller = eval_ast(ast, env)
+    begin
+      # We need to convert our MalNumbers to actual numbers somehow. Here?
+      args = evaller.data.drop(1).map{ |x| x.data }
+      # We still need to splat the args with * so the lambda can see them
+      res = evaller.data[0].call(*args)
+    rescue => e
+      raise e
+    end
+    # Oops. We need to convert back to a Mal data type.
+    return MalNumber.new(res)
   end
 end
 
@@ -159,14 +142,13 @@ end
 
 # rep
 # Pass input through READ, EVAL and PRINT in order and return the result
-# NB EVAL now returns the environment, as it might modify it.
 def rep(input, repl_env)
   begin
     ast = READ(input)
   rescue => e
     raise e
   end
-  ast, repl_env = EVAL(ast, repl_env)
+  ast = EVAL(ast, repl_env)
   output = PRINT(ast)
   return output
 end
