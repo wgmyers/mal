@@ -47,14 +47,14 @@ module MalCore
                                        # QUERY - Shouldn't we try to do deep equality?
                                        # For now, keep it simple.
                                        # First: check keys match up exactly
-                                       return MalFalse.new if x.keys.length != y.keys.length
+                                       return MalFalse.new if x.grab_keys.length != y.get_keys.length
 
                                        # Next: check each key points to same value
-                                       x.keys.each { |k| if !y.exists(k) ||
-                                                            MalCore::Env['='].call(x.get(k), y.get(k)).is_a?(MalFalse)
-                                                           return MalFalse.new
-                                                         end
-                                                   }
+                                       x.grab_keys.each { |k| if !y.exists(k) ||
+                                                                 MalCore::Env['='].call(x.get(k), y.get(k)).is_a?(MalFalse)
+                                                                return MalFalse.new
+                                                              end
+                                                       }
                                      elsif x.data != y.data
                                        return MalFalse.new
                                      end
@@ -142,7 +142,7 @@ module MalCore
                                        raise MalBadHashMapError unless kv.length.even?
 
                                        y = MalHashMap.new
-                                       h.keys.each { |k| y.set(k, h.get(k)) }
+                                       h.grab_keys.each { |k| y.set(k, h.get(k)) }
                                        kv.each { |i| y.push(i) }
                                        return y
                      },
@@ -151,14 +151,14 @@ module MalCore
                                       y = MalHashMap.new
                                       # FIXME: There must be a more idiomatic way to do this
                                       # Map? We want all the keys in h not present in l.
-                                      h.keys.each do |k| add = true
-                                                         l.each do |item| if item.data == k.data
-                                                                            add = false
-                                                                            break
-                                                                          end
-                                                                end
-                                                         y.set(k, h.get(k)) if add
-                                                   end
+                                      h.grab_keys.each do |k| add = true
+                                                              l.each do |item| if item.data == k.data
+                                                                                 add = false
+                                                                                 break
+                                                                               end
+                                                                     end
+                                                              y.set(k, h.get(k)) if add
+                                                      end
                                       return y
                      },
     'get'         => lambda { |h, k| return MalNil.new if h.is_a?(MalNil)
@@ -173,13 +173,13 @@ module MalCore
     'keys'        => lambda { |h| raise MalBadHashMapError, "arg to 'keys' must be hash" unless h.is_a?(MalHashMap)
 
                                   y = MalList.new
-                                  h.keys.each { |k| y.push(k) } # NB h.keys and not h.data.keys
+                                  h.grab_keys.each { |k| y.push(k) } # NB h.get_keys
                                   return y
                      },
     'vals'        => lambda { |h| raise MalBadHashMapError, "arg to 'vals' must be hash" unless h.is_a?(MalHashMap)
 
                                   y = MalList.new
-                                  h.data.values.each { |k| y.push(k) } # NB h.data.values and not h.values
+                                  h.data.each_value { |k| y.push(k) } # NB h.data.values and not h.values
                                   return y
                      },
     'readline'    => lambda { |p| raise MalBadPromptError unless p.is_a?(MalString)

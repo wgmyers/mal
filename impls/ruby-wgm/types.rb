@@ -332,12 +332,12 @@ class MalHashMap < MalType
     return MalString.new(key.dup, sanitise: false) # NB key.dup as string may be frozen
   end
 
-  # keys
-  # A wrapper around Ruby's keys that unmunges our internal munging
+  # grab_keys
+  # A sortof wrapper around Ruby's keys that unmunges our internal munging
   # for external usage.
-  def keys
+  def grab_keys
     ret_arr = []
-    @data.keys.each { |k| ret_arr.push(return_internal_key(k)) }
+    @data.each_key { |k| ret_arr.push(return_internal_key(k)) }
     return ret_arr
   end
 
@@ -415,7 +415,7 @@ class MalHashMap < MalType
   # Needed for with-meta
   def dup
     new = MalHashMap.new
-    keys.each { |k| new.set(k, data[k]) }
+    grab_keys.each { |k| new.set(k, data[k]) }
     return new
   end
 end

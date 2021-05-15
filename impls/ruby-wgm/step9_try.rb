@@ -150,7 +150,7 @@ def eval_ast(ast, env)
   when 'MalHashMap'
     retval = MalHashMap.new
     # Now the MalHashMap is a real hash we can do this sensibly
-    ast.data.keys.each do |key|
+    ast.data.each_key do |key|
       retval.set(key, EVAL(ast.data[key], env))
     end
     return retval
@@ -446,7 +446,7 @@ def init_env
     exit
   end
   # Add commands to twiddle our debug flags
-  DEBUG.keys.each do |k|
+  DEBUG.each_key do |k|
     repl_env.set(k, proc { DEBUG[k] = !DEBUG[k] })
   end
   return repl_env
