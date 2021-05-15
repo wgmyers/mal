@@ -9,18 +9,18 @@ module MalCore
     '-'           => lambda { |x, y| MalNumber.new(x.data - y.data) },
     '*'           => lambda { |x, y| MalNumber.new(x.data * y.data) },
     '/'           => lambda { |x, y| MalNumber.new(x.data / y.data) }, # NB Divide by zero caught by Ruby, not us
-    'prn'         => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
+    'prn'         => lambda { |*x| strs = x.map { |s| pr_str(s, readably: true) }
                                    puts(strs.join(' '))
                                    return MalNil.new # NB - return nil instead to suppress 'nil' print
                      },
-    'println'     => lambda { |*x| strs = x.map { |s| pr_str(s, false) }
+    'println'     => lambda { |*x| strs = x.map { |s| pr_str(s, readably: false) }
                                    puts(strs.join(' '))
                                    return MalNil.new # NB - same as above.
                      },
-    'pr-str'      => lambda { |*x| strs = x.map { |s| pr_str(s, true) }
+    'pr-str'      => lambda { |*x| strs = x.map { |s| pr_str(s, readably: true) }
                                    return(MalString.new(strs.join(' '), false))
                      },
-    'str'         => lambda { |*x| strs = x.map { |s| pr_str(s, false) }
+    'str'         => lambda { |*x| strs = x.map { |s| pr_str(s, readably: false) }
                                    return(MalString.new(strs.join(''), false))
                      },
     'list'        => lambda { |*x| l = MalList.new
