@@ -158,13 +158,13 @@ class MalString < MalType
   # Check there /is/ a trailing quote at the end of the string
   # Raise an error if not
   def _trailing_quote_check(str)
-    raise MalMismatchQuotesError unless /\"$/.match(str)
+    raise MalMismatchQuotesError unless /"$/.match(str)
   end
 
   # _unescaped_quote_check
   # Run this after we have stripped our leading and trailing quotes.
   def _unescaped_quote_check(str)
-    raise MalMisMatchQuotesError if /[^\\]\"/.match(str)
+    raise MalMisMatchQuotesError if /[^\\]"/.match(str)
   end
 
   # _strip_quotes
@@ -173,8 +173,8 @@ class MalString < MalType
   # We call this after checking there is a trailing quote
   def _strip_quotes(str)
     nqstr = str.dup
-    nqstr.sub!(/^\"/, '')
-    nqstr.sub!(/\"$/, '')
+    nqstr.sub!(/^"/, '')
+    nqstr.sub!(/"$/, '')
     return nqstr
   end
 
@@ -185,7 +185,7 @@ class MalString < MalType
   def _munge(str)
     mstr = str.dup
     mstr.gsub!(/\\\\/, '{esc-bs}')
-    mstr.gsub!(/\\\"/, '"')
+    mstr.gsub!(/\\"/, '"')
     mstr.gsub!(/\\n/, "\n")
     mstr.gsub!('{esc-bs}', '\\')
     return mstr
@@ -195,7 +195,7 @@ class MalString < MalType
     umstr = str.dup
     umstr.gsub!(/(\\)/, '\\1\\1') # MUST do this first
     umstr.gsub!(/\n/, '\\n')
-    umstr.gsub!(/\"/, '\\"')
+    umstr.gsub!(/"/, '\\"')
     return "\"#{umstr}\""
   end
 end
