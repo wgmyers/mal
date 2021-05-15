@@ -98,9 +98,9 @@ class MalFunction < MalType
   # Return a duplicate of ourselves
   # Needed for with-meta and defmacro!
   def dup
-    ret = MalFunction.new(self.ast, self.params, self.env, self.closure)
-    ret.is_macro = self.is_macro
-    ret.metadata = self.metadata
+    ret = MalFunction.new(ast, params, env, closure)
+    ret.is_macro = is_macro
+    ret.metadata = metadata
     return ret
   end
 end
@@ -262,7 +262,7 @@ class MalList < MalType
   # Needed for with-meta
   def dup
     new = MalList.new
-    self.data.each { |i| new.push(i) }
+    data.each { |i| new.push(i) }
     return new
   end
 end
@@ -286,7 +286,7 @@ class MalVector < MalList
   # Needed for with-meta
   def dup
     new = MalVector.new
-    self.data.each { |i| new.push(i) }
+    data.each { |i| new.push(i) }
     return new
   end
 end
@@ -406,7 +406,7 @@ class MalHashMap < MalType
   # Needed for with-meta
   def dup
     new = MalHashMap.new
-    self.keys.each { |k| new.set(k, self.data[k]) }
+    keys.each { |k| new.set(k, data[k]) }
     return new
   end
 end
@@ -420,7 +420,7 @@ class MalKeyword < MalType
   end
 
   def unimunge
-    return KEYWORD_PREFIX + self.data
+    return KEYWORD_PREFIX + data
   end
 end
 
