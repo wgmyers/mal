@@ -192,7 +192,7 @@ end
 # Print a prompt and take input
 # If input is EOF then stop
 # Otherwise pass input through rep and print it
-def main()
+def main
   repl_env = init_env
   prompt = 'user> '
   loop do

@@ -27,7 +27,7 @@ end
 # Print a prompt and take input
 # If input is EOF then stop
 # Otherwise pass input through rep and print it
-def main()
+def main
   prompt = 'user> '
   loop do
     line = grabline(prompt)

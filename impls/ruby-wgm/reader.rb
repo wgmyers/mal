@@ -47,7 +47,7 @@ end
 class Matcher
   attr_reader :open, :close, :hashcount
 
-  def initialize()
+  def initialize
     @open = 0
     @close = 0
     @hashcount = 0

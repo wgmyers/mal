@@ -12,7 +12,7 @@ KEYWORD_PREFIX = "\u029e"  # Not wholly sure about this.
 class MalType
   attr_reader :type, :data
 
-  def initialize()
+  def initialize
     @type = 'MalBaseType'
     @data = nil
   end
@@ -39,7 +39,7 @@ class MalAtom < MalType
   # deref
   # Allows us to implement deref so it only works on MalAtoms
   # NB Don't give any other MalObject a deref method.
-  def deref()
+  def deref
     return @data
   end
 
@@ -96,7 +96,7 @@ class MalFunction < MalType
   # def
   # Return a duplicate of ourselves
   # Needed for with-meta and defmacro!
-  def dup()
+  def dup
     ret = MalFunction.new(self.ast, self.params, self.env, self.closure)
     ret.is_macro = self.is_macro
     ret.metadata = self.metadata
@@ -203,7 +203,7 @@ end
 
 # NB - consider having MalBoolean for both true and false?
 class MalTrue < MalType
-  def initialize()
+  def initialize
     @type = 'MalTrue'
     @data = true
   end
@@ -213,7 +213,7 @@ class MalTrue < MalType
   end
 end
 class MalFalse < MalType
-  def initialize()
+  def initialize
     @type = 'MalFalse'
     @data = false
   end
@@ -224,7 +224,7 @@ class MalFalse < MalType
 end
 
 class MalNil < MalType
-  def initialise()
+  def initialise
     @type = 'MalNil'
     @data = nil
   end
@@ -237,7 +237,7 @@ end
 class MalList < MalType
   attr_accessor :metadata
 
-  def initialize()
+  def initialize
     @type = 'MalList'
     @data = []
     @metadata = MalNil.new
@@ -255,13 +255,13 @@ class MalList < MalType
     return '(' + strings.join(' ') + ')'
   end
 
-  def length()
+  def length
     return @data.length
   end
 
   # dup
   # Needed for with-meta
-  def dup()
+  def dup
     new = MalList.new
     self.data.each { |i| new.push(i) }
     return new
@@ -269,7 +269,7 @@ class MalList < MalType
 end
 
 class MalVector < MalList
-  def initialize()
+  def initialize
     @type = 'MalVector'
     @data = []
     @metadata = MalNil.new
@@ -285,7 +285,7 @@ class MalVector < MalList
 
   # dup
   # Needed for with-meta
-  def dup()
+  def dup
     new = MalVector.new
     self.data.each { |i| new.push(i) }
     return new
@@ -295,7 +295,7 @@ end
 class MalHashMap < MalType
   attr_accessor :metadata
 
-  def initialize()
+  def initialize
     @type = 'MalHashMap'
     @data = {}
     @next_is_key = true
@@ -329,7 +329,7 @@ class MalHashMap < MalType
   # keys
   # A wrapper around Ruby's keys that unmunges our internal munging
   # for external usage.
-  def keys()
+  def keys
     ret_arr = []
     @data.keys.each { |k| ret_arr.push(return_internal_key(k)) }
     return ret_arr
@@ -422,7 +422,7 @@ class MalKeyword < MalType
     @data = ':' + @data if @data[0] != ':'
   end
 
-  def unimunge()
+  def unimunge
     return KEYWORD_PREFIX + self.data
   end
 end
