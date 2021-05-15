@@ -338,7 +338,7 @@ class MalHashMap < MalType
   # an even number of key,val pairs, or we will corrupt ourselves.
   def push(item)
     if @next_is_key
-      if (item.is_a?(MalString) || item.is_a?(MalKeyword))
+      if item.is_a?(MalString) || item.is_a?(MalKeyword)
         ikey = make_internal_key(item)
         @data[ikey] = nil
         @last_key = ikey

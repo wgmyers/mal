@@ -28,8 +28,8 @@ module MalCore
     'list?'       => lambda { |x| x.instance_of?(MalList) ? MalTrue.new : MalFalse.new },
     'empty?'      => lambda { |x| x.data.length.zero? ? MalTrue.new : MalFalse.new },
     'count'       => lambda { |x| x.is_a?(MalNil) ? 0 : x.data.length },
-    '='           => lambda { |x, y| if ((x.instance_of?(MalList) || x.instance_of?(MalVector)) &&
-                                         (y.instance_of?(MalList) || y.instance_of?(MalVector)))
+    '='           => lambda { |x, y| if (x.instance_of?(MalList) || x.instance_of?(MalVector)) &&
+                                        (y.instance_of?(MalList) || y.instance_of?(MalVector))
                                        return MalFalse.new unless x.length == y.length
 
                                        x.data.each_with_index { |item, idx|
@@ -39,13 +39,13 @@ module MalCore
                                            return MalFalse.new if item.data != y.data[idx].data
                                          end
                                        }
-                                     elsif (x.class != y.class)
+                                     elsif x.class != y.class
                                        return MalFalse.new
                                      elsif x.is_a?(MalHashMap)
                                        # QUERY - Shouldn't we try to do deep equality?
                                        # For now, keep it simple.
                                        # First: check keys match up exactly
-                                       return MalFalse.new if (x.keys.length != y.keys.length)
+                                       return MalFalse.new if x.keys.length != y.keys.length
 
                                        # Next: check each key points to same value
                                        x.keys.each { |k| if !y.exists(k) ||
@@ -53,7 +53,7 @@ module MalCore
                                                            return MalFalse.new
                                                          end
                                                    }
-                                     elsif (x.data != y.data)
+                                     elsif x.data != y.data
                                        return MalFalse.new
                                      end
                                      return MalTrue.new
@@ -109,8 +109,8 @@ module MalCore
 
                                         return f.call(argsl.data)
                      },
-    'map'         => lambda { |f, ins| raise MalBadMapError, 'first arg to map must be function or builtin' unless (f.is_a?(MalFunction) || f.is_a?(Proc))
-                                       raise MalBadMapError, 'second arg to map must be list or vector' unless (ins.is_a?(MalList) || ins.is_a?(MalVector))
+    'map'         => lambda { |f, ins| raise MalBadMapError, 'first arg to map must be function or builtin' unless f.is_a?(MalFunction) || f.is_a?(Proc)
+                                       raise MalBadMapError, 'second arg to map must be list or vector' unless ins.is_a?(MalList) || ins.is_a?(MalVector)
 
                                        y = MalList.new
                                        ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
@@ -188,10 +188,10 @@ module MalCore
                                   return MalString.new(s, false)
                      },
     'time-ms'     => lambda { |*x| (Time.new.to_f * 1000).to_i },
-    'meta'        => lambda { |x| if (x.is_a?(MalFunction) ||
+    'meta'        => lambda { |x| if x.is_a?(MalFunction) ||
                                      x.is_a?(MalList) ||
                                      x.is_a?(MalVector) ||
-                                     x.is_a?(MalHashMap))
+                                     x.is_a?(MalHashMap)
                                     return x.metadata
                                   end
                                   # meta on builtins returns nil
@@ -199,11 +199,11 @@ module MalCore
 
                                   raise MalMetaError
                      },
-    'with-meta'   => lambda { |x, y| unless (x.is_a?(MalFunction) ||
-                                             x.is_a?(MalList) ||
-                                             x.is_a?(MalVector) ||
-                                             x.is_a?(MalHashMap) ||
-                                             x.is_a?(Proc))
+    'with-meta'   => lambda { |x, y| unless x.is_a?(MalFunction) ||
+                                            x.is_a?(MalList) ||
+                                            x.is_a?(MalVector) ||
+                                            x.is_a?(MalHashMap) ||
+                                            x.is_a?(Proc)
                                        raise MalMetaError
                                      end
 
@@ -225,16 +225,16 @@ module MalCore
     'string?'     => lambda { |x| x.is_a?(MalString) ? MalTrue.new : MalFalse.new },
     'number?'     => lambda { |x| x.is_a?(MalNumber) ? MalTrue.new : MalFalse.new },
     'macro?'      => lambda { |x| x.is_a?(MalFunction) ? x.is_macro : MalFalse.new },
-    'seq'         => lambda { |x| unless (x.is_a?(MalString) ||
-                                       x.is_a?(MalList) ||
-                                       x.is_a?(MalVector) ||
-                                       x.is_a?(MalNil))
+    'seq'         => lambda { |x| unless x.is_a?(MalString) ||
+                                         x.is_a?(MalList) ||
+                                         x.is_a?(MalVector) ||
+                                         x.is_a?(MalNil)
                                     raise MalSeqError
                                   end
-                                  if (x.is_a?(MalNil) ||
+                                  if x.is_a?(MalNil) ||
                                      (x.is_a?(MalString) && x.data == '') ||
                                      (x.is_a?(MalList) && x.length.zero?) ||
-                                     (x.is_a?(MalVector) && x.length.zero?))
+                                     (x.is_a?(MalVector) && x.length.zero?)
                                     return MalNil.new
                                   end
 

@@ -254,7 +254,7 @@ def EVAL(ast, env)
       else
         type = nil
       end
-      if (!type || type == 'MalFalse' || type == 'MalNil')
+      if !type || type == 'MalFalse' || type == 'MalNil'
       # Falsy. Return eval of third item if there is one
         return MalNil.new unless ast.data[3]
 
@@ -329,7 +329,7 @@ def EVAL(ast, env)
 
         # Ok, we have B and C.
         # Check to see if we haven't been given an evaluable MalType
-        if (!e.methods.include?(:malexp) || (e.malexp == nil))
+        if !e.methods.include?(:malexp) || (e.malexp == nil)
           err_exp = MalString.new(e.message, false)
         else
           err_exp = e.malexp
@@ -343,9 +343,9 @@ def EVAL(ast, env)
       # DEFAULT EVALLER
       # Brutal hack to allow (list + 1 2) etc
       # FIXME This really really can't be right.
-      if (ast.data[0].is_a?(MalSymbol) &&
-          (ast.data[0].data == 'list') &&
-          ast.data[1].is_a?(MalSymbol))
+      if ast.data[0].is_a?(MalSymbol) &&
+         (ast.data[0].data == 'list') &&
+         ast.data[1].is_a?(MalSymbol)
         f = eval_ast(ast.data.shift, env)
         squirrel = ast.data.shift
         args = eval_ast(ast, env)

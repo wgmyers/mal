@@ -26,7 +26,7 @@ class Env
       end
     end
     # Sanity check inputs a bit
-    raise MalBadEnvError if ((binds.length != exprs.length) && !variadic)
+    raise MalBadEnvError if (binds.length != exprs.length) && !variadic
 
     # Variadic binding: if we encounter a "&" we bind the next bind item
     # to all the remaining items in expr.

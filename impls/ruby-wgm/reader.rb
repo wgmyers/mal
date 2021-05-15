@@ -155,7 +155,7 @@ def read_form(reader, matcher)
     retval = read_list(reader, matcher, cur_tok)
   else
     retval = read_atom(reader, matcher)
-    if (retval == ')' || retval == ']' || retval == '}')
+    if retval == ')' || retval == ']' || retval == '}'
       matcher.close # Count our close parentheses
     end
   end
