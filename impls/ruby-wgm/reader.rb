@@ -46,8 +46,6 @@ end
 # matched returns true if we counted as many open as close parens
 # hashcount returns true if we have an even number of items
 class Matcher
-  attr_reader :open, :close, :hashcount
-
   def initialize
     @open = 0
     @close = 0
