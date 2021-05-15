@@ -130,7 +130,7 @@ def EVAL(ast, env)
         retval, letenv = EVAL(ast.data[2], letenv)
         # Convert retval to a Mal data object if it isn't one.
         # FIXME This shouldn't be.
-        retval = READ(retval.to_s) if !/^Mal/.match(retval.class.to_s)
+        retval = READ(retval.to_s) unless /^Mal/.match(retval.class.to_s)
         return retval, env
       else
         evaller = eval_ast(ast, env)

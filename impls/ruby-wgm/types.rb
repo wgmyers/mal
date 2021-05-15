@@ -159,7 +159,7 @@ class MalString < MalType
   # Check there /is/ a trailing quote at the end of the string
   # Raise an error if not
   def _trailing_quote_check(str)
-    raise MalMismatchQuotesError if !/\"$/.match(str)
+    raise MalMismatchQuotesError unless /\"$/.match(str)
   end
 
   # _unescaped_quote_check

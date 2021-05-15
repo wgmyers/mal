@@ -90,7 +90,7 @@ end
 # having to use a global, at the cost of some readability.
 def EVAL(ast, env)
   # If it's not a list, call eval_ast on it
-  return eval_ast(ast, env), env if !ast.is_a?(MalList)
+  return eval_ast(ast, env), env unless ast.is_a?(MalList)
   # It's a list. If it's empty, just return it.
   return ast, env if ast.data.length.zero?
 
@@ -131,7 +131,7 @@ def EVAL(ast, env)
     retval, letenv = EVAL(ast.data[2], letenv)
     # Convert retval to a Mal data object if it isn't one.
     # FIXME This shouldn't be.
-    retval = READ(retval.to_s) if !/^Mal/.match(retval.class.to_s)
+    retval = READ(retval.to_s) unless /^Mal/.match(retval.class.to_s)
     return retval, env
   when 'do'
     # Do the do

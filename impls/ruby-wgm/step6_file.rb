@@ -99,7 +99,7 @@ def EVAL(ast, env)
   # TCO YOLO
   loop do
     # If it's not a list, call eval_ast on it
-    return eval_ast(ast, env) if !ast.is_a?(MalList)
+    return eval_ast(ast, env) unless ast.is_a?(MalList)
     # It's a list. If it's empty, just return it.
     return ast if ast.data.length.zero?
 
