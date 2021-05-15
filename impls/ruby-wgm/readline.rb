@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # readline.rb
 
 # Add readline support to our commandline interpreter

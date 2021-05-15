@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # core.rb
 
 # Define our core functions here

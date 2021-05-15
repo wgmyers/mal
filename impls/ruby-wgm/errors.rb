@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # errors.rb
 
 # Custom exception classes for errors.

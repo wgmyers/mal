@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # step7_quote.rb
 # In which we implement quote, quasiquote and friends

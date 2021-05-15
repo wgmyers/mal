@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # step8_macros.rb
 # In which we implement user macros.

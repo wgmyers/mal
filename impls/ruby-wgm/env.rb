@@ -1,4 +1,5 @@
 #!/usr/local/env ruby
+# frozen_string_literal: true
 
 # env.rb
 

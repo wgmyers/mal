@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # stepA_mal.rb
 # In which we attempt self-hosting

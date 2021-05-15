@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # step5_tco.rb
 # In which we implement tail call optimisation

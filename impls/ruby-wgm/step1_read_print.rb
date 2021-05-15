@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # step1_read_print.rb
 # In which we tokenise our input and untokenise it again for printing

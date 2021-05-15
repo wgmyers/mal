@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # step0_repl.rb
 # In which we implement the basic skeleton of the interpreter

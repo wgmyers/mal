@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # step4_if_fn_do.rb
 # In which we implement some core language features.

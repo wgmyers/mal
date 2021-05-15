@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # step6_file.rb
 # In which we implement loading of files, eval, and atoms
