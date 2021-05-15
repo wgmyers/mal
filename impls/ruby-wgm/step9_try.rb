@@ -352,13 +352,14 @@ def EVAL(ast, env)
       end
       begin
         # If it's a MalFunction, we can do TCO
-        if f.is_a?(MalFunction)
+        case f
+        when MalFunction
           # TCO
           ast = f.ast
           env = Env.new(f.env, f.params.data, args)
           next
           # ... and loop to start for TCO
-        elsif f.is_a?(Proc)
+        when Proc
           # No TCO here - we can return a result
           # Here we must splat the args with * so our lambdas can see them
           res = f.call(*args)

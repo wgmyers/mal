@@ -171,9 +171,10 @@ def EVAL(ast, env)
     args = evaller.data.drop(1)
     begin
       # If it's a MalFunction, we splat the args in the closure
-      res = if f.is_a?(MalFunction)
+      res = case f
+            when MalFunction
               f.call(args)
-            elsif f.is_a?(Proc)
+            when Proc
         # Here we must splat the args with * so our lambdas can see them
               f.call(*args)
             else

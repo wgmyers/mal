@@ -241,21 +241,23 @@ module MalCore
                                   end
 
                                   retval = x
-                                  if x.is_a?(MalVector) # Convert vector to list
+                                  case x
+                                  when MalVector # Convert vector to list
                                     retval = MalList.new
                                     x.data.each { |i| retval.push(i) }
-                                  elsif x.is_a?(MalString) # Convert string to list of single char strings
+                                  when MalString # Convert string to list of single char strings
                                     retval = MalList.new
                                     chars = x.data.split('')
                                     chars.each { |c| retval.push(MalString.new(c, sanitise: false)) }
                                   end
                                   return retval # NB MalList input is returned unchanged
                      },
-    'conj'        => lambda { |col, *l| if col.is_a?(MalVector)
+    'conj'        => lambda { |col, *l| case col
+                                        when MalVector
                                           ret = MalVector.new
                                           col.data.each { |i| ret.push(i) }
                                           l.each { |i| ret.push(i) }
-                                        elsif col.is_a?(MalList)
+                                        when MalList
                                           ret = MalList.new
                                           l.reverse.each { |i| ret.push(i) }
                                           col.data.each { |i| ret.push(i) }

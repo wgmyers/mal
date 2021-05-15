@@ -291,9 +291,10 @@ def expand_metadata(tok_arr)
         if item_count.positive?
           bracket_depth += 1 if /^[(\[{]$/.match(item)
           bracket_depth -= 1 if /^[)\]}]$/.match(item)
-          if item_count == 2
+          case item_count
+          when 2
             item_one_arr.push(item)
-          elsif item_count == 1
+          when 1
             item_two_arr.push(item)
           end
           item_count -= 1 if bracket_depth.zero?
