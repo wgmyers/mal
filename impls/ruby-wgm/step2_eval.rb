@@ -32,11 +32,9 @@ def eval_ast(ast, repl_env)
   case type
   when 'MalSymbol'
     sym = ast.print
-    if repl_env.has_key?(sym)
-      return repl_env[sym]
-    else
-      raise MalUnknownSymbolError
-    end
+    raise MalUnknownSymbolError unless repl_env.has_key?(sym)
+
+    return repl_env[sym]
   when 'MalList'
     retval = MalList.new
     ast.data.each do |item|
@@ -87,26 +85,21 @@ end
 # Otherwise, we call eval_ast on it, assume we now have a function and some
 # parameters, and try and call that, returning the result.
 def EVAL(ast, repl_env)
-  type = ast.class.to_s
-  if type == 'MalList'
-    if ast.data.length.zero?
-      return ast
-    else
-      evaller = eval_ast(ast, repl_env)
-      begin
-        # We need to convert our MalNumbers to actual numbers somehow. Here?
-        args = evaller.data.drop(1).map{ |x| x.data }
-        # We still need to splat the args with * so the lambda can see them
-        res = evaller.data[0].call(*args)
-      rescue => e
-        raise e
-      end
-      # Oops. We need to convert back to a Mal data type.
-      return MalNumber.new(res)
-    end
-  else
-    return eval_ast(ast, repl_env)
+  return eval_ast(ast, repl_env) unless ast.is_a?(MalList)
+
+  return ast if ast.data.length.zero?
+
+  evaller = eval_ast(ast, repl_env)
+  begin
+    # We need to convert our MalNumbers to actual numbers somehow. Here?
+    args = evaller.data.drop(1).map{ |x| x.data }
+    # We still need to splat the args with * so the lambda can see them
+    res = evaller.data[0].call(*args)
+  rescue => e
+    raise e
   end
+  # Oops. We need to convert back to a Mal data type.
+  return MalNumber.new(res)
 end
 
 # PRINT
