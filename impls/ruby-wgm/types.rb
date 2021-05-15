@@ -6,7 +6,7 @@
 
 require_relative 'errors'
 
-KEYWORD_PREFIX = "\u029e"  # Not wholly sure about this.
+KEYWORD_PREFIX = "\u029e" # Not wholly sure about this.
 
 # MalType is the base class for our class types
 class MalType

@@ -204,7 +204,7 @@ def EVAL(ast, env)
       begin
         item = EVAL(ast.data[2], env)
         if is_defmacro && item.is_a?(MalFunction)
-          item = item.dup  # Don't mutate existing functions, duplicate them
+          item = item.dup # Don't mutate existing functions, duplicate them
           item.is_macro = true
         end
         env = env.set(ast.data[1], item)
@@ -299,7 +299,7 @@ def EVAL(ast, env)
 
     when 'quasiquote'
       ast = quasiquote(ast.data[1])
-      next  # TCO fallthrough
+      next # TCO fallthrough
 
     when 'macroexpand'
       # I have no idea how this is supposed to work.

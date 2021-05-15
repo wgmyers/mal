@@ -237,9 +237,9 @@ def EVAL(ast, env)
       # Return the value of the last one
 
       # TCO
-      lastel = ast.data.pop                # save last element of ast
+      lastel = ast.data.pop # save last element of ast
       ast.data.drop(1).each { |i| EVAL(i, env) }
-      ast = lastel                          # set ast to saved last element
+      ast = lastel # set ast to saved last element
       next
       # ... and loop to start of EVAL
 
@@ -291,7 +291,7 @@ def EVAL(ast, env)
 
     when 'quasiquote'
       ast = quasiquote(ast.data[1])
-      next  # TCO fallthrough
+      next # TCO fallthrough
 
     when 'macroexpand'
       # I have no idea how this is supposed to work.

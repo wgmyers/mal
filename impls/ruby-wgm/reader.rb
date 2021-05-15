@@ -151,7 +151,7 @@ def read_form(reader, matcher)
   cur_tok = reader.peek
   case cur_tok
   when /^[\(\[\{]$/
-    matcher.open  # Count our open parentheses
+    matcher.open # Count our open parentheses
     retval = read_list(reader, matcher, cur_tok)
   else
     retval = read_atom(reader, matcher)
