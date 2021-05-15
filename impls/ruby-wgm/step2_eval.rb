@@ -49,17 +49,8 @@ def eval_ast(ast, repl_env)
     return retval
   when 'MalHashMap'
     retval = MalHashMap.new
-    key = true
-    # We alternatve between blindly returning the untouched key and
-    # calling eval on key values.
-    # FIXME This is obviously nonsense behaviour and we need to revisit MalHashMap
-    ast.data.each do |item|
-      if key
-        retval.push(item)
-      else
-        retval.push(EVAL(item, repl_env))
-      end
-      key = !key
+    ast.data.each_key do |key|
+      retval.set(key, EVAL(ast.data[key], repl_env))
     end
     return retval
   end
@@ -85,7 +76,7 @@ end
 # Otherwise, we call eval_ast on it, assume we now have a function and some
 # parameters, and try and call that, returning the result.
 def EVAL(ast, repl_env)
-  return eval_ast(ast, repl_env) unless ast.is_a?(MalList)
+  return eval_ast(ast, repl_env) unless ast.instance_of?(MalList)
 
   return ast if ast.data.length.zero?
 
@@ -105,6 +96,7 @@ end
 # PRINT
 # We should probably set the 'readably' flag here.
 def PRINT(ast)
+  pp ast
   return pr_str(ast)
 end
 
