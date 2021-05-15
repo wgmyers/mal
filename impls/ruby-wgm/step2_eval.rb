@@ -15,10 +15,10 @@ require_relative 'types'
 
 # A simple environment for basic numeric functions
 repl_env = {
-  '+' => lambda { |x,y| x + y },
-  '-' => lambda { |x,y| x - y },
-  '*' => lambda { |x,y| x * y },
-  '/' => lambda { |x,y| x / y }
+  '+' => lambda { |x, y| x + y },
+  '-' => lambda { |x, y| x - y },
+  '*' => lambda { |x, y| x * y },
+  '/' => lambda { |x, y| x / y }
 }
 
 # eval_ast

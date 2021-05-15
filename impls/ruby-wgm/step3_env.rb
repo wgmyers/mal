@@ -159,10 +159,10 @@ def init_env
   repl_env = Env.new
   # A simple environment for basic numeric functions
   numeric_env = {
-    '+' => lambda { |x,y| x + y },
-    '-' => lambda { |x,y| x - y },
-    '*' => lambda { |x,y| x * y },
-    '/' => lambda { |x,y| x / y }
+    '+' => lambda { |x, y| x + y },
+    '-' => lambda { |x, y| x - y },
+    '*' => lambda { |x, y| x * y },
+    '/' => lambda { |x, y| x / y }
   }
   numeric_env.each do |key, val|
     repl_env.set(key, val)
