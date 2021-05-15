@@ -266,7 +266,6 @@ def expand_metadata(tok_arr)
   item_one_arr = []
   item_two_arr = []
   item_count = 0
-  cur_bracket = ''
   bracket_depth = 0
   tok_arr.each do |item|
     case item
