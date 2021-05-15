@@ -302,7 +302,7 @@ def main
     line = grabline(prompt)
     # The readline library returns nil on EOF
     # Adding 'q' to quit because Ctrl-D at the wrong time is doing my head in
-    break if line == nil || line == 'q'
+    break if line.nil? || line == 'q'
 
     begin
       puts rep(line, repl_env)

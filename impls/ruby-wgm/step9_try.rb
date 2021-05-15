@@ -328,7 +328,7 @@ def EVAL(ast, env)
 
         # Ok, we have B and C.
         # Check to see if we haven't been given an evaluable MalType
-        if !e.methods.include?(:malexp) || (e.malexp == nil)
+        if !e.methods.include?(:malexp) || e.malexp.nil?
           err_exp = MalString.new(e.message, false)
         else
           err_exp = e.malexp
@@ -465,7 +465,7 @@ def main
     line = grabline(prompt)
     # The readline library returns nil on EOF
     # Adding 'q' to quit because Ctrl-D at the wrong time is doing my head in
-    break if line == nil || line == 'q'
+    break if line.nil? || line == 'q'
 
     begin
       out = rep(line, repl_env)

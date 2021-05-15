@@ -46,7 +46,7 @@ def main
   loop do
     line = grabline(prompt)
     # The readline library returns nil on EOF
-    break if line == nil
+    break if line.nil?
 
     begin
       puts rep(line)
