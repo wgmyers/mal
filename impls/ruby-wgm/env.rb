@@ -6,6 +6,10 @@
 
 require_relative 'errors'
 
+# Env implements both the core environment we start with
+# and, with outer, allows the environment to be changed eg by def! etc
+# set allows new bindings to be made
+# get will search recursively outward until it finds a match
 class Env
   attr_reader :outer, :data
 

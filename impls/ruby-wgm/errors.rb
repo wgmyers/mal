@@ -2,6 +2,7 @@
 
 # Custom exception classes for errors.
 # NB - Inherit from StandardError and not Exception or things don't work.
+#:nodoc: all
 
 class MalBadApplyError < StandardError
   def initialize(msg = "Malformed call to 'apply'")

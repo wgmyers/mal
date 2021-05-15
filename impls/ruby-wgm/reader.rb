@@ -8,6 +8,8 @@
 require_relative 'types'
 require_relative 'errors'
 
+# Readers keep an array of tokens and our position in them
+# next and peek return current token with/without incrementing position
 class Reader
   attr_reader :tokens, :pos
 
@@ -38,8 +40,7 @@ class Reader
   end
 end
 
-#  Matcher
-# A class to count open and close parens as we read them
+# Matcher counts open and close parens as we read them
 # Also counts number of items added to hashmaps
 # matched returns true if we counted as many open as close parens
 # hashcount returns true if we have an even number of items
