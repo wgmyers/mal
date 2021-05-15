@@ -43,31 +43,21 @@ def eval_ast(ast, env)
   when 'MalList'
     retval = MalList.new
     ast.data.each do |item|
-      newitem, env = EVAL(item, env)
+      newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when 'MalVector'
     retval = MalVector.new
     ast.data.each do |item|
-      newitem, env = EVAL(item, env)
+      newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when 'MalHashMap'
     retval = MalHashMap.new
-    key = true
-    # We alternatve between blindly returning the untouched key and
-    # calling eval on key values.
-    # FIXME This is obviously nonsense behaviour and we need to revisit MalHashMap
-    ast.data.each do |item|
-      if key
-        retval.push(item)
-      else
-        newitem, env = EVAL(item, env)
-        retval.push(newitem)
-      end
-      key = !key
+    ast.data.each_key do |key|
+      retval.set(key, EVAL(ast.data[key], env))
     end
     return retval
   end
@@ -90,9 +80,9 @@ end
 # having to use a global, at the cost of some readability.
 def EVAL(ast, env)
   # If it's not a list, call eval_ast on it
-  return eval_ast(ast, env), env unless ast.is_a?(MalList)
+  return eval_ast(ast, env) unless ast.instance_of?(MalList)
   # It's a list. If it's empty, just return it.
-  return ast, env if ast.data.length.zero?
+  return ast if ast.data.length.zero?
 
   # APPLY section
   # Switch on the first item of the list
@@ -102,8 +92,9 @@ def EVAL(ast, env)
     # Do the def! stuff
     # QUERY - how does this fail? Should we raise our own BadDefError?
     begin
-      item, env = EVAL(ast.data[2], env)
-      return item, env.set(ast.data[1], item)
+      item = EVAL(ast.data[2], env)
+      env = env.set(ast.data[1], item)
+      return item
     rescue => e
       raise e
     end
@@ -120,7 +111,7 @@ def EVAL(ast, env)
       if is_key
         key = item
       else
-        val, letenv = EVAL(item, letenv)
+        val = EVAL(item, letenv)
         letenv = letenv.set(key, val)
       end
       is_key = !is_key
@@ -128,39 +119,34 @@ def EVAL(ast, env)
     # rubocop:enable Style/For
     # Finally, call EVAL on our last parameter in the new enviroment
     # and return the result. New env is discarded, so we return the old env.
-    retval, letenv = EVAL(ast.data[2], letenv)
+    retval = EVAL(ast.data[2], letenv)
     # Convert retval to a Mal data object if it isn't one.
     # FIXME This shouldn't be.
     retval = READ(retval.to_s) unless /^Mal/.match(retval.class.to_s)
-    return retval, env
+    return retval
   when 'do'
     # Do the do
     # Call eval_ast on every member of the list
     # Return the value of the last one
     ast.data.drop(1).each do |el|
-      retval, env = EVAL(el, env)
+      retval = EVAL(el, env)
     end
-    return retval, env
+    return retval
   when 'if'
     # Handle if statements
     # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
-    retval, env = EVAL(ast.data[1], env)
+    retval = EVAL(ast.data[1], env)
     if retval
       type = retval.class.to_s
     else
       type = nil
     end
-    if !type || type == 'MalFalse' || type == 'MalNil'
+    # Truthy. Return eval of second item
+    return EVAL(ast.data[2], env) unless !type || type == 'MalFalse' || type == 'MalNil'
     # Falsy. Return eval of third item if there is one
-      if ast.data[3]
-        return EVAL(ast.data[3], env)
-      else
-        return MalNil.new, env
-      end
-    else
-      # Truthy. Return eval of second item (or raise error)
-      return EVAL(ast.data[2], env)
-    end
+    return MalNil.new unless ast.data[3]
+
+    return EVAL(ast.data[3], env)
   when 'fn*'
     # Second element of the list is parameters. Third is function body.
     # So create a closure which:
@@ -176,8 +162,11 @@ def EVAL(ast, env)
       retval, e = EVAL(ast.data[2], cl_env)
       retval
     }
-    myfn = MalFunction.new(closure)
-    return myfn, env
+    # NB - At Step 4 we only use the closure. Later stages add other params to
+    # the MalFunction initialiser, hence all the nils here, as we only have one
+    # types.rb and I don't want to keep the old MalFunction around.
+    myfn = MalFunction.new(nil, nil, nil, closure)
+    return myfn
   else
     # DEFAULT EVALLER
     evaller = eval_ast(ast, env)
@@ -199,13 +188,13 @@ def EVAL(ast, env)
     # Oops. We /might/ need to convert back to a Mal data type.
     case res.class.to_s
     when 'TrueClass'
-      return MalTrue.new, env
+      return MalTrue.new
     when 'FalseClass'
-      return MalFalse.new, env
+      return MalFalse.new
     when 'Integer'
-      return MalNumber.new(res), env
+      return MalNumber.new(res)
     else
-      return res, env
+      return res
     end
   end
 end
@@ -218,14 +207,13 @@ end
 
 # rep
 # Pass input through READ, EVAL and PRINT in order and return the result
-# NB EVAL now returns the environment, as it might modify it.
 def rep(input, repl_env)
   begin
     ast = READ(input)
   rescue => e
     raise e
   end
-  ast, repl_env = EVAL(ast, repl_env)
+  ast = EVAL(ast, repl_env)
   output = PRINT(ast)
   return output
 end
@@ -241,6 +229,8 @@ def init_env
   end
   # Support for functions defined in mal in core.rb
   MalCore::Mal.each do |key, val|
+    next if key == 'cond' # NB Needed as we don't implement defmacro! until step 8
+
     rep(val, repl_env)
   end
   return repl_env
