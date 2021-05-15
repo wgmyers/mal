@@ -28,6 +28,7 @@ class MalAtom < MalType
 
   # data must be a Mal object
   def initialize(data)
+    super()
     @type = 'MalAtom'
     @data = data
   end
@@ -74,6 +75,7 @@ class MalFunction < MalType
   attr_accessor :is_macro, :metadata
 
   def initialize(ast, params, env, closure)
+    super()
     @type = 'MalFunction'
     @ast = ast
     @params = params
@@ -112,6 +114,7 @@ class MalString < MalType
   # But when we print from core.rb, we don't want to, so from there
   # we call with the sanitise flag set to false.
   def initialize(data, sanitise: true)
+    super()
     @type = 'MalString'
     @data = data
     @data = _sanitise(@data) if sanitise
@@ -203,6 +206,7 @@ end
 # NB - consider having MalBoolean for both true and false?
 class MalTrue < MalType
   def initialize
+    super()
     @type = 'MalTrue'
     @data = true
   end
@@ -213,6 +217,7 @@ class MalTrue < MalType
 end
 class MalFalse < MalType
   def initialize
+    super()
     @type = 'MalFalse'
     @data = false
   end
@@ -224,6 +229,7 @@ end
 
 class MalNil < MalType
   def initialise
+    super()
     @type = 'MalNil'
     @data = nil
   end
@@ -237,6 +243,7 @@ class MalList < MalType
   attr_accessor :metadata
 
   def initialize
+    super()
     @type = 'MalList'
     @data = []
     @metadata = MalNil.new
@@ -269,6 +276,7 @@ end
 
 class MalVector < MalList
   def initialize
+    super()
     @type = 'MalVector'
     @data = []
     @metadata = MalNil.new
@@ -295,6 +303,7 @@ class MalHashMap < MalType
   attr_accessor :metadata
 
   def initialize
+    super()
     @type = 'MalHashMap'
     @data = {}
     @next_is_key = true
@@ -413,6 +422,7 @@ end
 
 class MalKeyword < MalType
   def initialize(data)
+    super()
     @type = 'MalKeyword'
     @data = data
     # Prepend ':' if not given
@@ -426,6 +436,7 @@ end
 
 class MalSymbol < MalType
   def initialize(data)
+    super()
     @type = 'MalSymbol'
     @data = data
   end
@@ -433,6 +444,7 @@ end
 
 class MalNumber < MalType
   def initialize(data)
+    super()
     @type = 'MalNumber'
     @data = data.to_i # FIXME: We should also handle non-integers
   end
