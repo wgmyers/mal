@@ -19,7 +19,7 @@ DEBUG = {
   'show_ast'  => false,
   'show_env'  => false,
   'backtrace' => true
-}
+}.freeze
 
 # READ
 # Invokes the reader on its input

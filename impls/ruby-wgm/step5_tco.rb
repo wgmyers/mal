@@ -18,7 +18,7 @@ require_relative 'types'
 DEBUG = {
   'show_env'  => false,
   'backtrace' => false
-}
+}.freeze
 
 # READ
 # Invokes the reader on its input

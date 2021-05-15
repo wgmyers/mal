@@ -273,7 +273,7 @@ module MalCore
                                   return evil.ret
                      },
     'macavity'    => lambda { |*x| raise MalNotImplementedError }
-  }
+  }.freeze
 
   Mal = {
     'not'       => '(def! not (fn* (a) (if a false true)))',
@@ -282,7 +282,7 @@ module MalCore
                        (if (> (count xs) 0)
                          (list \'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw \"odd number of forms to cond\"))
                          (cons \'cond (rest (rest xs)))))))"
-  }
+  }.freeze
 
   # Evaller
   # A class to handle calls to Ruby eval

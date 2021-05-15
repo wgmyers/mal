@@ -16,11 +16,14 @@ require_relative 'types'
 
 # Some debugging flags
 # Type (foo) to toggle the flag in the REPL
+# We don't want to freeze this, because we intend it to be mutable.
+# rubocop: disable Style/MutableConstant
 DEBUG = {
   'show_ast'  => false,
   'show_env'  => false,
   'backtrace' => false
 }
+# rubocop: enable Style/MutableConstant
 
 # Set startup string
 STARTUP_STR = '(println (str "Mal [" *host-language* "]"))'

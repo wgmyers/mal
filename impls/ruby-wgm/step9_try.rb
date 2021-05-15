@@ -16,11 +16,13 @@ require_relative 'types'
 
 # Some debugging flags
 # Type (foo) to toggle the flag in the REPL
+# rubocop: disable Style/MutableConstant
 DEBUG = {
   'show_ast'  => false,
   'show_env'  => false,
   'backtrace' => false
 }
+# rubocop: enable Style/MutableConstant
 
 # READ
 # Invokes the reader on its input
