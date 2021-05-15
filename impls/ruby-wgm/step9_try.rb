@@ -275,7 +275,7 @@ def EVAL(ast, env)
       # to MalFunction, and here we return *that*.
       # Then we add code below in the DEFAULT EVALLER, to call the function
       # if it ever shows up in a list. I think. Or in eval_ast. I'm not sure.
-      closure = Proc.new { |*x|
+      closure = proc { |*x|
         cl_env = Env.new(env, ast.data[1].data, x)
         retval = EVAL(ast.data[2], cl_env)
       }
@@ -430,7 +430,7 @@ def init_env
     rep(val, repl_env)
   end
   # Guide says we must define eval here. Is so we can close over repl_env?
-  eval_proc = Proc.new { |ast| EVAL(ast, repl_env) }
+  eval_proc = proc { |ast| EVAL(ast, repl_env) }
   repl_env.set('eval', eval_proc)
   # Populate a dummy *ARGV* symbol
   argv = MalList.new
@@ -450,7 +450,7 @@ def init_env
   end
   # Add commands to twiddle our debug flags
   DEBUG.keys.each do |k|
-    repl_env.set(k, Proc.new { DEBUG[k] = !DEBUG[k] })
+    repl_env.set(k, proc { DEBUG[k] = !DEBUG[k] })
   end
   return repl_env
 end
