@@ -26,7 +26,7 @@ module MalCore
                                    return l
                      },
     'list?'       => lambda { |x| x.instance_of?(MalList) ? MalTrue.new : MalFalse.new },
-    'empty?'      => lambda { |x| x.data.length == 0 ? MalTrue.new : MalFalse.new },
+    'empty?'      => lambda { |x| x.data.length.zero? ? MalTrue.new : MalFalse.new },
     'count'       => lambda { |x| x.is_a?(MalNil) ? 0 : x.data.length },
     '='           => lambda { |x, y| # We must treat MalList and MalVector as equivalent
                                if ((x.instance_of?(MalList) || x.instance_of?(MalVector)) &&
@@ -96,7 +96,7 @@ module MalCore
 
                                     return x.data[y.data]
                      }, # FIXME: Error checking? What if not list or vector?
-    'first'       => lambda { |x| (!x.is_a?(MalNil) && (x.data.length > 0)) ? x.data[0] : MalNil.new },
+    'first'       => lambda { |x| (!x.is_a?(MalNil) && x.data.length.positive?) ? x.data[0] : MalNil.new },
     'rest'        => lambda { |x|
                                   y = MalList.new
                                   return y unless !x.is_a?(MalNil) # back out now if x is nil
@@ -261,8 +261,8 @@ module MalCore
                                   end
                                   if (x.is_a?(MalNil) ||
                                      (x.is_a?(MalString) && x.data == '') ||
-                                     (x.is_a?(MalList) && x.length == 0) ||
-                                     (x.is_a?(MalVector) && x.length == 0))
+                                     (x.is_a?(MalList) && x.length.zero?) ||
+                                     (x.is_a?(MalVector) && x.length.zero?))
                                     return MalNil.new
                                   end
 

@@ -89,7 +89,7 @@ end
 def EVAL(ast, repl_env)
   type = ast.class.to_s
   if type == 'MalList'
-    if ast.data.length == 0
+    if ast.data.length.zero?
       return ast
     else
       evaller = eval_ast(ast, repl_env)

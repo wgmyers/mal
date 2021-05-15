@@ -90,7 +90,7 @@ end
 def EVAL(ast, env)
   type = ast.class.to_s
   if type == 'MalList'
-    if ast.data.length == 0
+    if ast.data.length.zero?
       return ast, env
     else
       # APPLY section

@@ -214,14 +214,14 @@ def expand_macros(tok_arr)
       in_macro = in_macro + 1
       last_was_macro = true
     else
-      if in_macro > 0
+      if in_macro.positive?
         case item
         # When we're in a macro, we need to start counting brackets
         when '(', '['
           ret_arr.push(item)
           in_brackets = in_brackets + 1
         else
-          if in_brackets > 0
+          if in_brackets.positive?
             if (item == ')') || (item == ']')
               ret_arr.push(item)
               ret_arr.push(')')
@@ -244,7 +244,7 @@ def expand_macros(tok_arr)
           else
             ret_arr.push(item)
             # We're not in brackets. End all open macros now.
-            while in_macro > 0
+            while in_macro.positive?
               ret_arr.push(')')
               in_macro = in_macro - 1
             end
@@ -293,7 +293,7 @@ def expand_metadata(tok_arr)
         # When we've seen as many opening as closing brackets, we have
         # (probably) seen a complete item. Either go onto the next, or
         # add both items to the main array and complete the macro.
-        if item_count > 0
+        if item_count.positive?
           bracket_depth += 1 if /^[\(\[\{]$/.match(item)
           bracket_depth -= 1 if /^[\)\]\}]$/.match(item)
           if item_count == 2
@@ -301,9 +301,9 @@ def expand_metadata(tok_arr)
           elsif item_count == 1
             item_two_arr.push(item)
           end
-          item_count -= 1 if bracket_depth == 0
+          item_count -= 1 if bracket_depth.zero?
         end
-        if item_count == 0
+        if item_count.zero?
           in_macro = false
           ret_arr.push(item_two_arr)
           ret_arr.push(item_one_arr)

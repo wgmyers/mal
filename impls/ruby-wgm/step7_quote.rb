@@ -71,7 +71,7 @@ def quasiquote(ast)
     tmplist = MalList.new
     ast.data.each { |item| tmplist.push(item) }
     # If list *does* begin with unquote, squirrel it away and add it back after processing
-    if (tmplist.data.length > 0) &&
+    if tmplist.data.length.positive? &&
        tmplist.data[0].is_a?(MalSymbol) &&
        (tmplist.data[0].data == 'unquote')
       tmplist.data[0] = MalSymbol.new('hidden-unquote') # hide the 'unquote'
@@ -158,7 +158,7 @@ def EVAL(ast, env)
     # If it's not a list, call eval_ast on it
     return eval_ast(ast, env) if !ast.is_a?(MalList)
     # It's a list. If it's empty, just return it.
-    return ast if ast.data.length == 0
+    return ast if ast.data.length.zero?
 
     # APPLY section
     # Switch on the first item of the list
@@ -365,7 +365,7 @@ def init_env
   argv = MalList.new
   repl_env.set('*ARGV*', argv)
   # If ARGV is non-empty we should treat the first item as a filename and load it
-  if ARGV.length > 0
+  if ARGV.length.positive?
     # Populate *ARGV* 'properly'
     # NB We need to use arg.dup as command line strings are frozen in Ruby
     # but outputting them requires a call to unmunge, which blows up on frozen strings.

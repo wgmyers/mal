@@ -92,7 +92,7 @@ def EVAL(ast, env)
   # If it's not a list, call eval_ast on it
   return eval_ast(ast, env), env if !ast.is_a?(MalList)
   # It's a list. If it's empty, just return it.
-  return ast, env if ast.data.length == 0
+  return ast, env if ast.data.length.zero?
 
   # APPLY section
   # Switch on the first item of the list
