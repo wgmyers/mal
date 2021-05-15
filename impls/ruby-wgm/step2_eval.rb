@@ -39,13 +39,13 @@ def eval_ast(ast, repl_env)
     end
   when 'MalList'
     retval = MalList.new
-    for item in ast.data
+    ast.data.each do |item|
       retval.push(EVAL(item, repl_env))
     end
     return retval
   when 'MalVector'
     retval = MalVector.new
-    for item in ast.data
+    ast.data.each do |item|
       retval.push(EVAL(item, repl_env))
     end
     return retval
@@ -55,7 +55,7 @@ def eval_ast(ast, repl_env)
     # We alternatve between blindly returning the untouched key and
     # calling eval on key values.
     # FIXME This is obviously nonsense behaviour and we need to revisit MalHashMap
-    for item in ast.data
+    ast.data.each do |item|
       if key
         retval.push(item)
       else

@@ -30,14 +30,14 @@ def eval_ast(ast, env)
     end
   when 'MalList'
     retval = MalList.new
-    for item in ast.data
+    ast.data.each do |item|
       newitem, env = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
   when 'MalVector'
     retval = MalVector.new
-    for item in ast.data
+    ast.data.each do |item|
       newitem, env = EVAL(item, env)
       retval.push(newitem)
     end
@@ -48,7 +48,7 @@ def eval_ast(ast, env)
     # We alternatve between blindly returning the untouched key and
     # calling eval on key values.
     # FIXME This is obviously nonsense behaviour and we need to revisit MalHashMap
-    for item in ast.data
+    ast.data.each do |item|
       if key
         retval.push(item)
       else
@@ -113,6 +113,8 @@ def EVAL(ast, env)
         # Iterate over our parameters, calling set on new environment with
         # each key, value pair, first calling EVAL on the value w/ new env.
         is_key = true
+        # NB Using 'each' here fails. I have no idea why.
+        # rubocop:disable Style/For
         for item in ast.data[1].data
           if is_key
             key = item
@@ -122,6 +124,7 @@ def EVAL(ast, env)
           end
           is_key = !is_key
         end
+        # rubocop:enable Style/For
         # Finally, call EVAL on our last parameter in the new enviroment
         # and return the result. New env is discarded, so we return the old env.
         retval, letenv = EVAL(ast.data[2], letenv)

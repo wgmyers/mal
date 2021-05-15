@@ -194,7 +194,7 @@ def expand_macros(tok_arr)
   in_brackets = 0
   last_was_macro = false
 
-  for item in tok_arr
+  tok_arr.each do |item|
     case item
     # Handle splice-unquote
     when '~@'
@@ -279,7 +279,7 @@ def expand_metadata(tok_arr)
   item_count = 0
   cur_bracket = ''
   bracket_depth = 0
-  for item in tok_arr
+  tok_arr.each do |item|
     case item
     when '^'
       # We found a metadata macro

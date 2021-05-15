@@ -264,7 +264,7 @@ class MalList < MalType
 
   def print(readably = true)
     strings = []
-    for item in data
+    data.each do |item|
       strings.push(item.print(readably))
     end
     return '(' + strings.join(' ') + ')'
@@ -294,7 +294,7 @@ class MalVector < MalList
 
   def print(readably = true)
     strings = []
-    for item in data
+    data.each do |item|
       strings.push(item.print(readably))
     end
     return '[' + strings.join(' ') + ']'
@@ -412,7 +412,7 @@ class MalHashMap < MalType
   def print(readably = true)
     strings = []
     munge = @data.keys.zip(@data.values).flatten
-    for item in munge
+    munge.each do |item|
       if(item.is_a?(MalType))
         strings.push(item.print(readably))
       elsif item[0] == KEYWORD_PREFIX # magic MalKeyword prefix
