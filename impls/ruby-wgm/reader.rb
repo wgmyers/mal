@@ -85,30 +85,30 @@ end
 
 def read_atom(reader, matcher)
   data = reader.peek
-  case data
-  when nil
-    retval = nil
-  when ')'
-    retval = ')'
-  when ']'
-    retval = ']'
-  when '}'
-    retval = '}'
-  when /^-?\d+$/
-    retval = MalNumber.new(data)
-  when /^"/
-    retval = MalString.new(data)
-  when /^:/
-    retval = MalKeyword.new(data)
-  when 'true'
-    retval = MalTrue.new
-  when 'false'
-    retval = MalFalse.new
-  when 'nil'
-    retval = MalNil.new
-  else
-    retval = MalSymbol.new(data)
-  end
+  retval = case data
+           when nil
+             nil
+           when ')'
+             ')'
+           when ']'
+             ']'
+           when '}'
+             '}'
+           when /^-?\d+$/
+             MalNumber.new(data)
+           when /^"/
+             MalString.new(data)
+           when /^:/
+             MalKeyword.new(data)
+           when 'true'
+             MalTrue.new
+           when 'false'
+             MalFalse.new
+           when 'nil'
+             MalNil.new
+           else
+             MalSymbol.new(data)
+           end
   return retval
 end
 

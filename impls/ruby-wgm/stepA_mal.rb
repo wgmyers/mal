@@ -254,11 +254,7 @@ def EVAL(ast, env)
       # Handle if statements
       # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
       retval = EVAL(ast.data[1], env)
-      if retval
-        type = retval.class.to_s
-      else
-        type = nil
-      end
+      type = (retval.class.to_s if retval)
       if !type || type == 'MalFalse' || type == 'MalNil'
       # Falsy. Return eval of third item if there is one
         return MalNil.new unless ast.data[3]
@@ -334,11 +330,11 @@ def EVAL(ast, env)
 
         # Ok, we have B and C.
         # Check to see if we haven't been given an evaluable MalType
-        if !e.methods.include?(:malexp) || e.malexp.nil?
-          err_exp = MalString.new(e.message, sanitise: false)
-        else
-          err_exp = e.malexp
-        end
+        err_exp = if !e.methods.include?(:malexp) || e.malexp.nil?
+                    MalString.new(e.message, sanitise: false)
+                  else
+                    e.malexp
+                  end
         err_env = Env.new(env)
         err_env.set(try_err, err_exp)
         return EVAL(try_catcher, err_env)

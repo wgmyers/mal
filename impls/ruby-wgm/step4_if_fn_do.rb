@@ -137,11 +137,7 @@ def EVAL(ast, env)
     # Handle if statements
     # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
     retval = EVAL(ast.data[1], env)
-    if retval
-      type = retval.class.to_s
-    else
-      type = nil
-    end
+    type = (retval.class.to_s if retval)
     # Truthy. Return eval of second item
     return EVAL(ast.data[2], env) unless !type || type == 'MalFalse' || type == 'MalNil'
     # Falsy. Return eval of third item if there is one
@@ -175,14 +171,14 @@ def EVAL(ast, env)
     args = evaller.data.drop(1)
     begin
       # If it's a MalFunction, we splat the args in the closure
-      if f.is_a?(MalFunction)
-        res = f.call(args)
-      elsif f.is_a?(Proc)
+      res = if f.is_a?(MalFunction)
+              f.call(args)
+            elsif f.is_a?(Proc)
         # Here we must splat the args with * so our lambdas can see them
-        res = f.call(*args)
-      else
-        res = evaller # Here we just return our input
-      end
+              f.call(*args)
+            else
+              evaller # Here we just return our input
+            end
     rescue => e
       raise e
     end

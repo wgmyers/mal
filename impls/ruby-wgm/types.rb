@@ -59,11 +59,11 @@ class MalAtom < MalType
   def swap(arr)
     fn = arr.shift
     args = arr.unshift(@data)
-    if fn.is_a?(MalFunction)
-      @data = fn.call(args)
-    else
-      @data = fn.call(*args)
-    end
+    @data = if fn.is_a?(MalFunction)
+              fn.call(args)
+            else
+              fn.call(*args)
+            end
   end
 end
 

@@ -246,11 +246,7 @@ def EVAL(ast, env)
       # Handle if statements
       # (if COND X Y) returns X if COND, otherwise Y, or nil if not there.
       retval = EVAL(ast.data[1], env)
-      if retval
-        type = retval.class.to_s
-      else
-        type = nil
-      end
+      type = (retval.class.to_s if retval)
       if !type || type == 'MalFalse' || type == 'MalNil'
       # Falsy. Return eval of third item if there is one
         return MalNil.new unless ast.data[3]
