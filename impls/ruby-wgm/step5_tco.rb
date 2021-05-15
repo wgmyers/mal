@@ -64,18 +64,8 @@ def eval_ast(ast, env)
     return retval
   when 'MalHashMap'
     retval = MalHashMap.new
-    key = true
-    # We alternatve between blindly returning the untouched key and
-    # calling eval on key values.
-    # FIXME This is obviously nonsense behaviour and we need to revisit MalHashMap
-    ast.data.each do |item|
-      if key
-        retval.push(item)
-      else
-        newitem = EVAL(item, env)
-        retval.push(newitem)
-      end
-      key = !key
+    ast.data.each_key do |key|
+      retval.set(key, EVAL(ast.data[key], env))
     end
     return retval
   end
@@ -91,15 +81,12 @@ end
 # recursion. I think, and is compulsory in Scheme and related Lisps. I don't
 # really understand it yet, but that's what you get for trying to learn Lisp
 # by implementing it.
-# NB - The trick we used in previous steps of returning env here turns out to
-# have been a mistake, as it broke TCO. Removing it seems to have fixed most
-# of the problems, though not all regression tests pass as I type this.
 def EVAL(ast, env)
 
   # TCO YOLO
   loop do
     # If it's not a list, call eval_ast on it
-    return eval_ast(ast, env) unless ast.is_a?(MalList)
+    return eval_ast(ast, env) unless ast.instance_of?(MalList)
     # It's a list. If it's empty, just return it.
     return ast if ast.data.length.zero?
 
@@ -149,7 +136,7 @@ def EVAL(ast, env)
       # if !/^Mal/.match(retval.class.to_s)
       #   retval = READ(retval.to_s)
       # end
-      # return retval, env
+      # return retval
 
       # TCO way
       env = letenv
@@ -164,9 +151,9 @@ def EVAL(ast, env)
 
       # Pre TCO do
       # for item in ast.data.drop(1)
-      #   retval, env = EVAL(item, env)
+      #   retval = EVAL(item, env)
       # end
-      # return retval, env
+      # return retval
 
       # TCO do
       lastel = ast.data.pop                 # save last element of ast
@@ -186,12 +173,9 @@ def EVAL(ast, env)
       end
       if !type || type == 'MalFalse' || type == 'MalNil'
       # Falsy. Return eval of third item if there is one
-        if ast.data[3]
-          # Pre TCO - return EVAL(ast.data[3], env)
-          ast = ast.data[3]
-        else
-          return MalNil.new
-        end
+        return MalNil.new unless ast.data[3]
+
+        ast = ast.data[3]
       else
         # Truthy. Return eval of second item (or raise error)
         # Pre TCO - return EVAL(ast.data[2], env)
@@ -217,7 +201,7 @@ def EVAL(ast, env)
 
       # Pre TCO way
       # myfn = MalFunction.new(closure)
-      # return myfn, env
+      # return myfn
 
       # TCO way
       # NB - We also modify MalFunction over in types.rb to reflect the new
@@ -300,6 +284,8 @@ def init_env
   end
   # Support for functions defined in mal in core.rb
   MalCore::Mal.each do |key, val|
+    next if key == 'cond' # NB Needed as we don't implement defmacro! until step 8
+
     rep(val, repl_env)
   end
   return repl_env
