@@ -96,7 +96,7 @@ def read_atom(reader, matcher)
     retval = '}'
   when /^-?\d+$/
     retval = MalNumber.new(data)
-  when /^\"/
+  when /^"/
     retval = MalString.new(data)
   when /^:/
     retval = MalKeyword.new(data)
@@ -135,7 +135,7 @@ def read_list(reader, matcher, type)
   loop do
     res = read_form(reader, matcher)
     case res
-    when /^[\)\]\}]$/
+    when /^[)\]}]$/
       break
     when nil
       break
@@ -151,7 +151,7 @@ end
 def read_form(reader, matcher)
   cur_tok = reader.peek
   case cur_tok
-  when /^[\(\[\{]$/
+  when /^[(\[{]$/
     matcher.open # Count our open parentheses
     retval = read_list(reader, matcher, cur_tok)
   else
@@ -201,7 +201,7 @@ def expand_macros(tok_arr)
       in_macro += 1
       last_was_macro = true
     # Handle quote, quasiquote, unquote and deref
-    when /^[\'|`|~|@]$/
+    when /^['|`|~|@]$/
       ret_arr.push('(')
       case item
       when "\'"
@@ -289,8 +289,8 @@ def expand_metadata(tok_arr)
         # (probably) seen a complete item. Either go onto the next, or
         # add both items to the main array and complete the macro.
         if item_count.positive?
-          bracket_depth += 1 if /^[\(\[\{]$/.match(item)
-          bracket_depth -= 1 if /^[\)\]\}]$/.match(item)
+          bracket_depth += 1 if /^[(\[{]$/.match(item)
+          bracket_depth -= 1 if /^[)\]}]$/.match(item)
           if item_count == 2
             item_one_arr.push(item)
           elsif item_count == 1
