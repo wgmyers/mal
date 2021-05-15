@@ -81,7 +81,7 @@ end
 # Works sorta kinda, but!!!
 # FIXME does not yet reliably return error on mismatched parens.
 
-def read_atom(reader, matcher)
+def read_atom(reader)
   data = reader.peek
   retval = case data
            when nil
@@ -153,7 +153,7 @@ def read_form(reader, matcher)
     matcher.open # Count our open parentheses
     retval = read_list(reader, matcher, cur_tok)
   else
-    retval = read_atom(reader, matcher)
+    retval = read_atom(reader)
     if retval == ')' || retval == ']' || retval == '}'
       matcher.close # Count our close parentheses
     end
