@@ -1,5 +1,43 @@
 # Notes
 
+### Step A - Part Four: Fixing Everything (2021-05-15)
+
+Working steadily through the Rubocop complaints.
+
+Rubocop has an excellent --auto-gen-config feature designed precisely for my
+use case: "If you have a code base with an overwhelming amount of offenses,
+it can be a good idea to use rubocop --auto-gen-config"
+
+That's me!
+
+It creates a .rubocop_todo.yml file and a .rubocop.yml file, and lets you work
+through the complaints one by one until none are left. Along the way you end up
+creating a custom .rubocop.yml to handle specific decisions or quirks of your
+code.
+
+For example, the complexity metric complaints are quite possibly not soluble
+without simply telling Rubocop: no, look, I know EVAL is complex. Sorry.
+
+I am about 2/3 of the way through (there were ~1700 initial complaints or so?)
+and the guard clause refactoring rubocop complaints have required me to go
+through each of the step files and make them run, in order to check that my
+refactoring has not been nonsense.
+
+Which is to say, the code now passes all regression tests in all steps. Bugs
+included: not handling MalHashMap properly, trying to call defmacro! before it
+was implemented, and that weird stuff where I tried to have EVAL return env all
+the time - this has now been eliminated entirely.
+
+Some code in earlier steps now relates to later ones, but I think this is
+inevitable when you have all steps using the same library files. So the first
+call to MalFunction.new in step 4 now has a lot of nils in it, because we have
+to change the MalFunction initialize in step 5. But that's fine.
+
+Meanwhile, yay! passing all the tests.
+
+And boo! lots of Rubocop complaints still to fix. But far fewer than before, and,
+as the above makes clear - so worth doing.
+
 ### Step A - Part Three: Meta and friends (2021-05-11/12)
 
 Implemented 'meta', 'fn?', 'string?', 'number?' and 'macro?'.
