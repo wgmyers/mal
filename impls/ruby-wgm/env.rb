@@ -7,7 +7,6 @@
 require_relative 'errors'
 
 class Env
-
   attr_reader :outer, :data
 
   def initialize(outer = nil, binds = [], exprs = [])
@@ -87,5 +86,4 @@ class Env
       raise MalUnknownSymbolError, "'#{key}' not found"
     end
   end
-
 end

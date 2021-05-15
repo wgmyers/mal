@@ -10,7 +10,6 @@ KEYWORD_PREFIX = "\u029e"  # Not wholly sure about this.
 
 # MalType is the base class for our class types
 class MalType
-
   attr_reader :type, :data
 
   def initialize()
@@ -21,11 +20,9 @@ class MalType
   def print(readably = true)
     return @data
   end
-
 end
 
 class MalAtom < MalType
-
   attr_reader :type, :data
 
   # data must be a Mal object
@@ -67,13 +64,11 @@ class MalAtom < MalType
       @data = fn.call(*args)
     end
   end
-
 end
 
 # MalFunction
 # Tee hee
 class MalFunction < MalType
-
   attr_reader :ast, :params, :env, :closure, :data
   attr_accessor :is_macro, :metadata
 
@@ -107,13 +102,11 @@ class MalFunction < MalType
     ret.metadata = self.metadata
     return ret
   end
-
 end
 
 # MalString
 # Here be dragons
 class MalString < MalType
-
   # By default we sanitise our string inputs
   # But when we print from core.rb, we don't want to, so from there
   # we call with the sanitise flag set to false.
@@ -206,12 +199,10 @@ class MalString < MalType
     umstr.gsub!(/\"/, '\\"')
     return '"' + umstr + '"'
   end
-
 end
 
 # NB - consider having MalBoolean for both true and false?
 class MalTrue < MalType
-
   def initialize()
     @type = 'MalTrue'
     @data = true
@@ -220,10 +211,8 @@ class MalTrue < MalType
   def print(readably = true)
     return 'true'
   end
-
 end
 class MalFalse < MalType
-
   def initialize()
     @type = 'MalFalse'
     @data = false
@@ -232,11 +221,9 @@ class MalFalse < MalType
   def print(readably = true)
     return 'false'
   end
-
 end
 
 class MalNil < MalType
-
   def initialise()
     @type = 'MalNil'
     @data = nil
@@ -245,11 +232,9 @@ class MalNil < MalType
   def print(readably = true)
     return 'nil'
   end
-
 end
 
 class MalList < MalType
-
   attr_accessor :metadata
 
   def initialize()
@@ -281,11 +266,9 @@ class MalList < MalType
     self.data.each { |i| new.push(i) }
     return new
   end
-
 end
 
 class MalVector < MalList
-
   def initialize()
     @type = 'MalVector'
     @data = []
@@ -307,11 +290,9 @@ class MalVector < MalList
     self.data.each { |i| new.push(i) }
     return new
   end
-
 end
 
 class MalHashMap < MalType
-
   attr_accessor :metadata
 
   def initialize()
@@ -431,11 +412,9 @@ class MalHashMap < MalType
     self.keys.each { |k| new.set(k, self.data[k]) }
     return new
   end
-
 end
 
 class MalKeyword < MalType
-
   def initialize(data)
     @type = 'MalKeyword'
     @data = data
@@ -446,23 +425,18 @@ class MalKeyword < MalType
   def unimunge()
     return KEYWORD_PREFIX + self.data
   end
-
 end
 
 class MalSymbol < MalType
-
   def initialize(data)
     @type = 'MalSymbol'
     @data = data
   end
-
 end
 
 class MalNumber < MalType
-
   def initialize(data)
     @type = 'MalNumber'
     @data = data.to_i # FIXME: We should also handle non-integers
   end
-
 end

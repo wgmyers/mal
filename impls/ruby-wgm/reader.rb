@@ -9,7 +9,6 @@ require_relative 'types'
 require_relative 'errors'
 
 class Reader
-
   attr_reader :tokens, :pos
 
   def initialize(token_arr)
@@ -37,7 +36,6 @@ class Reader
   def peek
     return @tokens[@pos]
   end
-
 end
 
 #  Matcher
@@ -46,7 +44,6 @@ end
 # matched returns true if we counted as many open as close parens
 # hashcount returns true if we have an even number of items
 class Matcher
-
   attr_reader :open, :close, :hashcount
 
   def initialize()
@@ -78,7 +75,6 @@ class Matcher
 
     return false
   end
-
 end
 
 # read_atom, read_list and read_form are the core of our parser
