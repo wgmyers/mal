@@ -197,7 +197,7 @@ def expand_macros(tok_arr)
     when '~@'
       ret_arr.push('(')
       ret_arr.push('splice-unquote')
-      in_macro = in_macro + 1
+      in_macro += 1
       last_was_macro = true
     # Handle quote, quasiquote, unquote and deref
     when /^[\'|`|~|@]$/
@@ -212,24 +212,22 @@ def expand_macros(tok_arr)
       when '@'
         ret_arr.push('deref')
       end
-      in_macro = in_macro + 1
+      in_macro += 1
       last_was_macro = true
     else
+      ret_arr.push(item)
       if in_macro.positive?
         case item
         # When we're in a macro, we need to start counting brackets
         when '(', '['
-          ret_arr.push(item)
-          in_brackets = in_brackets + 1
+          in_brackets += 1
         else
           if in_brackets.positive?
             if (item == ')') || (item == ']')
-              ret_arr.push(item)
               ret_arr.push(')')
-              in_brackets = in_brackets - 1
-              in_macro = in_macro - 1
-            else
-              ret_arr.push(item)
+              in_brackets -= 1
+              in_macro -= 1
+            elsif (in_brackets < in_macro) || last_was_macro
               # Handle nested macros+brackets here.
               # * If macro depth is greater than bracket depth, we have an
               # unbracketed macro inside a bracketed one, and we need to end it
@@ -237,22 +235,17 @@ def expand_macros(tok_arr)
               # Nested bracketed macros should Just Work.
               # * But if last_was_macro is true, we're the first item after the
               # last macro, so we should also end it
-              if (in_brackets < in_macro) || last_was_macro
-                ret_arr.push(')')
-                in_macro = in_macro - 1
-              end
+              ret_arr.push(')')
+              in_macro -= 1
             end
           else
-            ret_arr.push(item)
             # We're not in brackets. End all open macros now.
             while in_macro.positive?
               ret_arr.push(')')
-              in_macro = in_macro - 1
+              in_macro -= 1
             end
           end # if in_brackets > 0
         end
-      else
-        ret_arr.push(item)
       end # if in_macro
       last_was_macro = false
     end   # case item
