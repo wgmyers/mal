@@ -18,7 +18,7 @@ class MalType
     @data = nil
   end
 
-  def print(readably: true)
+  def print(*)
     return @data
   end
 end
@@ -34,7 +34,7 @@ class MalAtom < MalType
   end
 
   # Produce output indicated by the test case
-  def print(readably: true)
+  def print(*)
     return "(atom #{@data.print})"
   end
 
@@ -87,7 +87,7 @@ class MalFunction < MalType
 
   # #<function> is what the guide says to do
   # It would be nice to have a way of reading the function back too somehow.
-  def print(readably: true)
+  def print(*)
     return '#<function>'
   end
 
@@ -211,7 +211,7 @@ class MalTrue < MalType
     @data = true
   end
 
-  def print(readably: true)
+  def print(*)
     return 'true'
   end
 end
@@ -222,7 +222,7 @@ class MalFalse < MalType
     @data = false
   end
 
-  def print(readably: true)
+  def print(*)
     return 'false'
   end
 end
@@ -234,7 +234,7 @@ class MalNil < MalType
     @data = nil
   end
 
-  def print(readably: true)
+  def print(*)
     return 'nil'
   end
 end
