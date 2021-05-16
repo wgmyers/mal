@@ -4,7 +4,7 @@
 
 # Define our core functions here
 module MalCore
-  Env = {
+  ENV = {
     '+'           => lambda { |x, y| MalNumber.new(x.data + y.data) },
     '-'           => lambda { |x, y| MalNumber.new(x.data - y.data) },
     '*'           => lambda { |x, y| MalNumber.new(x.data * y.data) },
@@ -42,7 +42,7 @@ module MalCore
 
                          x.data.each_with_index { |item, idx|
                            if item.is_a?(MalList)
-                             return MalFalse.new unless MalCore::Env['='].call(item, y.data[idx])
+                             return MalFalse.new unless MalCore::ENV['='].call(item, y.data[idx])
                            else
                              return MalFalse.new if item.data != y.data[idx].data
                            end
@@ -58,7 +58,7 @@ module MalCore
                          # Next: check each key points to same value
                          x.grab_keys.each do |k|
                            if !y.exists(k) ||
-                              MalCore::Env['='].call(x.get(k),
+                              MalCore::ENV['='].call(x.get(k),
                                                      y.get(k)).is_a?(MalFalse)
                              return MalFalse.new
                            end
@@ -328,7 +328,7 @@ module MalCore
     'macavity'    => lambda { |*_| raise MalNotImplementedError }
   }.freeze
 
-  Mal = {
+  MAL = {
     'not'       => '(def! not (fn* (a) (if a false true)))',
     'load-file' => '(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) "\nnil)")))))',
     'cond'      => "(defmacro! cond (fn* (& xs)

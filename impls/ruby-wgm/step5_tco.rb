@@ -274,11 +274,11 @@ end
 def init_env
   repl_env = Env.new
   # Core environment now defined in core.rb
-  MalCore::Env.each do |key, val|
+  MalCore::ENV.each do |key, val|
     repl_env.set(key, val)
   end
   # Support for functions defined in mal in core.rb
-  MalCore::Mal.each do |key, val|
+  MalCore::MAL.each do |key, val|
     next if key == 'cond' # NB Needed as we don't implement defmacro! until step 8
 
     rep(val, repl_env)
