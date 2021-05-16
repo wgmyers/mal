@@ -51,7 +51,8 @@ module MalCore
 
                                        # Next: check each key points to same value
                                        x.grab_keys.each { |k| if !y.exists(k) ||
-                                                                 MalCore::Env['='].call(x.get(k), y.get(k)).is_a?(MalFalse)
+                                                                 MalCore::Env['='].call(x.get(k),
+                                                                                        y.get(k)).is_a?(MalFalse)
                                                                 return MalFalse.new
                                                               end
                                                        }
@@ -65,7 +66,9 @@ module MalCore
     '>'           => lambda { |x, y| x.data > y.data ? MalTrue.new : MalFalse.new },
     '>='          => lambda { |x, y| x.data >= y.data ? MalTrue.new : MalFalse.new },
     'read-string' => lambda { |x| return read_str(x.print(readably: false)) },
-    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(readably: false)), sanitise: false) }, # FIXME: Error checking?
+    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(readably: false)),
+                                                       sanitise: false)
+                     }, # FIXME: Error checking?
     'atom'        => lambda { |x| return MalAtom.new(x) },
     'atom?'       => lambda { |x| return x.is_a?(MalAtom) },
     'deref'       => lambda { |x| return x.deref },
@@ -111,8 +114,14 @@ module MalCore
 
                                         return f.call(argsl.data)
                      },
-    'map'         => lambda { |f, ins| raise MalBadMapError, 'first arg to map must be function or builtin' unless f.is_a?(MalFunction) || f.is_a?(Proc)
-                                       raise MalBadMapError, 'second arg to map must be list or vector' unless ins.is_a?(MalList) || ins.is_a?(MalVector)
+    'map'         => lambda { |f, ins| unless f.is_a?(MalFunction) || f.is_a?(Proc)
+                                         raise MalBadMapError,
+                                               'first arg to map must be function or builtin'
+                                       end
+                                       unless ins.is_a?(MalList) || ins.is_a?(MalVector)
+                                         raise MalBadMapError,
+                                               'second arg to map must be list or vector'
+                                       end
 
                                        y = MalList.new
                                        ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
@@ -138,7 +147,10 @@ module MalCore
                                    return y
                      },
     'map?'        => lambda { |x| x.is_a?(MalHashMap) ? MalTrue.new : MalFalse.new },
-    'assoc'       => lambda { |h, *kv| raise MalBadHashMapError, "first arg to 'assoc' must be hash" unless h.is_a?(MalHashMap)
+    'assoc'       => lambda { |h, *kv| unless h.is_a?(MalHashMap)
+                                         raise MalBadHashMapError,
+                                               "first arg to 'assoc' must be hash"
+                                       end
                                        raise MalBadHashMapError unless kv.length.even?
 
                                        y = MalHashMap.new
@@ -146,7 +158,10 @@ module MalCore
                                        kv.each { |i| y.push(i) }
                                        return y
                      },
-    'dissoc'      => lambda { |h, *l| raise MalBadHashMapError, "first arg to 'dissoc' must be hash" unless h.is_a?(MalHashMap)
+    'dissoc'      => lambda { |h, *l| unless h.is_a?(MalHashMap)
+                                        raise MalBadHashMapError,
+                                              "first arg to 'dissoc' must be hash"
+                                      end
 
                                       y = MalHashMap.new
                                       # FIXME: There must be a more idiomatic way to do this
@@ -162,11 +177,18 @@ module MalCore
                                       return y
                      },
     'get'         => lambda { |h, k| return MalNil.new if h.is_a?(MalNil)
-                                     raise MalBadHashMapError, "first arg to 'get' must be hash" unless h.is_a?(MalHashMap)
+
+                                     unless h.is_a?(MalHashMap)
+                                       raise MalBadHashMapError,
+                                             "first arg to 'get' must be hash"
+                                     end
 
                                      return h.get(k)
                      },
-    'contains?'   => lambda { |h, k| raise MalBadHashMapError, "first arg to 'contains?' must be hash" unless h.is_a?(MalHashMap)
+    'contains?'   => lambda { |h, k| unless h.is_a?(MalHashMap)
+                                       raise MalBadHashMapError,
+                                             "first arg to 'contains?' must be hash"
+                                     end
 
                                      return h.exists(k)
                      },
