@@ -167,7 +167,6 @@ end
 # have been a mistake, as it broke TCO. Removing it seems to have fixed most
 # of the problems, though not all regression tests pass as I type this.
 def EVAL(ast, env)
-
   # TCO YOLO
   loop do
     # If it's not a list, call eval_ast on it

@@ -81,7 +81,6 @@ end
 # really understand it yet, but that's what you get for trying to learn Lisp
 # by implementing it.
 def EVAL(ast, env)
-
   # TCO YOLO
   loop do
     # If it's not a list, call eval_ast on it
