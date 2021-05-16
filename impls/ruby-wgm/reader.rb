@@ -320,7 +320,6 @@ def drop_comments(tok_arr)
   return ret_arr
 end
 
-
 # read_str
 # Take a string, and call tokenize on it
 # Then create a new Reader with those tokens

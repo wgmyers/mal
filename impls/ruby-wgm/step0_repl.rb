@@ -10,9 +10,11 @@ require_relative 'readline'
 def READ(arg)
   return arg
 end
+
 def EVAL(arg)
   return arg
 end
+
 def PRINT(arg)
   return arg
 end

@@ -215,6 +215,7 @@ class MalTrue < MalType
     return 'true'
   end
 end
+
 class MalFalse < MalType
   def initialize
     super()

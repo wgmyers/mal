@@ -17,9 +17,11 @@ def READ(arg)
 rescue => e
   raise e
 end
+
 def EVAL(arg)
   return arg
 end
+
 def PRINT(arg)
   return pr_str(arg)
 end
