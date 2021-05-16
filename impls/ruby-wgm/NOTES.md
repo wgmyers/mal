@@ -50,6 +50,10 @@ Next:
 * Fix MalNumber so it can handle non-integers
 * Fix whatever is wrong such that make "perf^ruby-wgm" fails.
 
+Digging into the perf^rubywgm issue, it looks like quasiquote macro expansion
+(and quite possibly all macro expansion) is not working properly, and is
+closing brackets too early, thus cutting off remaining code.
+
 ### Step A - Part Three: Meta and friends (2021-05-11/12)
 
 Implemented 'meta', 'fn?', 'string?', 'number?' and 'macro?'.

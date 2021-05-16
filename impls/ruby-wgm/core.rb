@@ -53,7 +53,7 @@ module MalCore
                          # QUERY - Shouldn't we try to do deep equality?
                          # For now, keep it simple.
                          # First: check keys match up exactly
-                         return MalFalse.new if x.grab_keys.length != y.get_keys.length
+                         return MalFalse.new if x.grab_keys.length != y.grab_keys.length
 
                          # Next: check each key points to same value
                          x.grab_keys.each do |k|

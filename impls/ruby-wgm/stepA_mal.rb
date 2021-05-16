@@ -55,7 +55,7 @@ end
 # Return true if ast is list with symbol as first element referring to a
 # function in env which has is_macro set to true
 def macro_call?(ast, env)
-  if ast.is_a?(MalList) && ast.data.length.positive? && ast.data[0].is_a?(MalSymbol)
+  if ast.instance_of?(MalList) && ast.data.length.positive? && ast.data[0].is_a?(MalSymbol)
     key = ast.data[0].data
     menv = env.find(key)
     return menv.data[key].is_macro if menv && menv.data[key].is_a?(MalFunction)
@@ -176,13 +176,13 @@ def EVAL(ast, env)
   # TCO YOLO
   loop do
     # If it's not a list, call eval_ast on it
-    return eval_ast(ast, env) unless ast.is_a?(MalList)
+    return eval_ast(ast, env) unless ast.instance_of?(MalList)
     # It's a list. If it's empty, just return it.
     return ast if ast.data.length.zero?
 
     # Macro expansion
     ast = macroexpand(ast, env)
-    unless ast.is_a?(MalList)
+    unless ast.instance_of?(MalList)
       next # Shorter than 'return eval_ast(ast, env)' modulo this comment.
     end
 
