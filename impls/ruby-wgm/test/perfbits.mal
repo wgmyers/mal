@@ -1,0 +1,44 @@
+;; Trying  to debug make perf issues
+;; time does not run
+;; depends: gensym, which depends on inc
+
+;; Integer predecessor (number -> number)
+(def! inc (fn* [a] (+ a 1)))
+
+;; Generate a hopefully unique symbol. See section "Plugging the Leaks"
+;; of http://www.gigamonkeys.com/book/macros-defining-your-own.html
+(def! gensym
+  (let* [counter (atom 0)]
+    (fn* []
+      (symbol (str "G__" (swap! counter inc))))))
+
+;; Evaluate an expression, but report the time spent
+(defmacro! time
+  (fn* (exp)
+    (let* [start (gensym)
+           ret   (gensym)]
+      `(let* (~start (time-ms)
+              ~ret   ~exp)
+        (do
+          (println "Elapsed time:" (- (time-ms) ~start) "msecs")
+          ~ret)))))
+
+;; Simpler time
+(defmacro! timepoop
+  (fn* (exp)
+    (let* [start (gensym)]
+      (quasiquote (let* (~start (time-ms))
+        (do
+          (println "Poop: " ~exp ~start)
+          (println "Parp: " ~exp ~start)))))))
+
+;; Evaluate an expression, but report the time spent, explicit quasiquote
+(defmacro! time2
+  (fn* (exp)
+    (let* [start (gensym)
+           ret   (gensym)]
+      (quasiquote (let* (~start (time-ms)
+              ~ret   ~exp)
+        (do
+          (println "Elapsed time:" (- (time-ms) ~start) "msecs")
+          ~ret))))))
