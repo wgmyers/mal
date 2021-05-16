@@ -243,12 +243,12 @@ def expand_macros(tok_arr)
               ret_arr.push(')')
               in_macro -= 1
             end
-          end # if in_brackets > 0
+          end
         end
-      end # if in_macro
+      end
       last_was_macro = false
-    end   # case item
-  end     # item in tok_arr
+    end
+  end
   return ret_arr
 end
 
