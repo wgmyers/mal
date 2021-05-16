@@ -228,7 +228,7 @@ class MalFalse < MalType
 end
 
 class MalNil < MalType
-  def initialise
+  def initialize
     super()
     @type = 'MalNil'
     @data = nil
