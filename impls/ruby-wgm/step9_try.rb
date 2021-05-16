@@ -51,12 +51,10 @@ end
 # Return true if ast is list with symbol as first element referring to a
 # function in env which has is_macro set to true
 def macro_call?(ast, env)
-  if ast.is_a?(MalList) && ast.data.length.positive?
-    if ast.data[0].is_a?(MalSymbol)
-      key = ast.data[0].data
-      menv = env.find(key)
-      return menv.data[key].is_macro if menv && menv.data[key].is_a?(MalFunction)
-    end
+  if ast.is_a?(MalList) && ast.data.length.positive? && ast.data[0].is_a?(MalSymbol)
+    key = ast.data[0].data
+    menv = env.find(key)
+    return menv.data[key].is_macro if menv && menv.data[key].is_a?(MalFunction)
   end
   return false
 end
