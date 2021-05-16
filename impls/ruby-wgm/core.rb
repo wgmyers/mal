@@ -56,13 +56,13 @@ module MalCore
                          return MalFalse.new if x.grab_keys.length != y.get_keys.length
 
                          # Next: check each key points to same value
-                         x.grab_keys.each { |k|
-                                           if !y.exists(k) ||
-                                              MalCore::Env['='].call(x.get(k),
-                                                                     y.get(k)).is_a?(MalFalse)
-                                             return MalFalse.new
-                                           end
-                                         }
+                         x.grab_keys.each do |k|
+                           if !y.exists(k) ||
+                              MalCore::Env['='].call(x.get(k),
+                                                     y.get(k)).is_a?(MalFalse)
+                             return MalFalse.new
+                           end
+                         end
                        elsif x.data != y.data
                          return MalFalse.new
                        end
@@ -186,15 +186,15 @@ module MalCore
                        # FIXME: There must be a more idiomatic way to do this
                        # Map? We want all the keys in h not present in l.
                        h.grab_keys.each do |k|
-                                         add = true
-                                         l.each do |item|
-                                                  if item.data == k.data
-                                                    add = false
-                                                    break
-                                                  end
-                                                end
-                                         y.set(k, h.get(k)) if add
-                                       end
+                         add = true
+                         l.each do |item|
+                           if item.data == k.data
+                             add = false
+                             break
+                           end
+                         end
+                         y.set(k, h.get(k)) if add
+                       end
                        return y
                      },
     'get'         => lambda { |h, k|
