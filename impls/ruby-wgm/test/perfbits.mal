@@ -23,14 +23,25 @@
           (println "Elapsed time:" (- (time-ms) ~start) "msecs")
           ~ret)))))
 
+
 ;; Simpler time
-(defmacro! timepoop
+(defmacro! timesimple
+  (fn* (exp)
+    (let* [start (gensym)]
+      `(let* (~start (time-ms))
+         (do
+           (println "Foo: " ~exp ~start)
+           (println "Bar: " ~exp ~start))))))
+
+;; Simpler time explicit quasiquote
+(defmacro! timesimple2
   (fn* (exp)
     (let* [start (gensym)]
       (quasiquote (let* (~start (time-ms))
         (do
-          (println "Poop: " ~exp ~start)
-          (println "Parp: " ~exp ~start)))))))
+          (println "Foo: " ~exp ~start)
+          (println "Bar: " ~exp ~start)))))))
+
 
 ;; Evaluate an expression, but report the time spent, explicit quasiquote
 (defmacro! time2
