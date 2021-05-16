@@ -92,7 +92,7 @@ module MalCore
 
                                      return x.data[y.data]
                      }, # FIXME: Error checking? What if not list or vector?
-    'first'       => lambda { |x| (!x.is_a?(MalNil) && x.data.length.positive?) ? x.data[0] : MalNil.new },
+    'first'       => lambda { |x| !x.is_a?(MalNil) && x.data.length.positive? ? x.data[0] : MalNil.new },
     'rest'        => lambda { |x| y = MalList.new
                                   return y unless !x.is_a?(MalNil) # back out now if x is nil
 
@@ -130,7 +130,7 @@ module MalCore
                                    return y
                      },
     'vector?'     => lambda { |x| x.is_a?(MalVector) ? MalTrue.new : MalFalse.new },
-    'sequential?' => lambda { |x| (x.is_a?(MalVector) || x.is_a?(MalList)) ? MalTrue.new : MalFalse.new },
+    'sequential?' => lambda { |x| x.is_a?(MalVector) || x.is_a?(MalList) ? MalTrue.new : MalFalse.new },
     'hash-map'    => lambda { |*x| raise MalBadHashMapError unless x.length.even?
 
                                    y = MalHashMap.new
@@ -223,7 +223,7 @@ module MalCore
                                      newx.metadata = y
                                      return newx
                      },
-    'fn?'         => lambda { |x| ((x.is_a?(MalFunction) && !x.is_macro) || x.is_a?(Proc)) ? MalTrue.new : MalFalse.new },
+    'fn?'         => lambda { |x| (x.is_a?(MalFunction) && !x.is_macro) || x.is_a?(Proc) ? MalTrue.new : MalFalse.new },
     'string?'     => lambda { |x| x.is_a?(MalString) ? MalTrue.new : MalFalse.new },
     'number?'     => lambda { |x| x.is_a?(MalNumber) ? MalTrue.new : MalFalse.new },
     'macro?'      => lambda { |x| x.is_a?(MalFunction) ? x.is_macro : MalFalse.new },
