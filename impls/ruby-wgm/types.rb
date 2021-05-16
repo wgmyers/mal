@@ -368,7 +368,7 @@ class MalHashMap < MalType
   # Return true if we have such a key, false if not
   def exists(key)
     ikey = make_internal_key(key)
-    return @data.has_key?(ikey)
+    return @data.key?(ikey)
   end
 
   # set
@@ -386,7 +386,7 @@ class MalHashMap < MalType
   # Accept both raw strings and MalTypes
   def get(key)
     ikey = make_internal_key(key)
-    return @data[ikey] if @data.has_key?(ikey)
+    return @data[ikey] if @data.key?(ikey)
 
     return MalNil.new
   end

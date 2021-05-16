@@ -69,7 +69,7 @@ class Env
   # Otherwise recurse up the environment tree, looking there
   # Return nil if nothing found
   def find(key)
-    return self if @data.has_key?(key)
+    return self if @data.key?(key)
 
     return @outer.find(key) unless @outer.nil?
 

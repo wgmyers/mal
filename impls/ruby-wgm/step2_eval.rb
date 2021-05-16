@@ -33,7 +33,7 @@ def eval_ast(ast, repl_env)
   case type
   when 'MalSymbol'
     sym = ast.print
-    raise MalUnknownSymbolError unless repl_env.has_key?(sym)
+    raise MalUnknownSymbolError unless repl_env.key?(sym)
 
     return repl_env[sym]
   when 'MalList'
