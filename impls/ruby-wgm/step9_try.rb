@@ -195,7 +195,7 @@ def EVAL(ast, env)
       # Only difference is we set is_macro in the MalFunction (tee hee)
 
       # Set is_defmacro if we are behaving as defmacro!
-      is_defmacro = ast.data[0].data == 'defmacro!' ? true : false
+      is_defmacro = ast.data[0].data == 'defmacro!'
       begin
         item = EVAL(ast.data[2], env)
         item.is_macro = true if is_defmacro && item.is_a?(MalFunction)
