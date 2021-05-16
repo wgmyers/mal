@@ -38,6 +38,18 @@ Meanwhile, yay! passing all the tests.
 And boo! lots of Rubocop complaints still to fix. But far fewer than before, and,
 as the above makes clear - so worth doing.
 
+Many hours later - we pass all Rubocop tests, modulo a fairly hefty .rubocop.yml
+config file. But that seems ok - certain things are choices that Rubocop needs
+to be told, and there are certain non-standard aspects of Mal that need excluding
+from normal Rubocoppery, such as the extremely long EVAL method which can't easily
+be broken up.
+
+Next:
+
+* Add tests for ruby-eval
+* Fix MalNumber so it can handle non-integers
+* Fix whatever is wrong such that make "perf^ruby-wgm" fails.
+
 ### Step A - Part Three: Meta and friends (2021-05-11/12)
 
 Implemented 'meta', 'fn?', 'string?', 'number?' and 'macro?'.
