@@ -43,8 +43,8 @@ module MalCore
                          x.data.each_with_index { |item, idx|
                            if item.is_a?(MalList)
                              return MalFalse.new unless MalCore::ENV['='].call(item, y.data[idx])
-                           else
-                             return MalFalse.new if item.data != y.data[idx].data
+                           elsif item.data != y.data[idx].data
+                             return MalFalse.new
                            end
                          }
                        elsif x.class != y.class
