@@ -218,14 +218,16 @@ def expand_macros(tok_arr)
       if in_macro.positive?
         case item
         # When we're in a macro, we need to start counting brackets
-        when '(', '['
+        when '(', '[', '{'
           in_brackets += 1
         else
           if in_brackets.positive?
-            if (item == ')') || (item == ']')
-              ret_arr.push(')')
+            if [')', ']', '}'].include?(item)
               in_brackets -= 1
-              in_macro -= 1
+              if in_brackets.zero?
+                ret_arr.push(')')
+                in_macro -= 1
+              end
             elsif (in_brackets < in_macro) || last_was_macro
               # Handle nested macros+brackets here.
               # * If macro depth is greater than bracket depth, we have an
