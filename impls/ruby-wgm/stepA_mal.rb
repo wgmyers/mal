@@ -39,10 +39,10 @@ end
 
 # macroexpand
 # Expand macros until we are no longer in a macro
-# Calling is_macro_call ensures we are always operating on a list where
+# Calling macro_call? ensures we are always operating on a list where
 # the first element is the symbol of an is_macro function.
 def macroexpand(ast, env)
-  while is_macro_call(ast, env)
+  while macro_call?(ast, env)
     funcsym = ast.data[0]
     func = env.get(funcsym.data)
     ast = func.call(ast.data.drop(1))
@@ -50,11 +50,11 @@ def macroexpand(ast, env)
   return ast
 end
 
-# is_macro_call
+# macro_call?
 # Take ast and env
 # Return true if ast is list with symbol as first element referring to a
 # function in env which has is_macro set to true
-def is_macro_call(ast, env)
+def macro_call?(ast, env)
   if ast.is_a?(MalList) && ast.data.length.positive?
     if ast.data[0].is_a?(MalSymbol)
       key = ast.data[0].data
