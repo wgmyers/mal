@@ -43,7 +43,7 @@ class MalConjError < StandardError
 end
 
 class MalEvalError < StandardError
-  def initialize(msg ='error in Ruby eval')
+  def initialize(msg = 'error in Ruby eval')
     super(msg)
   end
 end
@@ -92,6 +92,7 @@ end
 
 class MalThrownError < StandardError
   attr_reader :malexp
+
   def initialize(msg = 'Error thrown by Mal throw built-in', malexp: nil)
     super(msg)
     @malexp = malexp

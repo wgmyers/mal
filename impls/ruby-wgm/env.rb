@@ -35,14 +35,14 @@ class Env
         if b.data == '&'
           nl = MalList.new
           exprs.drop(i).each { |e| nl.push(e) }
-          set(binds[i+1], nl)
+          set(binds[i + 1], nl)
           break
         else
           set(b, exprs[i])
         end
       end
     else
-      binds.zip(exprs) do | bind, expr |
+      binds.zip(exprs) do |bind, expr|
         set(bind, expr)
       end
     end

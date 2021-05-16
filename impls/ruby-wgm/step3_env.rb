@@ -122,7 +122,7 @@ def EVAL(ast, env)
     evaller = eval_ast(ast, env)
     begin
       # We need to convert our MalNumbers to actual numbers somehow. Here?
-      args = evaller.data.drop(1).map{ |x| x.data }
+      args = evaller.data.drop(1).map { |x| x.data }
       # We still need to splat the args with * so the lambda can see them
       res = evaller.data[0].call(*args)
     rescue => e
