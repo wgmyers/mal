@@ -9,123 +9,138 @@ module MalCore
     '-'           => lambda { |x, y| MalNumber.new(x.data - y.data) },
     '*'           => lambda { |x, y| MalNumber.new(x.data * y.data) },
     '/'           => lambda { |x, y| MalNumber.new(x.data / y.data) }, # NB Divide by zero caught by Ruby, not us
-    'prn'         => lambda { |*x| strs = x.map { |s| pr_str(s, readably: true) }
-                                   puts(strs.join(' '))
-                                   return MalNil.new # NB - return nil instead to suppress 'nil' print
+    'prn'         => lambda { |*x|
+                       strs = x.map { |s| pr_str(s, readably: true) }
+                       puts(strs.join(' '))
+                       return MalNil.new # NB - return nil instead to suppress 'nil' print
                      },
-    'println'     => lambda { |*x| strs = x.map { |s| pr_str(s, readably: false) }
-                                   puts(strs.join(' '))
-                                   return MalNil.new # NB - same as above.
+    'println'     => lambda { |*x|
+                       strs = x.map { |s| pr_str(s, readably: false) }
+                       puts(strs.join(' '))
+                       return MalNil.new # NB - same as above.
                      },
-    'pr-str'      => lambda { |*x| strs = x.map { |s| pr_str(s, readably: true) }
-                                   return(MalString.new(strs.join(' '), sanitise: false))
+    'pr-str'      => lambda { |*x|
+                       strs = x.map { |s| pr_str(s, readably: true) }
+                       return(MalString.new(strs.join(' '), sanitise: false))
                      },
-    'str'         => lambda { |*x| strs = x.map { |s| pr_str(s, readably: false) }
-                                   return(MalString.new(strs.join(''), sanitise: false))
+    'str'         => lambda { |*x|
+                       strs = x.map { |s| pr_str(s, readably: false) }
+                       return(MalString.new(strs.join(''), sanitise: false))
                      },
-    'list'        => lambda { |*x| l = MalList.new
-                                   x.each { |i| l.push(i) }
-                                   return l
+    'list'        => lambda { |*x|
+                       l = MalList.new
+                       x.each { |i| l.push(i) }
+                       return l
                      },
     'list?'       => lambda { |x| x.instance_of?(MalList) ? MalTrue.new : MalFalse.new },
     'empty?'      => lambda { |x| x.data.length.zero? ? MalTrue.new : MalFalse.new },
     'count'       => lambda { |x| x.is_a?(MalNil) ? 0 : x.data.length },
-    '='           => lambda { |x, y| if (x.instance_of?(MalList) || x.instance_of?(MalVector)) &&
-                                        (y.instance_of?(MalList) || y.instance_of?(MalVector))
-                                       return MalFalse.new unless x.length == y.length
+    '='           => lambda { |x, y|
+                       if (x.instance_of?(MalList) || x.instance_of?(MalVector)) &&
+                          (y.instance_of?(MalList) || y.instance_of?(MalVector))
+                         return MalFalse.new unless x.length == y.length
 
-                                       x.data.each_with_index { |item, idx|
-                                         if item.is_a?(MalList)
-                                           return MalFalse.new unless MalCore::Env['='].call(item, y.data[idx])
-                                         else
-                                           return MalFalse.new if item.data != y.data[idx].data
-                                         end
-                                       }
-                                     elsif x.class != y.class
-                                       return MalFalse.new
-                                     elsif x.is_a?(MalHashMap)
-                                       # QUERY - Shouldn't we try to do deep equality?
-                                       # For now, keep it simple.
-                                       # First: check keys match up exactly
-                                       return MalFalse.new if x.grab_keys.length != y.get_keys.length
+                         x.data.each_with_index { |item, idx|
+                           if item.is_a?(MalList)
+                             return MalFalse.new unless MalCore::Env['='].call(item, y.data[idx])
+                           else
+                             return MalFalse.new if item.data != y.data[idx].data
+                           end
+                         }
+                       elsif x.class != y.class
+                         return MalFalse.new
+                       elsif x.is_a?(MalHashMap)
+                         # QUERY - Shouldn't we try to do deep equality?
+                         # For now, keep it simple.
+                         # First: check keys match up exactly
+                         return MalFalse.new if x.grab_keys.length != y.get_keys.length
 
-                                       # Next: check each key points to same value
-                                       x.grab_keys.each { |k| if !y.exists(k) ||
-                                                                 MalCore::Env['='].call(x.get(k),
-                                                                                        y.get(k)).is_a?(MalFalse)
-                                                                return MalFalse.new
-                                                              end
-                                                       }
-                                     elsif x.data != y.data
-                                       return MalFalse.new
-                                     end
-                                     return MalTrue.new
+                         # Next: check each key points to same value
+                         x.grab_keys.each { |k|
+                                           if !y.exists(k) ||
+                                              MalCore::Env['='].call(x.get(k),
+                                                                     y.get(k)).is_a?(MalFalse)
+                                             return MalFalse.new
+                                           end
+                                         }
+                       elsif x.data != y.data
+                         return MalFalse.new
+                       end
+                       return MalTrue.new
                      },
     '<'           => lambda { |x, y| x.data < y.data ? MalTrue.new : MalFalse.new },
     '<='          => lambda { |x, y| x.data <= y.data ? MalTrue.new : MalFalse.new },
     '>'           => lambda { |x, y| x.data > y.data ? MalTrue.new : MalFalse.new },
     '>='          => lambda { |x, y| x.data >= y.data ? MalTrue.new : MalFalse.new },
     'read-string' => lambda { |x| return read_str(x.print(readably: false)) },
-    'slurp'       => lambda { |x| return MalString.new(File.read(x.print(readably: false)),
-                                                       sanitise: false)
+    'slurp'       => lambda { |x|
+                       return MalString.new(File.read(x.print(readably: false)),
+                                            sanitise: false)
                      }, # FIXME: Error checking?
     'atom'        => lambda { |x| return MalAtom.new(x) },
     'atom?'       => lambda { |x| return x.is_a?(MalAtom) },
     'deref'       => lambda { |x| return x.deref },
     'reset!'      => lambda { |x, y| return x.reset(y) },
     'swap!'       => lambda { |x, *y| return x.swap(y) },
-    'cons'        => lambda { |x, y| z = MalList.new
-                                     z.push(x)
-                                     y.data.each { |i| z.push(i) }
-                                     return z
+    'cons'        => lambda { |x, y|
+                       z = MalList.new
+                       z.push(x)
+                       y.data.each { |i| z.push(i) }
+                       return z
                      }, # FIXME: Error checking?
-    'concat'      => lambda { |*x| y = MalList.new
-                                   x.each do |l|
-                                     l.data.each { |i| y.push(i) }
-                                   end
-                                   return y
+    'concat'      => lambda { |*x|
+                       y = MalList.new
+                       x.each do |l|
+                         l.data.each { |i| y.push(i) }
+                       end
+                       return y
                      }, # FIXME: Error checking? What if not list?
-    'vec'         => lambda { |x| return x if x.is_a?(MalVector)
+    'vec'         => lambda { |x|
+                       return x if x.is_a?(MalVector)
 
-                                  y = MalVector.new
-                                  x.data.each { |i| y.push(i) }
-                                  return y
+                       y = MalVector.new
+                       x.data.each { |i| y.push(i) }
+                       return y
                      }, # FIXME: Error checking? What if not list or vector?
-    'nth'         => lambda { |x, y| raise MalIndexOutOfRangeError if y.data >= x.data.length
+    'nth'         => lambda { |x, y|
+                       raise MalIndexOutOfRangeError if y.data >= x.data.length
 
-                                     return x.data[y.data]
+                       return x.data[y.data]
                      }, # FIXME: Error checking? What if not list or vector?
     'first'       => lambda { |x| !x.is_a?(MalNil) && x.data.length.positive? ? x.data[0] : MalNil.new },
-    'rest'        => lambda { |x| y = MalList.new
-                                  return y unless !x.is_a?(MalNil) # back out now if x is nil
+    'rest'        => lambda { |x|
+                       y = MalList.new
+                       return y unless !x.is_a?(MalNil) # back out now if x is nil
 
-                                  x.data.drop(1).each { |i| y.push(i) }
-                                  return y
+                       x.data.drop(1).each { |i| y.push(i) }
+                       return y
                      },
     'throw'       => lambda { |e| raise MalThrownError.new(malexp: e), e.print(readably: false) },
-    'apply'       => lambda { |f, *ins| if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
-                                           !(ins[-1].is_a?(MalList) || ins[-1].is_a?(MalVector))
-                                          raise MalBadApplyError
-                                        end
+    'apply'       => lambda { |f, *ins|
+                       if !(f.is_a?(MalFunction) || f.is_a?(Proc)) ||
+                          !(ins[-1].is_a?(MalList) || ins[-1].is_a?(MalVector))
+                         raise MalBadApplyError
+                       end
 
-                                        argsl = ins[-1]
-                                        ins.reverse.each { |i| argsl.data.unshift(i) unless i == argsl }
-                                        return f.call(*argsl.data) if f.is_a?(Proc) # handle builtins
+                       argsl = ins[-1]
+                       ins.reverse.each { |i| argsl.data.unshift(i) unless i == argsl }
+                       return f.call(*argsl.data) if f.is_a?(Proc) # handle builtins
 
-                                        return f.call(argsl.data)
+                       return f.call(argsl.data)
                      },
-    'map'         => lambda { |f, ins| unless f.is_a?(MalFunction) || f.is_a?(Proc)
-                                         raise MalBadMapError,
-                                               'first arg to map must be function or builtin'
-                                       end
-                                       unless ins.is_a?(MalList) || ins.is_a?(MalVector)
-                                         raise MalBadMapError,
-                                               'second arg to map must be list or vector'
-                                       end
+    'map'         => lambda { |f, ins|
+                       unless f.is_a?(MalFunction) || f.is_a?(Proc)
+                         raise MalBadMapError,
+                               'first arg to map must be function or builtin'
+                       end
+                       unless ins.is_a?(MalList) || ins.is_a?(MalVector)
+                         raise MalBadMapError,
+                               'second arg to map must be list or vector'
+                       end
 
-                                       y = MalList.new
-                                       ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
-                                       return y
+                       y = MalList.new
+                       ins.data.each { |i| f.is_a?(Proc) ? y.push(f.call(*i)) : y.push(f.call(i)) }
+                       return y
                      },
     'nil?'        => lambda { |x| x.is_a?(MalNil) ? MalTrue.new : MalFalse.new },
     'true?'       => lambda { |x| x.is_a?(MalTrue) ? MalTrue.new : MalFalse.new },
@@ -134,165 +149,181 @@ module MalCore
     'symbol'      => lambda { |x| MalSymbol.new(x.data) },
     'keyword'     => lambda { |x| MalKeyword.new(x.data) },
     'keyword?'    => lambda { |x| x.is_a?(MalKeyword) ? MalTrue.new : MalFalse.new },
-    'vector'      => lambda { |*x| y = MalVector.new
-                                   x.each { |i| y.push(i) }
-                                   return y
+    'vector'      => lambda { |*x|
+                       y = MalVector.new
+                       x.each { |i| y.push(i) }
+                       return y
                      },
     'vector?'     => lambda { |x| x.is_a?(MalVector) ? MalTrue.new : MalFalse.new },
     'sequential?' => lambda { |x| x.is_a?(MalVector) || x.is_a?(MalList) ? MalTrue.new : MalFalse.new },
-    'hash-map'    => lambda { |*x| raise MalBadHashMapError unless x.length.even?
+    'hash-map'    => lambda { |*x|
+                       raise MalBadHashMapError unless x.length.even?
 
-                                   y = MalHashMap.new
-                                   x.each { |i| y.push(i) }
-                                   return y
+                       y = MalHashMap.new
+                       x.each { |i| y.push(i) }
+                       return y
                      },
     'map?'        => lambda { |x| x.is_a?(MalHashMap) ? MalTrue.new : MalFalse.new },
-    'assoc'       => lambda { |h, *kv| unless h.is_a?(MalHashMap)
-                                         raise MalBadHashMapError,
-                                               "first arg to 'assoc' must be hash"
+    'assoc'       => lambda { |h, *kv|
+                       unless h.is_a?(MalHashMap)
+                         raise MalBadHashMapError,
+                               "first arg to 'assoc' must be hash"
+                       end
+                       raise MalBadHashMapError unless kv.length.even?
+
+                       y = MalHashMap.new
+                       h.grab_keys.each { |k| y.set(k, h.get(k)) }
+                       kv.each { |i| y.push(i) }
+                       return y
+                     },
+    'dissoc'      => lambda { |h, *l|
+                       unless h.is_a?(MalHashMap)
+                         raise MalBadHashMapError,
+                               "first arg to 'dissoc' must be hash"
+                       end
+
+                       y = MalHashMap.new
+                       # FIXME: There must be a more idiomatic way to do this
+                       # Map? We want all the keys in h not present in l.
+                       h.grab_keys.each do |k|
+                                         add = true
+                                         l.each do |item|
+                                                  if item.data == k.data
+                                                    add = false
+                                                    break
+                                                  end
+                                                end
+                                         y.set(k, h.get(k)) if add
                                        end
-                                       raise MalBadHashMapError unless kv.length.even?
-
-                                       y = MalHashMap.new
-                                       h.grab_keys.each { |k| y.set(k, h.get(k)) }
-                                       kv.each { |i| y.push(i) }
-                                       return y
+                       return y
                      },
-    'dissoc'      => lambda { |h, *l| unless h.is_a?(MalHashMap)
-                                        raise MalBadHashMapError,
-                                              "first arg to 'dissoc' must be hash"
-                                      end
+    'get'         => lambda { |h, k|
+                       return MalNil.new if h.is_a?(MalNil)
 
-                                      y = MalHashMap.new
-                                      # FIXME: There must be a more idiomatic way to do this
-                                      # Map? We want all the keys in h not present in l.
-                                      h.grab_keys.each do |k| add = true
-                                                              l.each do |item| if item.data == k.data
-                                                                                 add = false
-                                                                                 break
-                                                                               end
-                                                                     end
-                                                              y.set(k, h.get(k)) if add
-                                                      end
-                                      return y
+                       unless h.is_a?(MalHashMap)
+                         raise MalBadHashMapError,
+                               "first arg to 'get' must be hash"
+                       end
+
+                       return h.get(k)
                      },
-    'get'         => lambda { |h, k| return MalNil.new if h.is_a?(MalNil)
+    'contains?'   => lambda { |h, k|
+                       unless h.is_a?(MalHashMap)
+                         raise MalBadHashMapError,
+                               "first arg to 'contains?' must be hash"
+                       end
 
-                                     unless h.is_a?(MalHashMap)
-                                       raise MalBadHashMapError,
-                                             "first arg to 'get' must be hash"
-                                     end
-
-                                     return h.get(k)
+                       return h.exists(k)
                      },
-    'contains?'   => lambda { |h, k| unless h.is_a?(MalHashMap)
-                                       raise MalBadHashMapError,
-                                             "first arg to 'contains?' must be hash"
-                                     end
+    'keys'        => lambda { |h|
+                       raise MalBadHashMapError, "arg to 'keys' must be hash" unless h.is_a?(MalHashMap)
 
-                                     return h.exists(k)
+                       y = MalList.new
+                       h.grab_keys.each { |k| y.push(k) } # NB h.get_keys
+                       return y
                      },
-    'keys'        => lambda { |h| raise MalBadHashMapError, "arg to 'keys' must be hash" unless h.is_a?(MalHashMap)
+    'vals'        => lambda { |h|
+                       raise MalBadHashMapError, "arg to 'vals' must be hash" unless h.is_a?(MalHashMap)
 
-                                  y = MalList.new
-                                  h.grab_keys.each { |k| y.push(k) } # NB h.get_keys
-                                  return y
+                       y = MalList.new
+                       h.data.each_value { |k| y.push(k) } # NB h.data.values and not h.values
+                       return y
                      },
-    'vals'        => lambda { |h| raise MalBadHashMapError, "arg to 'vals' must be hash" unless h.is_a?(MalHashMap)
+    'readline'    => lambda { |p|
+                       raise MalBadPromptError unless p.is_a?(MalString)
 
-                                  y = MalList.new
-                                  h.data.each_value { |k| y.push(k) } # NB h.data.values and not h.values
-                                  return y
-                     },
-    'readline'    => lambda { |p| raise MalBadPromptError unless p.is_a?(MalString)
+                       s = grabline(p.data) # readline.rb
+                       return MalNil.new unless s
 
-                                  s = grabline(p.data) # readline.rb
-                                  return MalNil.new unless s
-
-                                  return MalString.new(s, sanitise: false)
+                       return MalString.new(s, sanitise: false)
                      },
     'time-ms'     => lambda { |*_| (Time.new.to_f * 1000).to_i },
-    'meta'        => lambda { |x| if x.is_a?(MalFunction) ||
-                                     x.is_a?(MalList) ||
-                                     x.is_a?(MalVector) ||
-                                     x.is_a?(MalHashMap)
-                                    return x.metadata
-                                  end
-                                  # meta on builtins returns nil
-                                  return MalNil.new if x.is_a?(Proc)
+    'meta'        => lambda { |x|
+                       if x.is_a?(MalFunction) ||
+                          x.is_a?(MalList) ||
+                          x.is_a?(MalVector) ||
+                          x.is_a?(MalHashMap)
+                         return x.metadata
+                       end
+                       # meta on builtins returns nil
+                       return MalNil.new if x.is_a?(Proc)
 
-                                  raise MalMetaError
+                       raise MalMetaError
                      },
-    'with-meta'   => lambda { |x, y| unless x.is_a?(MalFunction) ||
-                                            x.is_a?(MalList) ||
-                                            x.is_a?(MalVector) ||
-                                            x.is_a?(MalHashMap) ||
-                                            x.is_a?(Proc)
-                                       raise MalMetaError
-                                     end
+    'with-meta'   => lambda { |x, y|
+                       unless x.is_a?(MalFunction) ||
+                              x.is_a?(MalList) ||
+                              x.is_a?(MalVector) ||
+                              x.is_a?(MalHashMap) ||
+                              x.is_a?(Proc)
+                         raise MalMetaError
+                       end
 
-                                     # FIXME: Not at all sure this is how to handle the
-                                     # case where with-meta gets a built-in.
-                                     # For now, create a dummy function with empty ast, empty params,
-                                     # nil environment and the given Proc as the closure.
-                                     if x.is_a?(Proc)
-                                       newx = MalFunction.new(MalList.new, MalList.new, MalNil.new, x)
-                                       newx.metadata = y
-                                       return newx
-                                     end
-                                     # Duplicate our result before returning it
-                                     newx = x.dup
-                                     newx.metadata = y
-                                     return newx
+                       # FIXME: Not at all sure this is how to handle the
+                       # case where with-meta gets a built-in.
+                       # For now, create a dummy function with empty ast, empty params,
+                       # nil environment and the given Proc as the closure.
+                       if x.is_a?(Proc)
+                         newx = MalFunction.new(MalList.new, MalList.new, MalNil.new, x)
+                         newx.metadata = y
+                         return newx
+                       end
+                       # Duplicate our result before returning it
+                       newx = x.dup
+                       newx.metadata = y
+                       return newx
                      },
     'fn?'         => lambda { |x| (x.is_a?(MalFunction) && !x.is_macro) || x.is_a?(Proc) ? MalTrue.new : MalFalse.new },
     'string?'     => lambda { |x| x.is_a?(MalString) ? MalTrue.new : MalFalse.new },
     'number?'     => lambda { |x| x.is_a?(MalNumber) ? MalTrue.new : MalFalse.new },
     'macro?'      => lambda { |x| x.is_a?(MalFunction) ? x.is_macro : MalFalse.new },
-    'seq'         => lambda { |x| unless x.is_a?(MalString) ||
-                                         x.is_a?(MalList) ||
-                                         x.is_a?(MalVector) ||
-                                         x.is_a?(MalNil)
-                                    raise MalSeqError
-                                  end
-                                  if x.is_a?(MalNil) ||
-                                     (x.is_a?(MalString) && x.data == '') ||
-                                     (x.is_a?(MalList) && x.length.zero?) ||
-                                     (x.is_a?(MalVector) && x.length.zero?)
-                                    return MalNil.new
-                                  end
+    'seq'         => lambda { |x|
+                       unless x.is_a?(MalString) ||
+                              x.is_a?(MalList) ||
+                              x.is_a?(MalVector) ||
+                              x.is_a?(MalNil)
+                         raise MalSeqError
+                       end
+                       if x.is_a?(MalNil) ||
+                          (x.is_a?(MalString) && x.data == '') ||
+                          (x.is_a?(MalList) && x.length.zero?) ||
+                          (x.is_a?(MalVector) && x.length.zero?)
+                         return MalNil.new
+                       end
 
-                                  retval = x
-                                  case x
-                                  when MalVector # Convert vector to list
-                                    retval = MalList.new
-                                    x.data.each { |i| retval.push(i) }
-                                  when MalString # Convert string to list of single char strings
-                                    retval = MalList.new
-                                    chars = x.data.split('')
-                                    chars.each { |c| retval.push(MalString.new(c, sanitise: false)) }
-                                  end
-                                  return retval # NB MalList input is returned unchanged
+                       retval = x
+                       case x
+                       when MalVector # Convert vector to list
+                         retval = MalList.new
+                         x.data.each { |i| retval.push(i) }
+                       when MalString # Convert string to list of single char strings
+                         retval = MalList.new
+                         chars = x.data.split('')
+                         chars.each { |c| retval.push(MalString.new(c, sanitise: false)) }
+                       end
+                       return retval # NB MalList input is returned unchanged
                      },
-    'conj'        => lambda { |col, *l| case col
-                                        when MalVector
-                                          ret = MalVector.new
-                                          col.data.each { |i| ret.push(i) }
-                                          l.each { |i| ret.push(i) }
-                                        when MalList
-                                          ret = MalList.new
-                                          l.reverse.each { |i| ret.push(i) }
-                                          col.data.each { |i| ret.push(i) }
-                                        else
-                                          raise MalConjError
-                                        end
-                                        return ret
+    'conj'        => lambda { |col, *l|
+                       case col
+                       when MalVector
+                         ret = MalVector.new
+                         col.data.each { |i| ret.push(i) }
+                         l.each { |i| ret.push(i) }
+                       when MalList
+                         ret = MalList.new
+                         l.reverse.each { |i| ret.push(i) }
+                         col.data.each { |i| ret.push(i) }
+                       else
+                         raise MalConjError
+                       end
+                       return ret
                      },
-    'ruby-eval'   => lambda { |x| raise MalEvalError, 'arg to ruby-eval must be string' unless x.is_a?(MalString)
+    'ruby-eval'   => lambda { |x|
+                       raise MalEvalError, 'arg to ruby-eval must be string' unless x.is_a?(MalString)
 
-                                  evil = Evaller.new(x.data)
-                                  evil.do_eval
-                                  return evil.ret
+                       evil = Evaller.new(x.data)
+                       evil.do_eval
+                       return evil.ret
                      },
     'macavity'    => lambda { |*_| raise MalNotImplementedError }
   }.freeze
