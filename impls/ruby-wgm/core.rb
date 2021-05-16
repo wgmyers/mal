@@ -110,7 +110,7 @@ module MalCore
     'first'       => lambda { |x| !x.is_a?(MalNil) && x.data.length.positive? ? x.data[0] : MalNil.new },
     'rest'        => lambda { |x|
                        y = MalList.new
-                       return y unless !x.is_a?(MalNil) # back out now if x is nil
+                       return y if x.is_a?(MalNil) # back out now if x is nil
 
                        x.data.drop(1).each { |i| y.push(i) }
                        return y
