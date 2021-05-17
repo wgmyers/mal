@@ -1,0 +1,70 @@
+;; life.mal
+;; If I can't implement Conway's Life, what's the point?
+
+;; I have no idea how to do this in Lisp
+
+;; randcell
+;; Randomly return either 0 or 1
+(defmacro! randcell
+  (fn* ()
+   '(ruby-eval "rand(2)")))
+
+;; makeline
+;; Take an empty list and a length
+;; Fill it with random cells
+(def! makeline
+  (fn* [line length]
+      (if (< (count line) length)
+        (makeline (cons (randcell) line) length)
+        line)))
+
+;; makegrid
+;; Take an empty list, a height and a width
+;; Call makeline height times, using width as length
+(def! makegrid
+  (fn* [grid h w]
+    (if (< (count grid) h)
+      (makegrid (cons (makeline () w) grid) h w)
+      grid)))
+
+;; printcell
+;; Take a cell
+;; Return "X" if it is a 1, " " if 0
+(def! printcell
+  (fn* [c]
+    (if (= c 1)
+        (str "X")
+        (str " "))))
+
+;; displayline
+(def! displayline
+  (fn* [line]
+    (println (str (map printcell line)))))
+
+;; displaygrid
+(def! displaygrid
+  (fn* [grid]
+    (map displayline grid)))
+
+;; printgen
+(def! printgen
+  (fn* [gen grid]
+    (do
+      (println (str "Generation: " gen))
+      (displaygrid grid))))
+
+;; conway
+;; Take a grid
+;; Return another grid after calculating the next life generation
+;; For now, just call makegrid
+(def! conway
+  (fn* [grid h w]
+    (makegrid () h w)))
+
+(def! gameloop
+  (fn* [gen grid]
+    (do
+      (printgen gen (conway () 5 5))
+      (if (not (= (readline "") "q"))
+          (gameloop (+ gen 1) grid)
+          (println "Bye!")))))
