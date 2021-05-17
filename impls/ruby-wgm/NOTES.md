@@ -1,5 +1,44 @@
 # Notes
 
+### Step A - Part Six: Life (2021-05-17)
+
+life.mal now works! Sorta-kinda.
+
+It has revealed an implementation bug: you can say (nth (arr -1)) and happily
+get the last element of the array, because I am passing -1 directly to Ruby as
+the array accessor. This probably should not be, and because life.mal, as
+written, expects an error there, the Life implementation has wrapping issues
+where cells appear to walk from bottom to top and right to left (but not the
+other way around).
+
+So that needs fixing.
+
+It is also sloooow. But that is to be expected given that every element of it
+has been implemented in what is no doubt the clunkiest and least idiomatic
+Lisp possible.
+
+On the other hand, Life! Yay.
+
+### Step A - Part Five: Now What? (2021-05-16)
+
+Well, there's still a lot left to fix.
+
+Got make "perf^ruby-wgm" working: the bug turned out to be in macroexpand in
+reader.rb - we weren't counting brackets properly so long quasiquoted lists
+were being truncated, an issue that didn't seem to affect self-hosting (!) but
+which did break the 'time' function used by the test harness.
+
+I'm not entirely sure that expandmacro is exactly bulletproof, but at least
+the tests run.
+
+Performance is the same as the other ruby implementation on test 1, slower on
+test 2, but faster on step 3. So there's that.
+
+Still need to implement floats and the proper eval-ruby tests.
+
+Somewhat sidetracked by life.mal, though I am finding it painfully hard, since
+this is very much My First Lisp. Looking forward to a lightbulb moment?
+
 ### Step A - Part Four: Fixing Everything (2021-05-15)
 
 Working steadily through the Rubocop complaints.
