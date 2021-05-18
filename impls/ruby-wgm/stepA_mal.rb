@@ -66,9 +66,25 @@ end
 # quasiquote
 # A function to implement the quasiquote special form
 def quasiquote(ast)
-  type = ast.class.to_s
-  case type
-  when 'MalList'
+  case ast
+  when MalVector
+    retval = MalList.new
+    retval.push(MalSymbol.new('vec'))
+    # Now add "the result of processing ast as if it were a list not starting with unquote"
+    tmplist = MalList.new
+    ast.data.each { |item| tmplist.push(item) }
+    # If list *does* begin with unquote, squirrel it away and add it back after processing
+    if tmplist.data.length.positive? &&
+       tmplist.data[0].is_a?(MalSymbol) &&
+       (tmplist.data[0].data == 'unquote')
+      tmplist.data[0] = MalSymbol.new('hidden-unquote') # hide the 'unquote'
+      tmplist = quasiquote(tmplist)
+      tmplist.data[1].data[1] = MalSymbol.new('unquote') # put it back (it's now wrapped in cons and quote)
+    else
+      tmplist = quasiquote(tmplist)
+    end
+    retval.push(tmplist)
+  when MalList
     # If first element of list is 'unquote' symbol, return second element
     if (ast.data.length > 1) && ast.data[0].is_a?(MalSymbol) && (ast.data[0].data == 'unquote')
       retval = ast.data[1]
@@ -90,27 +106,10 @@ def quasiquote(ast)
       end
       retval = result
     end
-  when 'MalHashMap', 'MalSymbol'
+  when MalHashMap, MalSymbol
     retval = MalList.new
     retval.push(MalSymbol.new('quote'))
     retval.push(ast)
-  when 'MalVector'
-    retval = MalList.new
-    retval.push(MalSymbol.new('vec'))
-    # Now add "the result of processing ast as if it were a list not starting with unquote"
-    tmplist = MalList.new
-    ast.data.each { |item| tmplist.push(item) }
-    # If list *does* begin with unquote, squirrel it away and add it back after processing
-    if tmplist.data.length.positive? &&
-       tmplist.data[0].is_a?(MalSymbol) &&
-       (tmplist.data[0].data == 'unquote')
-      tmplist.data[0] = MalSymbol.new('hidden-unquote') # hide the 'unquote'
-      tmplist = quasiquote(tmplist)
-      tmplist.data[1].data[1] = MalSymbol.new('unquote') # put it back (it's now wrapped in cons and quote)
-    else
-      tmplist = quasiquote(tmplist)
-    end
-    retval.push(tmplist)
   else
     retval = ast
   end
@@ -125,9 +124,8 @@ end
 # on each member of the list
 # Otherwise return the contents of the data
 def eval_ast(ast, env)
-  type = ast.class.to_s
-  case type
-  when 'MalSymbol'
+  case ast
+  when MalSymbol
     sym = ast.print
     # If the symbol isn't found, an error will be raised in env.rb
     begin
@@ -135,21 +133,21 @@ def eval_ast(ast, env)
     rescue => e
       raise e
     end
-  when 'MalList'
-    retval = MalList.new
-    ast.data.each do |item|
-      newitem = EVAL(item, env)
-      retval.push(newitem)
-    end
-    return retval
-  when 'MalVector'
+  when MalVector
     retval = MalVector.new
     ast.data.each do |item|
       newitem = EVAL(item, env)
       retval.push(newitem)
     end
     return retval
-  when 'MalHashMap'
+  when MalList
+    retval = MalList.new
+    ast.data.each do |item|
+      newitem = EVAL(item, env)
+      retval.push(newitem)
+    end
+    return retval
+  when MalHashMap
     retval = MalHashMap.new
     # Now the MalHashMap is a real hash we can do this sensibly
     ast.data.each_key do |key|
@@ -375,12 +373,12 @@ def EVAL(ast, env)
       end
       # Oops. We /might/ need to convert back to a Mal data type.
       # FIXME I'm sure this shouldn't ever be the case.
-      case res.class.to_s
-      when 'TrueClass'
+      case res
+      when TrueClass
         return MalTrue.new
-      when 'FalseClass'
+      when FalseClass
         return MalFalse.new
-      when 'Integer'
+      when Integer
         return MalNumber.new(res)
       else
         return res
