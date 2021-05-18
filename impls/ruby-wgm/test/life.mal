@@ -128,19 +128,19 @@
 (def! conline
   (fn* [grid newline x y]
     (if (= x -1)
-      newline
-      (do
-        (conline grid (cons (conrules grid x y) newline) (dec x) y)))))
+        newline
+        (do
+          (conline grid (cons (conrules grid x y) newline) (dec x) y)))))
 
 ;; conway
 ;; Take a grid and calculate next life generation
 ;; Call with (), width and height
 (def! conway
   (fn* [grid newgrid x y]
-        (if (= y -1)
-            newgrid
-            (do
-              (conway grid (cons (conline grid () x y) newgrid) x (dec y))))))
+    (if (= y -1)
+        newgrid
+        (do
+          (conway grid (cons (conline grid () x y) newgrid) x (dec y))))))
 
 ;; game_loop
 ;; Take generation number, the current grid and its dimensions
