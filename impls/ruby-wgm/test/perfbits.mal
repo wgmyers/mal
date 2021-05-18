@@ -53,3 +53,11 @@
         (do
           (println "Elapsed time:" (- (time-ms) ~start) "msecs")
           ~ret))))))
+
+;; Reader Macro Expansion Test
+(defmacro! expansiontest
+  (fn* ()
+    (let* [sym (symbol "s")]
+      `(let* (~sym ("bol"))
+         (do
+           (println "sym: " ~sym))))))
