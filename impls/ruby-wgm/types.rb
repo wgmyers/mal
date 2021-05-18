@@ -10,10 +10,9 @@ KEYWORD_PREFIX = "\u029e" # Not wholly sure about this.
 
 # MalType is the base class for our class types
 class MalType
-  attr_reader :type, :data
+  attr_reader :data
 
   def initialize
-    @type = 'MalBaseType'
     @data = nil
   end
 
@@ -23,12 +22,11 @@ class MalType
 end
 
 class MalAtom < MalType
-  attr_reader :type, :data
+#  attr_reader :data
 
   # data must be a Mal object
   def initialize(data)
     super()
-    @type = 'MalAtom'
     @data = data
   end
 
@@ -70,12 +68,11 @@ end
 # MalFunction
 # Tee hee
 class MalFunction < MalType
-  attr_reader :ast, :params, :env, :closure, :data
+  attr_reader :ast, :params, :env, :closure
   attr_accessor :is_macro, :metadata
 
   def initialize(ast, params, env, closure)
     super()
-    @type = 'MalFunction'
     @ast = ast
     @params = params
     @env = env
@@ -114,7 +111,6 @@ class MalString < MalType
   # we call with the sanitise flag set to false.
   def initialize(data, sanitise: true)
     super()
-    @type = 'MalString'
     @data = data
     @data = _sanitise(@data) if sanitise
   end
@@ -206,7 +202,6 @@ end
 class MalTrue < MalType
   def initialize
     super()
-    @type = 'MalTrue'
     @data = true
   end
 
@@ -218,7 +213,6 @@ end
 class MalFalse < MalType
   def initialize
     super()
-    @type = 'MalFalse'
     @data = false
   end
 
@@ -230,7 +224,6 @@ end
 class MalNil < MalType
   def initialize
     super()
-    @type = 'MalNil'
     @data = nil
   end
 
@@ -244,7 +237,6 @@ class MalList < MalType
 
   def initialize
     super()
-    @type = 'MalList'
     @data = []
     @metadata = MalNil.new
   end
@@ -277,7 +269,6 @@ end
 class MalVector < MalList
   def initialize
     super()
-    @type = 'MalVector'
     @data = []
     @metadata = MalNil.new
   end
@@ -304,7 +295,6 @@ class MalHashMap < MalType
 
   def initialize
     super()
-    @type = 'MalHashMap'
     @data = {}
     @next_is_key = true
     @last_key = nil
@@ -423,7 +413,6 @@ end
 class MalKeyword < MalType
   def initialize(data)
     super()
-    @type = 'MalKeyword'
     @data = data
     # Prepend ':' if not given
     @data = ":#{@data}" if @data[0] != ':'
@@ -437,7 +426,6 @@ end
 class MalSymbol < MalType
   def initialize(data)
     super()
-    @type = 'MalSymbol'
     @data = data
   end
 end
@@ -445,7 +433,6 @@ end
 class MalNumber < MalType
   def initialize(data)
     super()
-    @type = 'MalNumber'
     @data = data.to_i # FIXME: We should also handle non-integers
   end
 end
