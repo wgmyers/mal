@@ -22,8 +22,6 @@ class MalType
 end
 
 class MalAtom < MalType
-#  attr_reader :data
-
   # data must be a Mal object
   def initialize(data)
     super()
