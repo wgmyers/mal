@@ -302,7 +302,7 @@ class MalHashMap < MalType
   # make_internal_key
   # Utility function to make internal keys
   def make_internal_key(key)
-    return key.data if key.is_a?(MalString)
+    return key.data if key.is_a?(MalString) || key.is_a?(MalSymbol)
 
     return key.unimunge if key.is_a?(MalKeyword)
 
