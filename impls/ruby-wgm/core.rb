@@ -358,19 +358,27 @@ module MalCore
     end
 
     def ruby2mal(rubyval)
-      case rubyval.class.to_s
-      when 'String'
+      case rubyval
+      when String
         MalString.new(rubyval, sanitise: false)
-      when 'Integer'
+      when Integer
         MalNumber.new(rubyval)
-      when 'Array'
+      when Symbol
+        MalSymbol.new(rubyval)
+      when Array
         arr = MalList.new
         rubyval.each { |i| arr.push(ruby2mal(i)) }
         arr
-      when 'Hash'
+      when Hash
         hash = MalHashMap.new
         rubyval.each_key { |k| hash.set(ruby2mal(k), ruby2mal(rubyval[k])) }
         hash
+      when TrueClass
+        t = MalTrue.new
+      when FalseClass
+        f = MalFalse.new
+      when NilClass
+        n = MalNil.new
       else
         raise MalEvalError, "could not convert #{rubyval.class} to Mal type"
       end
