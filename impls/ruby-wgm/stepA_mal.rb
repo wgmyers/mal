@@ -159,17 +159,7 @@ def eval_ast(ast, env)
 end
 
 # EVAL
-# Stage 5 refactors EVAL to handle TCO.
-# We put an infinite loop around the whole thing.
-# Whenever possible, by which we mean user-defined functions, let*, do and if,
-# we don't return anything but instead prepare the variables ast and env for
-# another run round the loop. This saves a stack frame and allows for deep
-# recursion. I think, and is compulsory in Scheme and related Lisps. I don't
-# really understand it yet, but that's what you get for trying to learn Lisp
-# by implementing it.
-# NB - The trick we used in previous steps of returning env here turns out to
-# have been a mistake, as it broke TCO. Removing it seems to have fixed most
-# of the problems, though not all regression tests pass as I type this.
+# Everything happens here
 def EVAL(ast, env)
   # TCO YOLO
   loop do
@@ -181,12 +171,11 @@ def EVAL(ast, env)
     # Macro expansion
     ast = macroexpand(ast, env)
     unless ast.instance_of?(MalList)
-      next # Shorter than 'return eval_ast(ast, env)' modulo this comment.
+      next
     end
 
     # APPLY section
     # Switch on the first item of the list
-    # FIXME This wants its own function now (or soon) surely
     case ast.data[0].data
 
     when 'def!', 'defmacro!'
@@ -231,8 +220,7 @@ def EVAL(ast, env)
       # TCO
       env = letenv
       ast = ast.data[2]
-      next
-      # ... and loop to start of EVAL
+      next # loop to start of EVAL
 
     when 'do'
       # Do the do
@@ -243,8 +231,7 @@ def EVAL(ast, env)
       lastel = ast.data[-1]                 # save last element of ast
       ast.data.drop(1).each { |i| EVAL(i, env) unless i == lastel }
       ast = lastel                          # set ast to saved last element
-      next
-      # ... and loop to start of EVAL
+      next # loop to start of EVAL
 
     when 'if'
       # Handle if statements
@@ -260,8 +247,7 @@ def EVAL(ast, env)
         # Truthy. Return eval of second item (or raise error)
         ast = ast.data[2]
       end
-      next
-      # ... and loop to start of EVAL
+      next # loop to start of EVAL
 
     when 'fn*'
       # Second element of the list is parameters. Third is function body.
@@ -359,8 +345,7 @@ def EVAL(ast, env)
           # TCO
           ast = f.ast
           env = Env.new(f.env, f.params.data, args)
-          next
-          # ... and loop to start for TCO
+          next # loop to start for TCO
         when Proc
           # No TCO here - we can return a result
           # Here we must splat the args with * so our lambdas can see them
@@ -395,7 +380,6 @@ end
 
 # rep
 # Pass input through READ, EVAL and PRINT in order and return the result
-# NB EVAL now returns the environment, as it might modify it.
 def rep(input, repl_env)
   begin
     ast = READ(input)
