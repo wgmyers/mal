@@ -1,5 +1,25 @@
 # Notes
 
+### Step A - Part Seven: Step Away From The Mal (2021-05-19)
+
+Right.
+
+All the ruby-eval tests now implemented, and after a few tweaks to the code,
+now passing. I wasn't properly handling True, False, Nil or Symbol return
+values, and suspect there are other values still not properly returned, but
+obviously these ones Are Important.
+
+I don't know if I'll bother with integers at this point: far more likely to
+have a crack at another go from the top in another language. Candidates are
+Rust (which I want to learn), and COBOL, which is not yet on the list of Mal
+implementations, but which will be Extremely Difficult, owing to the complete
+lack of anything remotely describable as a function: this can be worked around
+with shared global vars but implementing function lookup tables and closures
+will Not Be Fun. Or, you know, the reverse.
+
+But this has been great fun, extremely worthwhile, has taught me a great deal
+both about Ruby and Lisp, and I have raised an issue on Github saying so.
+
 ### Step A - Part Six: Life (2021-05-17)
 
 life.mal now works! Sorta-kinda.
