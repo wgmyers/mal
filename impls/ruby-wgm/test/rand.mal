@@ -1,0 +1,112 @@
+;; rand.mal
+;; Can I define a (crap) prng? Let's see.
+
+;; https://www.avrfreaks.net/forum/tiny-fast-prng has:
+;; uint8_t rnd(void) {
+;; static uint8_t s=0xaa,a=0;
+;;        s^=s<<3;
+;;        s^=s>>5;
+;;        s^=a++>>2;
+;;        return s;
+
+;; Utilities
+;; We need to be able to reverse a list, shift left and right bitwise, and
+;; raise an integer to the power of another integer
+
+;; rev
+;; Pass it a list
+;; Returns the list reversed
+(def! rev
+  (fn* (xs)
+    (if (<= (count xs) 1)
+        xs
+        (concat
+           (rev (rest xs))
+           (list (first xs))))))
+
+;; << and >> can be implemented with * and / respectively
+
+(def! <<
+  (fn* [n c]
+    (if (= c 0)
+        n
+        (<< (* n 2) (- c 1)))))
+
+(def! >>
+  (fn* [n c]
+    (if (= c 0)
+        n
+        (>> (/ n 2) (- c 1)))))
+
+;; **
+;; Pass it a number n, an exponent e, and, annoyingly, 1
+;; Returns n to the e
+(def! **
+  (fn* [n e acc]
+    (if (= e 0)
+    acc
+    (** n (- e 1) (* acc n)))))
+
+;; ^ is somewhat tricker. Ahem.
+;; (x ^ y) = (x | y) - (x & y), so we just need to implement | and &. Er.
+;; Which is great and all, but if I convert to binary, there's no need, just
+;; implement XOR directly, no need to piss about with AND and OR, it's the same.
+;; In the absence of a clever numerical solution (which may not exist without
+;; implementing some weird constraint thing I don't understand) there is no choice..
+
+;; d2b
+;; Pass it an integer and an empty list
+;; Get back a list of 1's and 0's as binary representation of that integer
+(def! d2b
+  (fn* [dec li]
+    (if (= 0 dec)
+        li
+        (if
+          (= (/ dec 2) (/ (+ dec 1) 2))
+          (d2b (>> dec 1) (cons 0 li))
+          (d2b (>> dec 1) (cons 1 li))))))
+
+;; b2d
+;; Pass it 0 and a list of 1's and 0's representing an integer
+;; Get back the integer represented by the binary
+(def! b2d
+  (fn* [dec li]
+    (if (= (count li) 0)
+        dec
+        (b2d (+ dec (* (** 2 (- (count li) 1) 1) (first li))) (rest li)))))
+
+;; mungebin
+;; Pass it two lists of 1's and 0's representing two binary numbers and an empty list
+;; Return a list representing the addition of each pair of numbers from each
+;; list, counting from the end (so containing either 0, 1 or 2)
+;; Assume the first number is larger (we will enforce this in the real xor
+;; which will always call xorbin with a, b such that a>b)
+;; This intermediate representation can then be processed elsewhere to implement
+;; bitwise AND, OR and XOR.
+(def! mungebin
+  (fn* [li1 li2 res]
+    (if (= (count li1) 0)
+        res
+        (if (= (count li2) 0)
+            (mungebin (rev (rest (rev li1))) () (cons (first (rev li1)) res))
+            (mungebin (rev (rest (rev li1))) (rev (rest (rev li2))) (cons (+ (first (rev li1)) (first (rev li2))) res))))))
+
+;; xorfunc
+;; Calculate xor for a bit via mungebin's intermediate representation
+;; (I should add andfunc and orfunc in the same way, but not needed for this prng)
+(def! xorfunc
+  (fn* [a]
+    (cond
+      (= a 0) 0
+      (= a 1) 1
+      (= a 2) 0)))
+
+;; xor
+;; Finally, we can put all the above together and implement xor
+;; Not quite a oneliner, because we promise mungebin that a is always > b, so
+;; we test for that first and ensure this is going to be the case.
+(def! xor
+  (fn* [a b]
+    (if (< a b)
+        (xor b a)
+        (b2d 0 (map xorfunc (mungebin (d2b a ()) (d2b b ()) ()))))))
