@@ -9,6 +9,17 @@
 ;;        s^=a++>>2;
 ;;        return s;
 
+;; TODO: Let user set seeds s and a
+
+;; NB: Algorithm author says: "Period is generally 55552 bytes. You can seed by
+;; changing s and/or a, but about 16% of the seeds give much shorter periods and
+;; reduced randomness."
+;; A later comment claims: "When you seed with with
+;; s= one of 15 18 63 101 129 156 172 208 and
+;; a=96..138
+;; you'll get a period of 55552. These are contiguous ranges of 43 seeds with
+;; good period. So you could seed with something like a=96+x%43."
+
 ;; Utilities
 ;; We need to be able to reverse a list, shift left and right bitwise, raise an
 ;; integer to the power of another integer, and calculate mod. Oh and inc an int.
@@ -61,12 +72,9 @@
         (mod (- a n) n)
         a)))
 
-;; ^ is somewhat tricker. Ahem.
-;; (x ^ y) = (x | y) - (x & y), so we just need to implement | and &. Er.
-;; Which is great and all, but if I convert to binary, there's no need, just
-;; implement XOR directly, no need to piss about with AND and OR, it's the same.
-;; In the absence of a clever numerical solution (which may not exist without
-;; implementing some weird constraint thing I don't understand) there is no choice..
+;; XOR is somewhat tricker than << and >> by a long way.
+;; I tried and failed to find a clever numerical solution.
+;; So instead we convert to binary and back.
 
 ;; d2b
 ;; Pass it an integer and an empty list
@@ -126,7 +134,7 @@
         (b2d 0 (map xorfunc (mungebin (d2b a ()) (d2b b ()) ()))))))
 
 ;; A reminder of our PRNG algorithm:
-;; NB - s is a uint8 so we need to mod 256 all results of operating on it.
+;; NB - s and a are uint8 so we need to mod 256 them on overflow.
 ;; static uint8_t s=0xaa,a=0;
 ;;        s^=s<<3;
 ;;        s^=s>>5;
@@ -134,15 +142,19 @@
 ;;        return s;
 
 ;; Separating out the three steps of the algorithm for clarity
+;; Shift left may overflow, so mod 256 that
 (def! rs1
   (fn* [s]
     (xor s (mod (<< s 3) 256))))
 ;;    (mod (xor s (<< s 3)) 256)))
 
+;; No overflow can happen here, don't mod
 (def! rs2
   (fn* [s]
     (xor s (>> s 5))))
 ;;    (mod (xor s (>> s 5)) 256)))
+
+;; No overflow possible, don't mod
 (def! rs3
   (fn* [s a]
     (xor s (>> a 2))))
@@ -150,7 +162,7 @@
 
 ;; This gives us a pseudo-random number between 0 and 255
 (def! rand256
-  (let* [s (atom 170) a (atom 0)]
+  (let* [s (atom 172) a (atom 96)]
     (fn* []
       (do
         (swap! a inc)
@@ -167,7 +179,7 @@
     (mod (rand256) n)))
 
 ;; rand2
-;; Quicker than (rand 2), hopefully
+;; Quicker than (rand 2), but not by much
 (def! rand2
   (fn* []
      (let* [n (rand256)]
