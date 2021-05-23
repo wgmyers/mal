@@ -4,6 +4,8 @@
 ;; I have no idea how to do this in Lisp properly.
 ;; But it works, albeit slowly, and with caveats.
 
+(load-file "test/rand.mal")
+
 ;; Borrowed from trivial.mal
 (def! inc
   (fn* [a]
@@ -22,7 +24,8 @@
 ;; Randomly return either 0 or 1
 (defmacro! rand_cell
   (fn* []
-   '(ruby-eval "rand(2)")))
+    '(rand2)))
+;;  '(ruby-eval "rand(2)")))
 
 ;; make_line
 ;; Take an empty list and a length

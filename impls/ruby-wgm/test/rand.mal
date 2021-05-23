@@ -10,8 +10,13 @@
 ;;        return s;
 
 ;; Utilities
-;; We need to be able to reverse a list, shift left and right bitwise, and
-;; raise an integer to the power of another integer
+;; We need to be able to reverse a list, shift left and right bitwise, raise an
+;; integer to the power of another integer, and calculate mod. Oh and inc an int.
+
+;; Borrowed from trivial.mal
+(def! inc
+  (fn* [a]
+    (+ a 1)))
 
 ;; rev
 ;; Pass it a list
@@ -47,6 +52,15 @@
     acc
     (** n (- e 1) (* acc n)))))
 
+;; mod
+;; Give it a and n
+;; Return a mod n
+(def! mod
+  (fn* [a n]
+    (if (>= a n)
+        (mod (- a n) n)
+        a)))
+
 ;; ^ is somewhat tricker. Ahem.
 ;; (x ^ y) = (x | y) - (x & y), so we just need to implement | and &. Er.
 ;; Which is great and all, but if I convert to binary, there's no need, just
@@ -80,7 +94,7 @@
 ;; Return a list representing the addition of each pair of numbers from each
 ;; list, counting from the end (so containing either 0, 1 or 2)
 ;; Assume the first number is larger (we will enforce this in the real xor
-;; which will always call xorbin with a, b such that a>b)
+;; which will always call mungebin with a, b such that a > b)
 ;; This intermediate representation can then be processed elsewhere to implement
 ;; bitwise AND, OR and XOR.
 (def! mungebin
@@ -110,3 +124,47 @@
     (if (< a b)
         (xor b a)
         (b2d 0 (map xorfunc (mungebin (d2b a ()) (d2b b ()) ()))))))
+
+;; A reminder of our PRNG algorithm:
+;; NB - s is a uint8 so we need to mod 256 all results of operating on it.
+;; static uint8_t s=0xaa,a=0;
+;;        s^=s<<3;
+;;        s^=s>>5;
+;;        s^=a++>>2;
+;;        return s;
+
+;; Separating out the three steps of the algorithm for clarity
+(def! rs1
+  (fn* [s]
+    (mod (xor s (<< s 3)) 256)))
+(def! rs2
+  (fn* [s]
+    (mod (xor s (>> s 5)) 256)))
+(def! rs3
+  (fn* [s a]
+    (mod (xor s (>> a 2)) 256)))
+
+;; This gives us a pseudo-random number between 0 and 255
+(def! rand256
+  (let* [s (atom 170) a (atom 0)]
+    (fn* []
+      (do
+        (swap! a inc)
+        (swap! s rs1)
+        (swap! s rs2)
+        (swap! s rs3 @a)))))
+
+;; rand n gives a pseudo-random number between 0 and n where n < 256
+;; NB -- Very slow for small values of n.
+(def! rand
+  (fn* [n]
+    (mod (rand256) n)))
+
+;; rand2
+;; Quicker than (rand 2), hopefully
+(def! rand2
+  (fn* []
+     (let* [n (rand256)]
+       (if (= (/ n 2) (/ (+ n 1) 2))
+           1
+           0))))
