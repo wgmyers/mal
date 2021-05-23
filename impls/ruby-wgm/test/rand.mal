@@ -1,5 +1,5 @@
 ;; rand.mal
-;; Can I define a (crap) prng? Let's see.
+;; Can I define a mini-prng? Let's see.
 
 ;; https://www.avrfreaks.net/forum/tiny-fast-prng has:
 ;; uint8_t rnd(void) {
@@ -102,7 +102,7 @@
     (if (= (count li1) 0)
         res
         (if (= (count li2) 0)
-            (mungebin (rev (rest (rev li1))) () (cons (first (rev li1)) res))
+            (mungebin () () (concat li1 res))
             (mungebin (rev (rest (rev li1))) (rev (rest (rev li2))) (cons (+ (first (rev li1)) (first (rev li2))) res))))))
 
 ;; xorfunc
