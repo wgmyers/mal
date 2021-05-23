@@ -136,13 +136,17 @@
 ;; Separating out the three steps of the algorithm for clarity
 (def! rs1
   (fn* [s]
-    (mod (xor s (<< s 3)) 256)))
+    (xor s (mod (<< s 3) 256))))
+;;    (mod (xor s (<< s 3)) 256)))
+
 (def! rs2
   (fn* [s]
-    (mod (xor s (>> s 5)) 256)))
+    (xor s (>> s 5))))
+;;    (mod (xor s (>> s 5)) 256)))
 (def! rs3
   (fn* [s a]
-    (mod (xor s (>> a 2)) 256)))
+    (xor s (>> a 2))))
+;;    (mod (xor s (>> a 2)) 256)))
 
 ;; This gives us a pseudo-random number between 0 and 255
 (def! rand256
@@ -150,6 +154,8 @@
     (fn* []
       (do
         (swap! a inc)
+        (if (= a 256)
+            (swap! a 0))
         (swap! s rs1)
         (swap! s rs2)
         (swap! s rs3 @a)))))
