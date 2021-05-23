@@ -77,8 +77,8 @@
         li
         (if
           (= (/ dec 2) (/ (+ dec 1) 2))
-          (d2b (>> dec 1) (cons 0 li))
-          (d2b (>> dec 1) (cons 1 li))))))
+          (d2b (/ dec 2) (cons 0 li))
+          (d2b (/ dec 2) (cons 1 li))))))
 
 ;; b2d
 ;; Pass it 0 and a list of 1's and 0's representing an integer
