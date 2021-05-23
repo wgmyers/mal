@@ -1,5 +1,34 @@
 # Notes
 
+### Step A - Part Eight: No Really Step Away (2021-05-23)
+
+So, life.mal is now running fine, but I wanted to see how it ran on some of the
+other implementations, at which point I ran into two problems:
+
+1 - life.mal relies on ruby-eval to call rand(2); each implementation has its own
+flavour of random number generation, meaning rewriting the call to rand each time.
+2 - Not all implementations actually have interop anyway
+
+So I decided to implement a pure Mal PRNG.
+
+This took some time, as firstly I have no idea how to do such a thing, and secondly,
+once I found a nicely simple looking PRNG algorithm, I realised that I did not
+have such things as <<, >> or ^ lying around and would also need to implement
+those.
+
+Bitshifts are trivial, XOR substantially less so.
+
+Long story short, I now have a pure Mal rand function implemented in rand.mal,
+using a home-brewed (terrible) implementation of XOR. Clunky but it works.
+
+life.mal now takes ~20s to generate a 38x19 grid in ruby-wgm.
+
+The original ruby implentation takes ~10s to do the same thing.
+
+The Rust implementation takes ~3s.
+
+The C implementation complains about my code and won't run it at all.
+
 ### Step A - Part Seven: Step Away From The Mal (2021-05-19)
 
 Right.
