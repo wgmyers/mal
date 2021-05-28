@@ -141,9 +141,9 @@ b
     (let* [sym (symbol "s")]
       `(let* (~sym ("bol"))
          (do
-           (println "sym: " ~sym))))))
+           (println "sym:" ~sym))))))
 (expansiontest)
-;=>(sym: bol)
+;=>sym: (bol)
 
 ;>>> deferrable=True
 ;;
