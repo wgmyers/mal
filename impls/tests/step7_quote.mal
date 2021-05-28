@@ -135,16 +135,6 @@ b
 (= nil (quote abc))
 ;=>false
 
-;; Testing reader macro expansion in complex expressions
-(defmacro! expansiontest
-  (fn* ()
-    (let* [sym (symbol "s")]
-      `(let* (~sym ("bol"))
-         (do
-           (println "sym:" ~sym))))))
-(expansiontest)
-;=>sym: (bol)
-
 ;>>> deferrable=True
 ;;
 ;; -------- Deferrable Functionality --------
