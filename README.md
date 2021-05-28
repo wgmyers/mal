@@ -35,13 +35,14 @@ Here is the final diagram for [step A](process/guide.md#stepA):
 ![stepA_mal architecture](process/stepA_mal.png)
 
 If you are interested in creating a mal implementation (or just
-interested in using mal for something), please drop by the #mal
-channel on freenode. In addition to the [make-a-lisp process
-guide](process/guide.md) there is also a [mal/make-a-lisp
+interested in using mal for something), you are welcome to to join our
+[Discord](https://discord.gg/CKgnNbJBpF) or join #mal on
+[libera.chat](https://libera.chat/). In addition to the [make-a-lisp
+process guide](process/guide.md) there is also a [mal/make-a-lisp
 FAQ](docs/FAQ.md) where I attempt to answer some common questions.
 
 
-**3. Mal is implemented in 85 languages (88 different implementations and 108 runtime modes)**
+**3. Mal is implemented in 86 languages (90 different implementations and 112 runtime modes)**
 
 | Language | Creator |
 | -------- | ------- |
@@ -52,6 +53,7 @@ FAQ](docs/FAQ.md) where I attempt to answer some common questions.
 | [BASIC](#basic-c64-and-qbasic) (C64 &amp; QBasic) | [Joel Martin](https://github.com/kanaka) |
 | [BBC BASIC V](#bbc-basic-v) | [Ben Harris](https://github.com/bjh21) |
 | [C](#c) | [Joel Martin](https://github.com/kanaka)  |
+| [C #2](#c2) | [Duncan Watts](https://github.com/fungiblecog)  |
 | [C++](#c-1) | [Stephen Thirlwall](https://github.com/sdt) |
 | [C#](#c-2) | [Joel Martin](https://github.com/kanaka)  |
 | [ChucK](#chuck) | [Vasilij Schneidermann](https://github.com/wasamasa) |
@@ -118,6 +120,7 @@ FAQ](docs/FAQ.md) where I attempt to answer some common questions.
 | [Scala](#scala) | [Joel Martin](https://github.com/kanaka)  |
 | [Scheme (R7RS)](#scheme-r7rs) | [Vasilij Schneidermann](https://github.com/wasamasa) |
 | [Skew](#skew) | [Dov Murik](https://github.com/dubek) |
+| [Standard ML](#sml) | [Fabian Bergström](https://github.com/fabjan) |
 | [Swift 2](#swift) | [Keith Rollin](https://github.com/keith-rollin) |
 | [Swift 3](#swift-3) | [Joel Martin](https://github.com/kanaka)  |
 | [Swift 4](#swift-4) | [陆遥](https://github.com/LispLY)  |
@@ -181,6 +184,10 @@ The following implementations are maintained as separate projects:
 
 * [by Tim Morgan](https://github.com/seven1m/mal-rust)
 * [by vi](https://github.com/vi/mal-rust-vi) - using [Pest](https://pest.rs/) grammar, not using typical Mal infrastructure (cargo-ized steps and built-in converted tests).
+
+### Q
+
+* [by Ali Mohammad Pur](https://github.com/alimpfard/mal/tree/q/impls/q) - The Q implementation works fine but it requires a proprietary manual download that can't be Dockerized (or integrated into the mal CI pipeline) so for now it remains a separate project.
 
 
 ## Other mal Projects
@@ -290,6 +297,18 @@ cd impls/c
 make
 ./stepX_YYY
 ```
+
+### C.2
+
+The second C implementation of mal requires the following libraries (lib and
+header packages): libedit, libgc, libdl, and libffi.
+
+```
+cd impls/c.2
+make
+./stepX_YYY
+```
+
 
 ### C++
 
@@ -1030,6 +1049,27 @@ The Skew implementation of mal has been tested with Skew 0.7.42.
 cd impls/skew
 make
 node stepX_YYY.js
+```
+
+
+### Standard ML (Poly/ML, MLton, Moscow ML)
+
+The Standard ML implementation of mal requires an
+[SML97](https://github.com/SMLFamily/The-Definition-of-Standard-ML-Revised)
+implementation. The Makefile supports Poly/ML, MLton, Moscow ML, and has
+been tested with Poly/ML 5.8.1, MLton 20210117, and Moscow ML version 2.10.
+
+```
+cd impls/sml
+# Poly/ML
+make sml_MODE=polyml
+./stepX_YYY
+# MLton
+make sml_MODE=mlton
+./stepX_YYY
+# Moscow ML
+make sml_MODE=mosml
+./stepX_YYY
 ```
 
 

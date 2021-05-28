@@ -7,6 +7,7 @@ IMPL:
   - {IMPL: basic, basic_MODE: qbasic, NO_SELF_HOST: 1}  # step4 OOM
   - {IMPL: bbc-basic}
   - {IMPL: c}
+  - {IMPL: c.2}
   - {IMPL: cpp}
   - {IMPL: coffee}
   - {IMPL: cs}
@@ -89,6 +90,9 @@ IMPL:
   - {IMPL: scheme, scheme_MODE: cyclone}
 # - {IMPL: scheme, scheme_MODE: foment}
   - {IMPL: skew}
+  - {IMPL: sml, sml_MODE: polyml}
+  - {IMPL: sml, sml_MODE: mlton}
+  - {IMPL: sml, sml_MODE: mosml}
   - {IMPL: tcl}
   - {IMPL: ts}
   - {IMPL: vala}
