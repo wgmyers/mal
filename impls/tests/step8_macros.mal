@@ -44,7 +44,7 @@
 ;=>(1)
 
 ;; Testing reader macro expansion in complex expressions
-(defmacro! expansiontest (fn* () (let* [sym (symbol "s")] `(let* (~sym ("bol")) (do (println "sym:" ~sym))))))
+(defmacro! expansiontest (fn* () (let* [sym (symbol "s")] `(let* (~sym (list "bol")) (do (println "sym:" ~sym))))))
 (expansiontest)
 ;=>sym: (bol)
 
