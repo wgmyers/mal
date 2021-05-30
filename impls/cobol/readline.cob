@@ -11,6 +11,7 @@ WORKING-STORAGE SECTION.
 01 WS-PROMPT-MSG-C PIC X(7).
 01 WS-READLINE-PTR USAGE POINTER.
 01 WS-READLINE-BUFFER PIC X(255) BASED.
+01 WS-QUIT-CHAR PIC X(1) VALUE 'q'.
 
 LINKAGE SECTION.
 01 WS-PROMPT-MSG PIC X(6).
@@ -37,13 +38,18 @@ INIT-PROMPT-PARA.
 
 *> GnuCOBOL 3.0 has a built-in for this, but we don't have it
 *> So. Clobber WS-INPUT and use our WS-READLINE-BUFFER to copy across.
+*> Unless the pointer is null (ie Ctrl-D), in which case, return 'q'
 COPY-CSTRING-PARA.
      INSPECT WS-INPUT REPLACING CHARACTERS BY SPACE.
-     SET ADDRESS OF WS-READLINE-BUFFER TO WS-READLINE-PTR.
-     STRING
-          WS-READLINE-BUFFER DELIMITED BY X'00'
-          INTO WS-INPUT
-     END-STRING.
+     IF WS-READLINE-PTR = NULL THEN
+          MOVE WS-QUIT-CHAR TO WS-INPUT
+     ELSE
+          SET ADDRESS OF WS-READLINE-BUFFER TO WS-READLINE-PTR
+          STRING
+               WS-READLINE-BUFFER DELIMITED BY X'00'
+               INTO WS-INPUT
+          END-STRING
+     END-IF.
 
 *> Convert back to a proper COBOL string before returning.
 *> NB - possibly not necessary after COPY-STRING-PARA - not sure where NULL goes.
