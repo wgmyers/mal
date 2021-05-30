@@ -1,4 +1,6 @@
 STEPS = step0_repl
+LIBS = readline
+CLIBS = -lreadline
 
 all: $(STEPS)
 
@@ -7,8 +9,11 @@ dist: mal
 mal: stepA_mal
 	cp $< $@
 
-%: %.cob
-	cobc -free -x $*.cob -o $@
+step0_repl:
+	cobc -free -x $(CLIBS) $(STEPS).cob $(LIBS).cob -o $@
+
+# %: %.cob
+#	 cobc -free -x $(CLIBS) $*.cob -o $@
 
 .PHONY: clean
 
